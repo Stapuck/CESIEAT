@@ -21,6 +21,8 @@ dotenv.config();
 const MONGO_URL = process.env.MONGO_URL as string;
 const FRONTEND1 = process.env.FRONTEND1 as string; //ts 
 const FRONTEND2 = process.env.FRONTEND2 as string; //js
+const FRONTEND3 = process.env.FRONTEND2 as string; //js
+const FRONTEND4 = process.env.FRONTEND4 as string; //js
 const PORT = Number(process.env.PORT) || 3002;
 // const PORT = 3002;
 
@@ -29,7 +31,7 @@ const app = new Hono()
 
 // CORS configuration
 app.use('*', cors({
-  origin: [FRONTEND1, FRONTEND2],
+  origin: [FRONTEND1, FRONTEND2, FRONTEND3, FRONTEND4 ],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 

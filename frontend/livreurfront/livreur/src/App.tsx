@@ -5,6 +5,8 @@ import TestPage from "./pages/TestPage"
 import CreatePage from "./pages/CreatePage"
 import EditPage from "./pages/EditPage"
 import NotFoundPage from "./components/NotFoundPage"
+import LoginPage from "./pages/LoginPage"
+import SigninPage from "./pages/SigninPage"
 
 
 function App() {
@@ -28,8 +30,8 @@ function App() {
         <Route path="/404" element={<NotFoundPage/>} />
           <Route path="*" element={<NotFoundPage />} />
 
-        <Route path='/login' element={<EditPage/>}></Route>
-        <Route path='/signin' element={<EditPage/>}></Route>
+        <Route path='/login' element={<LoginPage/>}></Route>
+        <Route path='/signin' element={<SigninPage/>}></Route>
       </Routes>
     </div>
   )
