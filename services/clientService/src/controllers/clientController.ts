@@ -63,3 +63,22 @@ export const deleteClient = async (c: Context) => {
         return handleError(error, c);
     }
 };
+
+export const pauseClient = async (c: Context) => {
+    try {
+        const id = c.req.param('id');
+        const client = await Client.findByIdAndUpdate(
+            id,
+            { isPaused: true },
+            { new: true, runValidators: true }
+        );
+        
+        if (!client) {
+            return c.json({ message: `Client with ID ${id} not found` }, 404);
+        }
+        
+        return c.json({ message: `Client ${id} has been paused successfully`, client });
+    } catch (error) {
+        return handleError(error, c);
+    }
+};

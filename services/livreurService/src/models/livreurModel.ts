@@ -1,25 +1,25 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-interface IClient extends Document {
+interface ILivreur extends Document {
     name: string;
     email: string;
     password: string;
-    address: string;
     phone: string;
-    isPaused: boolean;
+    vehicleType: string;
+    isAvailable: boolean;
 }
 
-const clientSchema = new Schema(
+const livreurSchema = new Schema(
     {
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
-        address: { type: String, required: true },
         phone: { type: String, required: true },
-        isPaused: { type: Boolean, required: true, default: false}
+        vehicleType: { type: String, required: true },
+        isAvailable: { type: Boolean, default: true }
     },
     { timestamps: true }
 );
 
-const Client = mongoose.model<IClient>('Client', clientSchema);
-export default Client;
+const Livreur = mongoose.model<ILivreur>('Livreur', livreurSchema);
+export default Livreur;

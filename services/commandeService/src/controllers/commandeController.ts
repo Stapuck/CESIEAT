@@ -8,8 +8,8 @@ const handleError = (error: unknown, c: Context) => {
 
 export const getCommandes = async (c: Context) => {
     try {
-        const clients = await Commande.find({});
-        return c.json(clients);
+        const commandes = await Commande.find({});
+        return c.json(commandes);
     } catch (error) {
         return handleError(error, c);
     }
@@ -18,9 +18,9 @@ export const getCommandes = async (c: Context) => {
 export const getCommande = async (c: Context) => {
     try {
         const id = c.req.param('id');
-        const client = await Commande.findById(id);
-        if (!client) return c.json({ message: `Client with ID ${id} not found` }, 404);
-        return c.json(client);
+        const commande = await Commande.findById(id);
+        if (!commande) return c.json({ message: `Commande with ID ${id} not found` }, 404);
+        return c.json(commande);
     } catch (error) {
         return handleError(error, c);
     }
@@ -29,8 +29,8 @@ export const getCommande = async (c: Context) => {
 export const createCommande = async (c: Context) => {
     try {
         const body = await c.req.json();
-        const client = await Commande.create(body);
-        return c.json(client, 201);
+        const commande = await Commande.create(body);
+        return c.json(commande, 201);
     } catch (error) {
         return handleError(error, c);
     }
@@ -40,9 +40,9 @@ export const editCommande = async (c: Context) => {
     try {
         const id = c.req.param('id');
         const body = await c.req.json();
-        const client = await Commande.findByIdAndUpdate(id, body, { new: true, runValidators: true });
-        if (!client) return c.json({ message: `Client with ID ${id} not found` }, 404);
-        return c.json(client);
+        const commande = await Commande.findByIdAndUpdate(id, body, { new: true, runValidators: true });
+        if (!commande) return c.json({ message: `Commande with ID ${id} not found` }, 404);
+        return c.json(commande);
     } catch (error) {
         return handleError(error, c);
     }
@@ -51,9 +51,9 @@ export const editCommande = async (c: Context) => {
 export const deleteCommande = async (c: Context) => {
     try {
         const id = c.req.param('id');
-        const client = await Commande.findByIdAndDelete(id);
-        if (!client) return c.json({ message: `Client with ID ${id} not found` }, 404);
-        return c.json({ message: `Client ${id} deleted successfully` });
+        const commande = await Commande.findByIdAndDelete(id);
+        if (!commande) return c.json({ message: `Commande with ID ${id} not found` }, 404);
+        return c.json({ message: `Commande ${id} deleted successfully` });
     } catch (error) {
         return handleError(error, c);
     }

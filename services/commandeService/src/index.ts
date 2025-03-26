@@ -28,7 +28,7 @@ app.use('*', cors({
 
 app.route('/api/commandes', commandeRoute);
 
-mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0;')
+mongoose.connect(MONGO_URL)
 .then( () => {
   console.log('connected to mongodb')
  
@@ -36,6 +36,6 @@ mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrite
     fetch: app.fetch,
     port: PORT
   }, (info) => {
-    console.log(`Server is running on http://localhost:${info.port}`)
+    console.log(`Server Commande is running on http://localhost:${info.port}`)
   })
 })
