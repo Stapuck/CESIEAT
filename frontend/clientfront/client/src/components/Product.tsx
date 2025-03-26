@@ -41,18 +41,22 @@ const Product = ({ product, getProducts }: { product: IProduct; getProducts: () 
     }
 
     return (
-        <div className=" bg-white flex items-center justify-center rounded-xl shadow-lg   m-3 z-10">
+        <div className=" bg-white flex items-start justify-between rounded-xl   m-3 z-10">
             <div className="p-2">
-                <img src={product.image} alt={product.name} className=" w-20 h-20 overflow-clip object-cover outline-1 rounded-3xl" />
+                <img src={product.image} alt={product.name} className=" w-40 h-40 overflow-clip object-cover outline-1 rounded-3xl" />
             </div>
-            <div>
-            <h2 className="text font-semibold">
+            <div className="flex flex-col items-start mt-4  justify-start">
+                <h2 className="text font-semibold">
                     {product.name}
+                </h2>
+                <h2 className="text font-semibold">
+                    {product.price}
+                </h2>
+                <h2 className="text font-semibold">
+                    {product.quantity}
                 </h2>
             </div>
             <div className="px-4 pt-2 pb-4">
-                
-
                 <div className="mt-2 flex flex-col gap-4 items-center ">
                     <Link to={`/edit-product/${product._id}`} className="inline-block w-full text-center shadow-md text-sm bg-gray-700 text-white rounderd-sm px-4 py-1 font-bold hover:bg-gray-600 hover:cursor-pointer ">edit</Link>
                     <button onClick={() => deleteProduct(product._id)} className="inline-block w-full text-center shadow-md text-sm bg-red-700 text-white rounderd-sm px-4 py-1 font-bold hover:bg-red-600 hover:cursor-pointer ">delete</button>

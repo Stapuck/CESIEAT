@@ -4,53 +4,59 @@ import Product from './Product';
 
 function GalleryProduct() {
 
-    const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
 
-    const [isLoading, setIsLoading] = useState(false);
-  
-  
-    const getProducts = async () => {
-      try { 
-        // console.log(VITE_BACKEND_URL);
-        setIsLoading(true);
-        const response = await axios.get("http://localhost:3002/api/products");
-        // const response = await axios.get(`${VITE_BACKEND_URL_PRODUCT}/api/products`);
-        // console.log(response.data);
-        setProducts(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  const getProducts = async () => {
+    try {
+      // console.log(VITE_BACKEND_URL);
+      setIsLoading(true);
+      const response = await axios.get("http://localhost:3002/api/products");
+      // const response = await axios.get(`${VITE_BACKEND_URL_PRODUCT}/api/products`);
+      // console.log(response.data);
+      setProducts(response.data);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
     }
-  
-    useEffect(()=> {
-      getProducts();
-    }, [])
+  }
+
+  useEffect(() => {
+    getProducts();
+  }, [])
   return (
-    <div className='grid grid-cols-2 lg:grid-cols-4 mt-5'>
+    <div className=''>
+      <div className=''>
+        <h1 className='text-3xl font-bold text-start p-3 ml-4 mt-5 mb-5'>Nos restaurants à proximtés</h1>
+      </div>
+      <div className='grid grid-cols-2 bg-white rounded-2xl m-5 lg:grid-cols-4 mt-5'>
+
         {isLoading ? ("Loading") : (
           <>
-          {products.length > 0 ? (
-             <>
+            {products.length > 0 ? (
+              <>
                 {
-                  products.map((product,index) => {
+                  products.map((product, index) => {
                     return (
-                      <Product key={index} product={product} getProducts={getProducts}/>
-                      
+                      <Product key={index} product={product} getProducts={getProducts} />
+
                     )
                   })
                 }
-             </>
-          ) : (
+              </>
+            ) : (
 
-            <div>
-              There is no products
-            </div>
-          )}
-          
+              <div>
+                There is no products
+              </div>
+            )}
+
           </>
         )}
       </div>
+    </div>
   );
 }
 
