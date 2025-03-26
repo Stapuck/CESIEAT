@@ -39,7 +39,7 @@ const Product = ({ product, getProducts}: { product: IProduct; getProducts: () =
     }
 
     return (
-        <div className="bg-white rounded shadow-lg overflow-hidden m-3">
+        <div className=" bg-white rounded shadow-lg overflow-hidden m-3 z-10">
             <img src={product.image} alt={product.name} className="w-full h-28 object-cover" />
             <div className="px-4 pt-2 pb-4">
                 <h2 className="text font-semibold">

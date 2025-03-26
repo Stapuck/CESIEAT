@@ -5,7 +5,7 @@ import GalleryProduct from "../components/GalleryProduct";
 const HomePage = () => {
 
   return (
-    <div>
+    <div className=" z-10">
       <h1>
         this is HomePage
       </h1>
