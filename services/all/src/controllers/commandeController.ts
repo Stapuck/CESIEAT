@@ -8,7 +8,6 @@ export const createCommande = (c: Context) => createItem(Commande, c);
 export const updateCommande = (c: Context) => updateItem(Commande, c);
 export const deleteCommande = (c: Context) => deleteItem(Commande, c);
 
-
 //custom
 
 export const getCommandesByRestorateur = async (c: Context) => {

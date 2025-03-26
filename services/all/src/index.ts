@@ -16,12 +16,26 @@ import commandeRoute from './routes/commandeRoute.js';
 
 dotenv.config();
 
+
+
 const MONGO_URL = process.env.MONGO_URL as string;
-// const PORT = Number(process.env.PORT) || 3002;
-const PORT = 3002;
+const FRONTEND1 = process.env.FRONTEND1 as string; //ts 
+const FRONTEND2 = process.env.FRONTEND2 as string; //js
+const PORT = Number(process.env.PORT) || 3002;
+// const PORT = 3002;
 
 
 const app = new Hono()
+
+// CORS configuration
+app.use('*', cors({
+  origin: [FRONTEND1, FRONTEND2],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
+
+
+
+
 
 
 // Routes
@@ -29,6 +43,7 @@ app.route('/api/products', productRoute);
 app.route('/api/tasks', taskRoute);
 app.route('/api/clients', clientRoute)
 app.route('/api/commandes', commandeRoute)
+
 
 app.use(errorMiddleware)
 
