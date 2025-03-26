@@ -13,9 +13,6 @@ function App() {
   return (
     <div className="bg-white">
       <Navbar />
-      <Hero />
-
-
       <Routes>
         <Route index element={<HomePage />}></Route>
 

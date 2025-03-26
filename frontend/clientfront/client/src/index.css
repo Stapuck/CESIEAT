@@ -6,6 +6,14 @@
   --color-default-background : #DFC5F2;
   --color-gradient-left : #CA56DE;
   --color-gradient-right : #FFB300;
+  --color-button-background : #EAADDF;
+  --color-text-search-color : #8B4497;
+  --font-Inter: "Inter", sans-serif;
   
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 }
 

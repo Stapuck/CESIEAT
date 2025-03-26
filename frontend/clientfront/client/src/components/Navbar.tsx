@@ -7,7 +7,7 @@ import CompteLogo from "../assets/account_circle.svg";
 
 const Navbar = () => {
     return (
-        <nav className="bg-default-background flex items-center">
+        <nav className="bg-default-background font-Inter flex items-center">
             <div className="container flex mx-auto p-2 items-center">
                 <img src={LogoCESIEAT} alt="Logo" className="" />
                 <Link to='/'><h2 className="text-black font-navbar text-2xl font-bold ml-3.5">CHEF</h2></Link>
