@@ -27,7 +27,8 @@ app.use('*', cors({
 
 app.route('/api/clients', clientRoute);
 
-mongoose.connect(MONGO_URL)
+// mongoose.connect(MONGO_URL)
+mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 .then( () => {
   console.log('connected to mongodb')
  

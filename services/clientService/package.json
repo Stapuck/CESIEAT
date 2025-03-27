@@ -2,14 +2,16 @@
   "name": "clientService",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "build": "rm -rf ./dist && tsc && echo \"🟩 Build success !\""
   },
   "dependencies": {
     "@hono/node-server": "^1.14.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "hono": "^4.7.5",
-    "mongoose": "^8.13.0"
+    "mongoose": "^8.13.0",
+    "typescript": "^5.8.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
