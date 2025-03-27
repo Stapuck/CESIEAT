@@ -1,8 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 @import "tailwindcss";
+@import 'leaflet/dist/leaflet.css';
+
 
 @theme {
-  --font-navbar: "Inter", "sans-serif"; 
   --color-default-background : #b9d8c2;
   --color-gradient-left : #9ac2c9;
   --color-gradient-right : #4A5043;
@@ -10,6 +10,7 @@
   --color-text-search-color : #FFCB47;
   --font-Inter: "Inter", sans-serif;
   --default-font-family: "Inter", sans-serif;
+
 
 
 /* colors definitions*/
@@ -22,8 +23,11 @@
 
 }
 
+
 @font-face {
   font-family: "Inter";
-  src: url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+  src: url(./assets/fonts/Inter-Italic-VariableFont_opsz_wght.ttf) format("ttf"),
+        url(./assets/fonts/Inter-VariableFont_opsz_wght.ttf) format("ttf");
+  font-style: normal;
 }
 
