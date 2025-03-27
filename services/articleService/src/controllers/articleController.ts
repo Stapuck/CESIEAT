@@ -64,3 +64,26 @@ export const deleteArticle = async (c: Context) => {
     }
 };
 
+
+// const fetchGenericArticles = async () => {
+//     try {
+//         const response = await axios.get("http://localhost:3002/api/articles", {
+//             params: { type: ["boisson", "sauce"] }
+//         });
+//         setGenericArticles(response.data);
+//     } catch (error) {
+//         console.error("Erreur lors de la récupération des articles génériques", error);
+//     }
+// };
+
+
+// const fetchRestaurantArticles = async (restaurantId) => {
+//     try {
+//         const response = await axios.get("http://localhost:3002/api/articles", {
+//             params: { restaurantId }
+//         });
+//         setRestaurantArticles(response.data);
+//     } catch (error) {
+//         console.error("Erreur lors de la récupération des articles du restaurant", error);
+//     }
+// };

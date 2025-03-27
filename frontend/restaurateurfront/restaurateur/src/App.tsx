@@ -1,0 +1,48 @@
+
+import { Link, Route, Routes } from "react-router-dom"
+import HomePage from "./pages/HomePage"
+import TestPage from "./pages/TestPage"
+import CreatePage from "./pages/CreatePage"
+import EditPage from "./pages/EditPage"
+import NotFoundPage from "./components/NotFoundPage"
+import LoginPage from "./pages/LoginPage"
+import SigninPage from "./pages/SigninPage"
+import { ToastContainer } from 'react-toastify';
+import CreateArticle from "./pages/Article/CreateArticle"
+import CreateMenu from "./pages/Menu/CreateMenu"
+
+
+function App() {
+  return (
+    <div className="bg-white">
+      <nav className="bg-gray-800">
+        <div className="container mx-auto p-2">
+          <Link to='/'><h2 className="text-white text-2xl font-bold">restaurateur front</h2></Link>
+        </div>
+      </nav>
+      <div className="container mx-auto p-2 h-full">
+      <Routes>
+        <Route index element={<HomePage/>}></Route>
+        
+        <Route path='/create-product' element={<CreatePage/>}></Route>
+        <Route path='/create-article' element={<CreateArticle/>}></Route>
+        <Route path='/create-menu' element={<CreateMenu/>}></Route>
+        <Route path='/edit-product/:id' element={<EditPage/>}></Route>
+
+
+        <Route path='/test' element={<TestPage/>}></Route>
+        <Route path="/404" element={<NotFoundPage/>} />
+          <Route path="*" element={<NotFoundPage />} />
+
+        <Route path='/login' element={<LoginPage/>}></Route>
+        <Route path='/signin' element={<SigninPage/>}></Route>
+      </Routes>
+      </div>
+      <ToastContainer/>
+
+
+    </div>
+  )
+}
+
+export default App
