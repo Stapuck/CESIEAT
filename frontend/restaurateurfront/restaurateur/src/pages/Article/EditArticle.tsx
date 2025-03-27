@@ -1,20 +1,43 @@
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const CreateArticle = () => {
+const EditArticle = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    
     const [name, setName] = useState("");
     const [reference, setReference] = useState("");
     const [type, setType] = useState("");
     const [price, setPrice] = useState<number>();
     const [isInStock, setIsInStock] = useState(true);
     const [image, setImage] = useState("");
-    const [restaurantid, setRestaurantId] = useState<string>("");
+    const [restaurantid, setRestaurantId] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
 
-    const saveArticle = async (e: any) => {
+    useEffect(() => {
+        const fetchArticle = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3005/api/articles/${id}`);
+                const article = response.data;
+                setName(article.name);
+                setReference(article.reference);
+                setType(article.type);
+                setPrice(article.price);
+                setIsInStock(article.isInStock);
+                setImage(article.image);
+                setRestaurantId(article.restaurantid);
+            } catch (error) {
+                console.error(error);
+                toast.error("Erreur lors de la récupération de l'article");
+            }
+        };
+
+        fetchArticle();
+    }, [id]);
+
+    const updateArticle = async (e: any) => {
         e.preventDefault();
 
         if (!name || !reference || !type || !price || !image || !restaurantid) {
@@ -24,7 +47,7 @@ const CreateArticle = () => {
 
         try {
             setIsLoading(true);
-            await axios.post("http://localhost:3005/api/articles", {
+            await axios.put(`http://localhost:3005/api/articles/${id}`, {
                 name,
                 reference,
                 type,
@@ -34,7 +57,7 @@ const CreateArticle = () => {
                 restaurantid
             });
 
-            toast.success("Article créé avec succès");
+            toast.success("Article mis à jour avec succès");
             setIsLoading(false);
             navigate("/article");
         } catch (error: any) {
@@ -45,16 +68,16 @@ const CreateArticle = () => {
 
     return (
         <div className="max-w-lg bg-white shadow-lg mx-auto p-7 rounded mt-6">
-            <h2 className="font-semibold text-2xl mb-4 text-center">Créer un nouvelle article</h2>
-            <form onSubmit={saveArticle}>
+            <h2 className="font-semibold text-2xl mb-4 text-center">Modifier l'article</h2>
+            <form onSubmit={updateArticle}>
                 <div className="space-y-2">
                     <div>
                         <label>Nom</label>
-                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full block border p-3 rounded" placeholder="Nom" />
+                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full block border p-3 rounded" />
                     </div>
                     <div>
                         <label>Référence</label>
-                        <input type="text" value={reference} onChange={(e) => setReference(e.target.value)} className="w-full block border p-3 rounded" placeholder="Référence" />
+                        <input type="text" value={reference} onChange={(e) => setReference(e.target.value)} className="w-full block border p-3 rounded" />
                     </div>
                     <div>
                         <label>Type</label>
@@ -68,7 +91,7 @@ const CreateArticle = () => {
                     </div>
                     <div>
                         <label>Prix</label>
-                        <input type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} className="w-full block border p-3 rounded" placeholder="Prix" />
+                        <input type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} className="w-full block border p-3 rounded" />
                     </div>
                     <div>
                         <label>En stock</label>
@@ -76,11 +99,11 @@ const CreateArticle = () => {
                     </div>
                     <div>
                         <label>Image URL</label>
-                        <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="w-full block border p-3 rounded" placeholder="URL de l'image" />
+                        <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="w-full block border p-3 rounded" />
                     </div>
                     <div>
                         <label>ID du restaurant</label>
-                        <input type="text" value={restaurantid} onChange={(e) => setRestaurantId(e.target.value)} className="w-full block border p-3 rounded" placeholder="ID du restaurant" />
+                        <input type="text" value={restaurantid} onChange={(e) => setRestaurantId(e.target.value)} className="w-full block border p-3 rounded" />
                     </div>
                     <div>
                         {!isLoading && (
@@ -103,4 +126,4 @@ const CreateArticle = () => {
     );
 };
 
-export default CreateArticle;
+export default EditArticle;

@@ -17,7 +17,7 @@ services: # Définition des services à exécuter.
     build:
       context: ./services/articleService
       dockerfile: Dockerfile
-    container_name: public-service
+    container_name: articleService
     ports:
       - "3005:3000"
     networks:
@@ -27,7 +27,7 @@ services: # Définition des services à exécuter.
     build:
       context: ./services/clientService
       dockerfile: Dockerfile
-    container_name: private-service
+    container_name: clientService
     ports:
       - "3000:3000"
     networks:

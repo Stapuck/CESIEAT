@@ -66,7 +66,13 @@ const Account = ({
           )}
         </p>
 
+        <div>
+          gerer le parainage ici : code parainage
+        </div>
+
       </div>
+
+      
     );
   } else {
     return <div>Loading...</div>;

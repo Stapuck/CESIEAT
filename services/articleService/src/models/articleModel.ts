@@ -7,6 +7,7 @@ interface IArticle extends Document {
     price: number;
     isInStock: boolean;
     image?: string;
+    restaurantid?: string;
 }
 
 const articleSchema = new Schema(
@@ -16,7 +17,8 @@ const articleSchema = new Schema(
         type: { type: String, enum: ['plat', 'boisson', 'sauce', 'accompagnement'], required: true },
         price: { type: Number, required: true },
         isInStock: { type: Boolean, default: true },
-        image: { type: String }
+        image: { type: String },
+        restaurantid: { type: String }
     },
     { timestamps: true }
 );

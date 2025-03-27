@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import GalleryProduct from "../components/GalleryProduct";
+// import GalleryArticle from "../components/GalleryArticle";
 
 
 const HomePage = () => {
@@ -27,8 +28,26 @@ const HomePage = () => {
 
       <div>
         <GalleryProduct/>
+        {/* <GalleryArticle/> */}
+        
+
+
       </div>
-    </div>
+
+      {/* <div className='grid grid-cols-2 lg:grid-cols-4 mt-5'>
+            {isLoading ? ("Loading") : (
+                <>
+                    {articles.length > 0 ? (
+                        articles.map((article, index) => (
+                            <Article key={index} article={article} getArticles={getArticles} />
+                        ))
+                    ) : (
+                        <div>Aucun article disponible</div>
+                    )}
+                </>
+            )}
+        </div>*/}
+    </div> 
   )
 }
 

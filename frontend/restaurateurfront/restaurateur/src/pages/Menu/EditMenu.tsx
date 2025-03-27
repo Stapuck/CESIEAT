@@ -1,9 +1,10 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const CreateMenu = () => {
+const EditMenu = () => {
+    const { id } = useParams<{ id: string }>();  // Récupération de l'ID du menu via l'URL
     const [name, setName] = useState("");
     const [price, setPrice] = useState<number>();
     const [articles, setArticles] = useState<any[]>([]);
@@ -20,12 +21,24 @@ const CreateMenu = () => {
                 console.error("Erreur lors de la récupération des articles", error);
             }
         };
-        fetchArticles();
-    }, []);
 
-    const handleAddArticle = () => {
-        setSelectedArticles([...selectedArticles, ""]);
-    };
+        const fetchMenu = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3006/api/menus/${id}`);
+                const menu = response.data;
+                setName(menu.name);
+                setPrice(menu.price);
+                setSelectedArticles(menu.articles);
+
+                
+            } catch (error) {
+                console.error("Erreur lors de la récupération du menu", error);
+            }
+        };
+
+        fetchArticles();
+        fetchMenu();
+    }, [id]);
 
     const handleArticleChange = (index: number, value: string) => {
         const updatedArticles = [...selectedArticles];
@@ -36,7 +49,7 @@ const CreateMenu = () => {
 
     const handleRemoveArticle = (index: number) => {
         const updatedArticles = [...selectedArticles];
-        updatedArticles.splice(index, 1);
+        updatedArticles.splice(index, 1); // Supprime l'article à l'index donné
         setSelectedArticles(updatedArticles);
         calculateTotalPrice(updatedArticles);
     };
@@ -51,13 +64,13 @@ const CreateMenu = () => {
 
         try {
             setIsLoading(true);
-            await axios.post("http://localhost:3006/api/menus", {
+            await axios.put(`http://localhost:3006/api/menus/${id}`, {
                 name,
                 price,
-                articles: selectedArticles
+                articles: selectedArticles,
             });
 
-            toast.success("Menu créé avec succès");
+            toast.success("Menu mis à jour avec succès");
             setIsLoading(false);
             navigate("/menu");
         } catch (error: any) {
@@ -74,25 +87,41 @@ const CreateMenu = () => {
         setPrice(total);
     };
 
+    // todo faire un foreach selectedArticles fetcharticlebyId puis afficher via la cardarticle sans les modifier et suprimer. 
     return (
         <div className="max-w-lg bg-white shadow-lg mx-auto p-7 rounded mt-6">
-            <h2 className="font-semibold text-2xl mb-4 text-center">Créer un Menu</h2>
+            <h2 className="font-semibold text-2xl mb-4 text-center">Éditer un Menu</h2>
             <form onSubmit={saveMenu}>
                 <div className="space-y-2">
                     <div>
                         <label>Nom</label>
-                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full block border p-3 rounded" placeholder="Nom du menu" />
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full block border p-3 rounded"
+                            placeholder="Nom du menu"
+                        />
                     </div>
                     <div>
                         <label>Prix</label>
-                        <input type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} className="w-full block border p-3 rounded" placeholder="Prix" />
+                        <input
+                            type="number"
+                            value={price}
+                            onChange={(e) => setPrice(Number(e.target.value))}
+                            className="w-full block border p-3 rounded"
+                            placeholder="Prix"
+                        />
                     </div>
                     <div>
-                        {selectedArticles.length > 0 ? (<label className="my-4">Articles</label>) : (<label className="my-4 mx-2">Choissiez des articles</label>)}
-                        {/* <label>Articles</label> */}
+                        <label>Articles</label>
                         {selectedArticles.map((selectedArticle, index) => (
                             <div className="flex items-center space-x-2" key={index}>
-                                <select value={selectedArticle} onChange={(e) => handleArticleChange(index, e.target.value)} className="w-full block border p-3 rounded mt-2">
+                                <select
+                                    value={selectedArticle}
+                                    onChange={(e) => handleArticleChange(index, e.target.value)}
+                                    className="w-full block border p-3 rounded mt-2"
+                                >
                                     <option value="">Sélectionnez un article</option>
                                     {Object.entries(
                                         articles.reduce((acc: any, article: any) => {
@@ -103,15 +132,29 @@ const CreateMenu = () => {
                                     ).map(([type, articles]) => (
                                         <optgroup key={type} label={type}>
                                             {(articles as any[]).map((article) => (
-                                                <option key={article._id} value={article._id}>{article.name} ({article.type})  - {article.price}€</option>
+                                                <option key={article._id} value={article._id}>
+                                                    {article.name} ({article.type}) - {article.price}€
+                                                </option>
                                             ))}
                                         </optgroup>
                                     ))}
                                 </select>
-                                <button type="button" onClick={() => handleRemoveArticle(index)} className="bg-red-500 text-white px-2 py-1 rounded">-</button>
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveArticle(index)}
+                                    className="bg-red-500 text-white px-2 py-1 rounded"
+                                >
+                                    -
+                                </button>
                             </div>
                         ))}
-                        <button type="button" onClick={handleAddArticle} className="mt-2 bg-green-500 text-white px-3 py-1 rounded">+</button>
+                        <button
+                            type="button"
+                            onClick={() => setSelectedArticles([...selectedArticles, ""])}
+                            className="mt-2 bg-green-500 text-white px-3 py-1 rounded"
+                        >
+                            +
+                        </button>
                     </div>
                     <div>
                         {!isLoading && (
@@ -127,6 +170,7 @@ const CreateMenu = () => {
                             </div>
                             
                         )}
+                        
                     </div>
                 </div>
             </form>
@@ -134,4 +178,4 @@ const CreateMenu = () => {
     );
 };
 
-export default CreateMenu;
+export default EditMenu;
