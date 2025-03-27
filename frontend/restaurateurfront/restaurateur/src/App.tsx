@@ -250,10 +250,14 @@ function App() {
             <Route path="/" element={<Login authenticated={authenticated} handleLogin={login} />} />
             <Route path="/callback" element={<Callback authenticated={authenticated} setAuth={setAuthenticated} handleLogout={signout} userManager={zitadel.userManager} />} />
             <Route path="/home" element={<HomePage />} />
+            {/* article */}
             <Route path='/create-article' element={<CreateArticle />} />
             <Route path='/edit-article/:id' element={<EditArticle />} />
+            {/* menu */}
             <Route path='/create-menu' element={<CreateMenu />} />
             <Route path='/edit-menu/:id' element={<EditMenu />} />
+            
+
             <Route path='/account' element={<Account authenticated={authenticated} setAuth={setAuthenticated} userManager={zitadel.userManager} />} />
             <Route path='/test' element={<TestPage />} />
             <Route path="/404" element={<NotFoundPage />} />
@@ -262,8 +266,6 @@ function App() {
             <Route path="/article" element={<ArticlePage />} />
             <Route path="/commande" element={<CommandePage />} />
             <Route path="/historique" element={<Historique />} />
-
-
 
           </Routes>
         </div>

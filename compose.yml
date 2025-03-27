@@ -33,6 +33,46 @@ services: # Définition des services à exécuter.
     networks:
       - app-network
 
+  commande-service:
+    build:
+      context: ./services/commandeService
+      dockerfile: Dockerfile
+    container_name: commandeService
+    ports:
+      - "3003:3000"
+    networks:
+      - app-network
+
+  livreur-service:
+    build:
+      context: ./services/livreurService
+      dockerfile: Dockerfile
+    container_name: livreurService
+    ports:
+      - "3004:3000"
+    networks:
+      - app-network
+
+  menu-service:
+    build:
+      context: ./services/menuService
+      dockerfile: Dockerfile
+    container_name: menuService
+    ports:
+      - "3006:3000"
+    networks:
+      - app-network
+
+  restaurateur-service:
+    build:
+      context: ./services/restaurateurService
+      dockerfile: Dockerfile
+    container_name: restaurateurService
+    ports:
+      - "3001:3000"
+    networks:
+      - app-network
+
   # auth: # Service pour l'API d'authentification.
   #   build: # Construction de l'image pour le service d'authentification.
   #     #context: ./auth # Répertoire contenant les fichiers nécessaires pour construire l'image.

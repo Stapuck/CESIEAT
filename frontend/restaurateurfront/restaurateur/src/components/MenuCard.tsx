@@ -11,6 +11,8 @@ interface IMenu {
     createAt: string;
 }
 
+// revoir la date TODO 
+
 const MenuCard = ({ menu, getMenus }: { menu: IMenu; getMenus: () => void }) => {
     const deleteMenu = async (id: string) => {
         const result = await Swal.fire({

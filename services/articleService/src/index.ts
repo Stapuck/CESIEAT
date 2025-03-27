@@ -15,7 +15,7 @@ dotenv.config();
 // const FRONTEND3 = process.env.FRONTEND3 as string; //js
 // const FRONTEND4 = process.env.FRONTEND4 as string; //js
 // const FRONTEND5 = process.env.FRONTEND5 as string; //js
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 3005;
 
 import articleRoute from './routes/articleRoute.js';
 

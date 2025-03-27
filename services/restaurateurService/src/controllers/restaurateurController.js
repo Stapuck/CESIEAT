@@ -1,0 +1,61 @@
+import Restaurateur from '../models/restaurateurModel.js';
+const handleError = (error, c) => {
+    const errMsg = error instanceof Error ? error.message : 'An unknown error occurred';
+    return c.json({ message: errMsg }, 500);
+};
+export const getRestaurateurs = async (c) => {
+    try {
+        const restaurateurs = await Restaurateur.find({});
+        return c.json(restaurateurs);
+    }
+    catch (error) {
+        return handleError(error, c);
+    }
+};
+export const getRestaurateur = async (c) => {
+    try {
+        const id = c.req.param('id');
+        const restaurant = await Restaurateur.findById(id);
+        if (!restaurant)
+            return c.json({ message: `Restaurant with ID ${id} not found` }, 404);
+        return c.json(restaurant);
+    }
+    catch (error) {
+        return handleError(error, c);
+    }
+};
+export const createRestaurant = async (c) => {
+    try {
+        const body = await c.req.json();
+        const restaurant = await Restaurateur.create(body);
+        return c.json(restaurant, 201);
+    }
+    catch (error) {
+        return handleError(error, c);
+    }
+};
+export const editRestaurant = async (c) => {
+    try {
+        const id = c.req.param('id');
+        const body = await c.req.json();
+        const restaurant = await Restaurateur.findByIdAndUpdate(id, body, { new: true, runValidators: true });
+        if (!restaurant)
+            return c.json({ message: `Restaurant with ID ${id} not found` }, 404);
+        return c.json(restaurant);
+    }
+    catch (error) {
+        return handleError(error, c);
+    }
+};
+export const deleteRestaurant = async (c) => {
+    try {
+        const id = c.req.param('id');
+        const restaurant = await Restaurateur.findByIdAndDelete(id);
+        if (!restaurant)
+            return c.json({ message: `Livreur with ID ${id} not found` }, 404);
+        return c.json({ message: `Restaurant ${id} deleted successfully` });
+    }
+    catch (error) {
+        return handleError(error, c);
+    }
+};
