@@ -83,6 +83,7 @@ const Search = () => {
         const query = searchQueryRef.current.trim();
         if (!query) return;
         setLoading(true);
+        setZoom(13);
 
         try {
             const response = await fetch(
@@ -154,7 +155,7 @@ const Search = () => {
                 />
                 <button
                     onClick={handleSearch}
-                    className="absolute top-1/2 right-3 transform -translate-y-1/2 bg-button-background p-2 rounded-full"
+                    className="absolute top-1/2 right-3 transform -translate-y-1/2 bg-button-background p-2 rounded-full hover:cursor-pointer hover:scale-110 transition-transform duration-200"
                     aria-label="Rechercher"
                 >
                     {loading ? <img src={LoadingArrow} className="w-5 h-5"/> : <img src={SearchIcon} alt="Search" className="w-5 h-5" />}
@@ -179,7 +180,11 @@ const Search = () => {
                     center={position}
                     zoom={zoom}
                     scrollWheelZoom={true}
+                    markerZoomAnimation={true}
+                    bounceAtZoomLimits={true}
+                    
                     className="h-full w-full rounded-lg shadow-lg"
+                    
                 >
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

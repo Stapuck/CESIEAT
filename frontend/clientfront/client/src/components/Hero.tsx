@@ -34,8 +34,8 @@ const Hero = () => {
             <motion.div initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{
-                    duration: 0.4,
-                    scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+                    duration: 0.0,
+                    scale: { type: "spring", visualDuration: 0.0, bounce: 0.0 },
                 }}
                 className="relative items-center mx-2 mb-6 z-10 mt-10 rounded-3xl shadow-2xl bg-transparent-background p-8 sm:w-screen]">
                 <h1 className="text-5xl font-extrabold p-8">

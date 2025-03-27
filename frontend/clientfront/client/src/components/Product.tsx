@@ -41,20 +41,23 @@ const Product = ({ product, getProducts }: { product: IProduct; getProducts: () 
     }
 
     return (
-        <div className=" bg-white flex items-start justify-between rounded-xl   m-3 z-10">
+        <div className=" bg-white flex  rounded-xl   m-3 z-10">
             <div className="p-1">
-                <img src={product.image} alt={product.name} className=" w-40 h-40 overflow-clip object-cover " />
+                <img src={product.image} alt={product.name} className=" w-[200px] h-[128px] overflow-clip object-cover " />
             </div>
-            <div className="flex flex-col items-start mt-4  justify-start">
+            <div className="flex flex-col items-start mt-4 ml-3 justify-start">
                 <h2 className="text font-semibold">
                     {product.name}
                 </h2>
-                <h2 className="text font-semibold">
-                    {product.price}
-                </h2>
-                <h2 className="text font-semibold">
-                    {product.quantity}
-                </h2>
+                <span className="text font-light italic">
+                    {product.quantity} 
+                </span>
+                <span className="text font-normal ">
+                    {product.price} €
+                </span>
+                <div className="mx-4">
+
+                </div>
             </div>
             <div className="px-4 pt-2 pb-4">
                 <div className="mt-2 flex flex-col gap-4 items-center ">
