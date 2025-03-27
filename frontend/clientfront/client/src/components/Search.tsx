@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import SearchIcon from "../assets/icons/magnifyingglass.svg";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import FoodIcon from "../assets/icons/fork.knife.circle.fill.svg";
-import LocationPin from "../assets/icons/mappin.and.ellipse.circle.fill.svg";
+import LocationPin from "../assets/icons/mappin.svg";
 import LoadingArrow from "../assets/icons/arrow.trianglehead.2.clockwise.svg";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -146,6 +146,11 @@ const Search = () => {
                     className="input shadow-xl input-bordered text-text-search-color bg-white rounded-full font-bold p-3 w-full"
                     placeholder="Votre ville ou restaurant"
                     aria-label="Champ de recherche"
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            handleSearch();
+                        }
+                    }}
                 />
                 <button
                     onClick={handleSearch}
@@ -184,7 +189,7 @@ const Search = () => {
 
                     {/* Marqueur pour la position actuelle */}
                     <Marker position={position} icon={locationIcon}>
-                        <Popup>Position actuelle : {searchQueryRef.current || "France"}</Popup>
+                        <Popup>Position actuelle : {searchQueryRef.current}</Popup>
                     </Marker>
 
                     {/* Marqueurs pour tous les restaurants */}

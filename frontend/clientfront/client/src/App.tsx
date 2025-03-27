@@ -1,4 +1,3 @@
-
 import { Link, Route, Routes } from "react-router-dom"
 import HomePage from "./pages/HomePage"
 import TestPage from "./pages/TestPage"
@@ -7,7 +6,8 @@ import EditPage from "./pages/EditPage"
 import NotFoundPage from "./components/NotFoundPage"
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/ReactToastify.css'; // Importer les styles CSS
 
 function App() {
   return (
@@ -28,8 +28,21 @@ function App() {
         <Route path='/signin' element={<EditPage />}></Route>
       </Routes>
       <Footer />
+      
+      {/* Configuration du ToastContainer */}
+      <ToastContainer 
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
-    
   )
 }
 
