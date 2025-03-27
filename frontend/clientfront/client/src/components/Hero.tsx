@@ -1,8 +1,9 @@
 import BackgroundFood from "../assets/background_food.jpg";
-import SearchIcon from "../assets/search.svg";
+import SearchIcon from "../assets/icons/magnifyingglass.svg";
 import Quote from "../assets/quote.svg";
 import InversedQuote from "../assets/quote_inversed.svg";
 import React, { useState, useEffect } from "react";
+import { motion } from "motion/react";
 
 
 const Hero = () => {
@@ -27,10 +28,16 @@ const Hero = () => {
     }, []);
     return (
         <div
-            className="flex flex-col justify-center hero-content relative items-center z-0 bg-cover bg-center  mt-20  bg-no-repeat"
+            className="flex flex-col justify-center hero-content relative items-center z-0 bg-cover bg-center h-full w-full overflow-clip mt-20 bg-no-repeat"
             style={{ backgroundImage: `url(${BackgroundFood})` }}
         >
-            <div className="relative w-250 items-center mb-6 z-10 mt-10 rounded-3xl shadow-2xl bg-transparent-background p-8">
+            <motion.div initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                    duration: 0.4,
+                    scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+                }}
+                className="relative items-center mx-2 mb-6 z-10 mt-10 rounded-3xl shadow-2xl bg-transparent-background p-8 sm:w-screen]">
                 <h1 className="text-5xl font-extrabold p-8">
                     Bienvenue sur{" "}
                     <span className="bg-gradient-to-r from-gradient-left to-gradient-right bg-clip-text font-extrabold text-transparent">
@@ -51,28 +58,8 @@ const Hero = () => {
                         className="p-4 max-w-sm object-contain z-10"
                     />
                 </div>
-            </div>
-            <div className="flex justify-around py-8 items-center w-full  relative z-10 bg-primary">
-                <div>
-                    <p className="text-white font-bold pl-5 pb-4">
-                        Rapide et proche de chez vous
-                    </p>
-                    <div className="relative w-full  max-w-300">
-                        <input
-                            type="text"
-                            className="input shadow-xl input-bordered text-text-search-color placeholder-text-search-color bg-white rounded-full font-bold p-3 max-w-full pr-12"
-                            placeholder="Votre ville"
-                        />
-                        <button className="absolute shadow-2xl  top-1/2 right-3 transform -translate-y-1/2 bg-button-background p-2 rounded-full">
-                            <img
-                                src={SearchIcon}
-                                alt="Search"
-                                className="w-5 h-5"
-                            />
-                        </button>
-                    </div>
-                </div>
-            </div>
+            </motion.div>
+            
         </div>
     );
 };

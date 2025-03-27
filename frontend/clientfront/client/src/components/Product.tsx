@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import Swal from 'sweetalert2';
 // import { VITE_BACKEND_URL_PRODUCT } from "../App";
 
-import FavoriteLogo from "../assets/favorite.svg";
+import FavoriteLogo from "../assets/icons/heart.fill.svg";
 
 
 interface IProduct {
@@ -42,8 +42,8 @@ const Product = ({ product, getProducts }: { product: IProduct; getProducts: () 
 
     return (
         <div className=" bg-white flex items-start justify-between rounded-xl   m-3 z-10">
-            <div className="p-2">
-                <img src={product.image} alt={product.name} className=" w-40 h-40 overflow-clip object-cover outline-1 rounded-3xl" />
+            <div className="p-1">
+                <img src={product.image} alt={product.name} className=" w-40 h-40 overflow-clip object-cover " />
             </div>
             <div className="flex flex-col items-start mt-4  justify-start">
                 <h2 className="text font-semibold">

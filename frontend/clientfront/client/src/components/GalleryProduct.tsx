@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios'
 import Product from './Product';
+import Search from './Search';
 
 function GalleryProduct() {
 
@@ -28,10 +29,11 @@ function GalleryProduct() {
   }, [])
   return (
     <div className=''>
+      <Search />
       <div className=''>
         <h1 className='text-3xl font-bold text-start p-3 ml-4 mt-5 mb-5'>Nos restaurants à proximtés</h1>
       </div>
-      <div className='grid grid-cols-2 bg-white rounded-2xl m-5 lg:grid-cols-4 mt-5'>
+      <div className='grid grid-cols-1 bg-white rounded-2xl m-5 lg:grid-cols-3 sm:grid-cols-2 xl:grid-cols-4  mt-5'>
 
         {isLoading ? ("Loading") : (
           <>
