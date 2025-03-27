@@ -17,7 +17,7 @@ const FRONTEND4 = process.env.FRONTEND4 as string; //js
 const FRONTEND5 = process.env.FRONTEND5 as string; //js
 const PORT = Number(process.env.PORT) || 3000;
 
-import clientRoute from './routes/clientRoute.js';
+import articleRoute from './routes/articleRoute.js';
 
 // CORS configuration
 app.use('*', cors({
@@ -25,7 +25,7 @@ app.use('*', cors({
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
-app.route('/api/clients', clientRoute);
+app.route('/api/articles', articleRoute);
 
 mongoose.connect(MONGO_URL)
 .then( () => {
@@ -35,6 +35,6 @@ mongoose.connect(MONGO_URL)
     fetch: app.fetch,
     port: PORT
   }, (info) => {
-    console.log(`Server Client is running on http://localhost:${info.port}`)
+    console.log(`Server Articles is running on http://localhost:${info.port}`)
   })
 })

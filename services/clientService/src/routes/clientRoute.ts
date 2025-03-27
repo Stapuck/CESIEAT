@@ -1,13 +1,14 @@
 import { Hono } from 'hono';
-import {getClients, getClient, createClient, editClient, deleteClient} from '../controllers/clientController.js'
+import {getClients, getClient, createClient, editClient, deleteClient, pauseClient} from '../controllers/clientController.js'
 
 
-const productRoute = new Hono();
+const clientRoute = new Hono();
 
-productRoute.get('/', getClients);
-productRoute.get('/:id', getClient);
-productRoute.post('/', createClient);
-productRoute.put('/:id', editClient);
-productRoute.delete('/:id', deleteClient);
+clientRoute.get('/', getClients);
+clientRoute.get('/:id', getClient);
+clientRoute.post('/', createClient);
+clientRoute.put('/:id', editClient);
+clientRoute.delete('/:id', deleteClient);
+clientRoute.put('/clients/:id/pause', pauseClient )
 
-export default productRoute;
+export default clientRoute;

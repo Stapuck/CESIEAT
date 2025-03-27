@@ -7,6 +7,7 @@ import EditPage from "./pages/EditPage"
 import NotFoundPage from "./components/NotFoundPage"
 import LoginPage from "./pages/LoginPage"
 import SigninPage from "./pages/SigninPage"
+import { ToastContainer } from 'react-toastify';
 
 
 function App() {
@@ -17,8 +18,7 @@ function App() {
           <Link to='/'><h2 className="text-white text-2xl font-bold">Livreur front</h2></Link>
         </div>
       </nav>
-
-
+      <div className="container mx-auto p-2 h-full">
       <Routes>
         <Route index element={<HomePage/>}></Route>
         
@@ -33,6 +33,10 @@ function App() {
         <Route path='/login' element={<LoginPage/>}></Route>
         <Route path='/signin' element={<SigninPage/>}></Route>
       </Routes>
+      </div>
+      <ToastContainer/>
+
+
     </div>
   )
 }
