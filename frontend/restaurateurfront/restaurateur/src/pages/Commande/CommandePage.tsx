@@ -149,7 +149,8 @@ const CommandesPage = () => {
   // Filtrer les commandes par statut
   const nouvellesCommandes = commandes.filter((commande) => commande.status === "En attente");
   const enPreparationCommandes = commandes.filter((commande) => commande.status === "Préparation");
-  const enAttenteDeRecupCommandes = commandes.filter((commande) => commande.status === "En attente de récupération");
+  const enAttenteDeRecupCommandes = commandes.filter((commande) => commande.status === "Prêt");
+  const enLivraisonCommandes = commandes.filter((commande) => commande.status === "En livraison");
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -160,10 +161,10 @@ const CommandesPage = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 gap-6">
         {/* Nouvelle Commande */}
         <div className="bg-white p-4 rounded shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Nouvelles Commandes</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Nouvelles Commandes ({nouvellesCommandes.length})</h2>
           <div className="bg-gray-200 p-4 rounded mb-4">
             {isLoading ? ('Loading') : (<>
             
@@ -185,7 +186,7 @@ const CommandesPage = () => {
 
         {/* Commande en préparation */}
         <div className="bg-white p-4 rounded shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Commandes en Préparation</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Commandes en Préparation ({enPreparationCommandes.length})</h2>
           <div className="bg-gray-200 p-4 rounded mb-4">
 
             {isLoading ? ('Loading') : ( 
@@ -207,7 +208,7 @@ const CommandesPage = () => {
 
         {/* Commande en attente de récupération */}
         <div className="bg-white p-4 rounded shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Commandes en Attente de Récupération</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">Commandes en Attente de Récupération ({enAttenteDeRecupCommandes.length})</h2>
           <div className="bg-gray-200 p-4 rounded mb-4">
             {isLoading ? ('Loading') : (
               <>
@@ -222,6 +223,28 @@ const CommandesPage = () => {
                ))
                )}
               </>)}
+            
+          </div>
+        </div>
+
+        {/* Commande en Livraison*/}
+        <div className="bg-white p-4 rounded shadow-lg">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">En livraison ({enLivraisonCommandes.length})</h2>
+          <div className="bg-gray-200 p-4 rounded mb-4">
+            {isLoading ? ('Loading') : (<>
+            
+            {enLivraisonCommandes.length === 0 ? (
+              <p className="text-gray-600">Pas de nouvelles commandes pour le moment.</p>
+            ) : (
+              enLivraisonCommandes.map((commande, index) => (
+                <div key={index} className="p-2 mb-2 border-b">
+                  <p className="text-gray-800">Commande {index + 1}: {commande.client} - {commande.totalAmount}€</p>
+                  <p>Status: {commande.status}</p>
+                </div>
+              ))
+            )}
+            </>
+            )}
             
           </div>
         </div>

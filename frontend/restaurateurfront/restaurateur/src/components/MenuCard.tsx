@@ -8,7 +8,7 @@ interface IMenu {
     name: string;
     price: number;
     articles: string[]; 
-    createAt: string;
+    createdAt: string;
 }
 
 // revoir la date TODO 
@@ -41,7 +41,7 @@ const MenuCard = ({ menu, getMenus }: { menu: IMenu; getMenus: () => void }) => 
                 <h2 className="text-lg font-semibold">{menu.name}</h2>
                 <div className="text-sm">Prix : {menu.price} €</div>
                 <div className="text-sm">Articles associés : {menu.articles.length}</div>
-                <div className="text-sm">creer le  : {menu.createAt}</div>
+                <div className="text-sm">creer le  : {new Date(menu.createdAt).toLocaleString()}</div>
                 <div className="mt-2 flex gap-4">
                     <Link to={`/edit-menu/${menu._id}`} className="inline-block w-full text-center shadow-md text-sm bg-gray-700 text-white rounded-sm px-4 py-1 font-bold hover:bg-gray-600 hover:cursor-pointer">
                         Modifier

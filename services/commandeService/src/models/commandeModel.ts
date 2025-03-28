@@ -23,7 +23,7 @@ const commandeSchema = new Schema(
             }
         ],
         totalAmount: { type: Number, required: true },
-        status: { type: String, enum: ['En attente', 'Préparation', 'En livraison', 'Livrée', 'Annulée'], default: 'En attente' }
+        status: { type: String, enum: ['En attente', 'Préparation','Prêt', 'En livraison', 'Livrée', 'Annulée'], default: 'En attente' }
     },
     { timestamps: true }
 );

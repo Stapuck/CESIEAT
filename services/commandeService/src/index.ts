@@ -26,7 +26,7 @@ import commandeRoute from './routes/commandeRoute.js';
 // }));
 
 
-app.route('/api/commandes', commandeRoute);
+
 
 
 app.use('*', cors({
@@ -34,6 +34,7 @@ app.use('*', cors({
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
+app.route('/api/commandes', commandeRoute);
 
 
 // mongoose.connect(MONGO_URL)

@@ -1,3 +1,5 @@
+
+
 import dotenv from 'dotenv';
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
@@ -34,6 +36,8 @@ app.use('*', cors({
 
 app.route('/api/menus', menuRoute);
 
+
+app.route('/api/menus', menuRoute);
 
 
 // mongoose.connect(MONGO_URL)
