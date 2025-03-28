@@ -2,17 +2,23 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 interface IArticle extends Document {
     name: string;
-    quantity: number;
+    reference: string;
+    type: 'plat' | 'boisson' | 'sauce' | 'accompagnement';
     price: number;
+    isInStock: boolean;
     image?: string;
+    restaurantid?: string;
 }
 
 const articleSchema = new Schema(
     {
-        name: { type: String, required: [true, "Please enter a product name"] },
-        quantity: { type: Number, required: true, default: 0 },
+        name: { type: String, required: true },
+        reference: { type: String, required: true, unique: true },
+        type: { type: String, enum: ['plat', 'boisson', 'sauce', 'accompagnement'], required: true },
         price: { type: Number, required: true },
-        image: { type: String, required: false }
+        isInStock: { type: Boolean, default: true },
+        image: { type: String },
+        restaurantid: { type: String }
     },
     { timestamps: true }
 );

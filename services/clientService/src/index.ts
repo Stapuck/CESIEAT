@@ -9,25 +9,32 @@ const app = new Hono()
 dotenv.config();
 
 
-const MONGO_URL = process.env.MONGO_URL as string;
-const FRONTEND1 = process.env.FRONTEND1 as string; //ts 
-const FRONTEND2 = process.env.FRONTEND2 as string; //js
-const FRONTEND3 = process.env.FRONTEND3 as string; //js
-const FRONTEND4 = process.env.FRONTEND4 as string; //js
-const FRONTEND5 = process.env.FRONTEND5 as string; //js
+// const MONGO_URL = process.env.MONGO_URL as string;
+// const FRONTEND1 = process.env.FRONTEND1 as string; //ts 
+// const FRONTEND2 = process.env.FRONTEND2 as string; //js
+// const FRONTEND3 = process.env.FRONTEND3 as string; //js
+// const FRONTEND4 = process.env.FRONTEND4 as string; //js
+// const FRONTEND5 = process.env.FRONTEND5 as string; //js
 const PORT = Number(process.env.PORT) || 3000;
 
 import clientRoute from './routes/clientRoute.js';
 
 // CORS configuration
+// app.use('*', cors({
+//   origin: [FRONTEND1, FRONTEND2, FRONTEND3, FRONTEND4, FRONTEND5 ],
+//   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+// }));
+
 app.use('*', cors({
-  origin: [FRONTEND1, FRONTEND2, FRONTEND3, FRONTEND4, FRONTEND5 ],
+  origin: '*', // Autoriser toutes les origines
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
+
 app.route('/api/clients', clientRoute);
 
-mongoose.connect(MONGO_URL)
+// mongoose.connect(MONGO_URL)
+mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 .then( () => {
   console.log('connected to mongodb')
  

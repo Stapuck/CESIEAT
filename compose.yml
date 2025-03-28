@@ -1,0 +1,94 @@
+services: # Définition des services à exécuter.
+  # nginx: # Service pour le serveur NGINX.
+  #   image: nginx:latest # Utilisation de l'image officielle de la dernière version de NGINX.
+  #   container_name: gateway # Nom attribué au conteneur NGINX.
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf # Montage d'un fichier de configuration personnalisé (local vers le conteneur).
+  #   ports:
+  #     - "8080:8080" # Le port 8080 du conteneur est mappé au port 8080 de la machine hôte.
+  #   networks:
+  #     - app-network # Connexion au réseau `app-network` pour la communication avec d'autres services.
+  #   depends_on: # Déclare que NGINX dépend du démarrage préalable des services spécifiés.
+  #     - auth # Dépendance au service d'authentification (auth-service).
+  #     - public
+  #     - private
+
+  article-service:
+    build:
+      context: ./services/articleService
+      dockerfile: Dockerfile
+    container_name: articleService
+    ports:
+      - "3005:3000"
+    networks:
+      - app-network
+
+  client-service:
+    build:
+      context: ./services/clientService
+      dockerfile: Dockerfile
+    container_name: clientService
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  commande-service:
+    build:
+      context: ./services/commandeService
+      dockerfile: Dockerfile
+    container_name: commandeService
+    ports:
+      - "3003:3000"
+    networks:
+      - app-network
+
+  livreur-service:
+    build:
+      context: ./services/livreurService
+      dockerfile: Dockerfile
+    container_name: livreurService
+    ports:
+      - "3004:3000"
+    networks:
+      - app-network
+
+  menu-service:
+    build:
+      context: ./services/menuService
+      dockerfile: Dockerfile
+    container_name: menuService
+    ports:
+      - "3006:3000"
+    networks:
+      - app-network
+
+  restaurateur-service:
+    build:
+      context: ./services/restaurateurService
+      dockerfile: Dockerfile
+    container_name: restaurateurService
+    ports:
+      - "3001:3000"
+    networks:
+      - app-network
+
+  # auth: # Service pour l'API d'authentification.
+  #   build: # Construction de l'image pour le service d'authentification.
+  #     #context: ./auth # Répertoire contenant les fichiers nécessaires pour construire l'image.
+  #     dockerfile: Dockerfile # Utilisation d'un fichier Dockerfile personnalisé pour configurer le conteneur.
+  #   container_name: auth-service # Nom attribué au conteneur du service d'authentification.
+  #   ports:
+  #     - "3000:3000" # Le port 3000 du conteneur est mappé au port 3000 de la machine hôte.
+  #   networks:
+  #     - app-network # Connexion au réseau `app-network` pour la communication avec d'autres services.
+  #   environment: # Variables d'environnement pour configurer le service.
+  #     - JWT_KEY=API # Clé utilisée pour signer et vérifier les jetons JWT.
+  #     - JWT_REFRESH_KEY=NODE
+  #     - PORT=3000 # Port sur lequel le service écoute à l'intérieur du conteneur.
+
+networks: # Définition des réseaux utilisés par les services. app-network :Nom du réseau. Vous pouvez le nommer comme vous le souhaitez.
+  app-network:
+    driver: bridge # Type de réseau utilisé (bridge est utilisé pour isoler les services dans un réseau privé). 
+    #Le mode "bridge" est le type de réseau par défaut dans Docker.
+    #Dans ce mode, tous les conteneurs connectés au réseau peuvent communiquer entre eux via leur nom de conteneur ou leur adresse IP interne.

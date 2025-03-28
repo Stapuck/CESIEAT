@@ -1,5 +1,5 @@
 import type { Context } from 'hono';
-import Commande from '../models/commandeModel.js';
+import { Commande } from '../models/commandeModel.js';
 
 const handleError = (error: unknown, c: Context) => {
     const errMsg = error instanceof Error ? error.message : 'An unknown error occurred';
