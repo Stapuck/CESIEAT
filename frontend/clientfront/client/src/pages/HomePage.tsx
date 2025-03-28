@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import GalleryProduct from "../components/GalleryProduct";
+import GalleryRestaurants from "../components/restaurantsComponents/GalleryRestaurants";
 import Hero from "../components/Hero";
 
 
@@ -10,7 +10,7 @@ const HomePage = () => {
       <Hero/>
 
       <div>
-        <GalleryProduct/>
+        <GalleryRestaurants/>
       </div>
     </div>
   )

@@ -6,7 +6,7 @@ import CompteLogo from "../assets/icons/person.crop.circle.svg";
 
 const Navbar = () => {
     return (
-        <nav className="bg-default-background font-Inter mb-30 shadow-gray-500 shadow-2xl z-50 fixed w-full top-0 flex items-center">
+        <nav className="bg-default-background font-Inter shadow-gray-500 shadow-2xl z-50 fixed w-full top-0 flex items-center">
             <div className="container mx-auto p-2 items-center flex">
                 <Link to="/" className="flex items-center">
                     <img src={LogoCESIEAT} alt="Logo" className="" />

@@ -18,11 +18,18 @@ import menuRoute from './routes/menuRoute.js';
 //   origin: [FRONTEND1, FRONTEND2, FRONTEND3, FRONTEND4, FRONTEND5 ],
 //   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 // }));
-app.route('/api/menus', menuRoute);
+
 app.use('*', cors({
     origin: '*', // Autoriser toutes les origines
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
+
+app.route('/api/menus', menuRoute);
+app.route('/api/menus/:id', menuRoute);
+
+
+
+
 // mongoose.connect(MONGO_URL)
 mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
     .then(() => {

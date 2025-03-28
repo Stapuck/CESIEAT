@@ -64,3 +64,37 @@ export const deleteMenu = async (c: Context) => {
     }
 };
 
+export const getMenuByRestaurant = async (c: Context) => {
+    try {
+        const restaurantId = c.req.param('id');
+        const menus = await Menu.find({ restaurant: restaurantId });
+        if (!menus || menus.length === 0) return c.json({ message: `No menus found for restaurant with ID ${restaurantId}` }, 404);
+        return c.json(menus);
+    } catch (error) {
+        const errMsg = error instanceof Error ? error.message : 'An unknown error occurred';
+        return handleError(error, c);
+    }
+};
+
+export const getMenuByRestaurantBody = async (c: Context) => {
+    try {
+        const body = await c.req.json();
+        const { restaurantId } = body;
+        
+        if (!restaurantId) {
+            return c.json({ message: "Restaurant ID is required" }, 400);
+        }
+        
+        const menus = await Menu.find({ restaurant: restaurantId });
+        if (!menus || menus.length === 0) {
+            return c.json({ message: `No menus found for this restaurant` }, 404);
+        }
+        
+        return c.json(menus);
+    } catch (error) {
+        return handleError(error, c);
+    }
+};
+
+
+

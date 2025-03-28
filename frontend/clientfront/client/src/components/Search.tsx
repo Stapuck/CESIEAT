@@ -164,12 +164,6 @@ const Search = () => {
                 )}
             </div>
 
-            <div>
-                <Link to="/create-restaurant" className="text-white font-bold text-center mt-4">
-                    Create Restaurants
-                </Link>
-
-            </div>
 
             <div className="w-full h-[400px] mt-8 px-3 z-1 max-w-350">
                 <MapContainer
