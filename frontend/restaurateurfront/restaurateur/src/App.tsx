@@ -120,6 +120,7 @@ import MenuPage from "./pages/Menu/MenuPage";
 import ArticlePage from "./pages/Article/ArticlePage";
 import HistoriqueCommande from "./pages/Commande/HistoriqueCommande";
 import CommandePage from "./pages/Commande/CommandePage";
+import CreateCommande from "./pages/Commande/CreateCommande";
 
 function App() {
   const config: ZitadelConfig = {
@@ -256,6 +257,9 @@ function App() {
             {/* menu */}
             <Route path='/create-menu' element={<CreateMenu />} />
             <Route path='/edit-menu/:id' element={<EditMenu />} />
+
+            {/* provisoir */}
+            <Route path='/create-commande' element={<CreateCommande/>} />
             
 
             <Route path='/account' element={<Account authenticated={authenticated} setAuth={setAuthenticated} userManager={zitadel.userManager} />} />
