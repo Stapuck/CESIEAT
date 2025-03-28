@@ -56,7 +56,8 @@ const Restaurant: React.FC<RestaurantProps> = ({ id, name, address, url, onDelet
             navigate(`/restaurant-menus`, { 
                 state: { 
                     restaurantId: id,
-                    restaurantName: name
+                    restaurantName: name,
+                    restaurantImage: url
                 } 
             });
         }

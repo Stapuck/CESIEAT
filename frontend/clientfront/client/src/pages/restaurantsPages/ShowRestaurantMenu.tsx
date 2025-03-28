@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation as useRestaurant, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -13,53 +13,55 @@ interface Menu {
     updatedAt: string;
 }
 
-interface LocationState {
+interface RestaurantState {
     restaurantId: string;
     restaurantName?: string;
+    restaurantImage?: string;
 }
 
+
 const ShowRestaurantMenu: React.FC = () => {
-    const location = useLocation();
+    const restaurant = useRestaurant();
     const navigate = useNavigate();
-    const state = location.state as LocationState;
-    
+    const state = restaurant.state as RestaurantState;
+
     const [menus, setMenus] = useState<Menu[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [restaurantName, setRestaurantName] = useState<string>('');
+    const [restaurantImage, setRestaurantImage] = useState<string>('');
+    const [articleNames, setArticleNames] = useState<{ [key: string]: string }>({});
 
-    // Rediriger vers la page d'accueil si aucun état n'est passé
     useEffect(() => {
         if (!state || !state.restaurantId) {
             toast.error("Information de restaurant manquante");
             navigate('/');
             return;
         }
-        
-        // Si le nom du restaurant est fourni dans le state, l'utiliser
+
         if (state.restaurantName) {
             setRestaurantName(state.restaurantName);
+        }
+
+        if (state.restaurantImage) {
+            setRestaurantImage(state.restaurantImage);
         }
     }, [state, navigate]);
 
     useEffect(() => {
         const fetchMenus = async () => {
             if (!state || !state.restaurantId) return;
-            
+
             try {
                 setLoading(true);
-                
-                // Utiliser un endpoint POST ou GET avec body pour éviter l'ID dans l'URL
+
                 const response = await axios.post(`http://localhost:3006/api/menus/restaurant`, {
                     restaurantId: state.restaurantId
                 });
-                
-                console.log("Menus récupérés:", response.data);
+
                 setMenus(response.data);
-                
-                // Si le nom du restaurant n'est pas dans le state, le récupérer
+
                 if (!state.restaurantName) {
                     try {
-                        // Utiliser POST pour éviter d'exposer l'ID dans l'URL
                         const restaurantResponse = await axios.post(`http://localhost:3001/api/restaurateurs/details`, {
                             id: state.restaurantId
                         });
@@ -79,6 +81,33 @@ const ShowRestaurantMenu: React.FC = () => {
         fetchMenus();
     }, [state]);
 
+    const fetchArticleName = async (id: string) => {
+        try {
+            const response = await axios.get(`http://localhost:3005/api/articles/${id}`);
+            return response.data.name;
+        } catch (error) {
+            console.error(`Erreur lors de la récupération de l'article ${id}:`, error);
+            return 'Article inconnu';
+        }
+    };
+
+    useEffect(() => {
+        const fetchArticles = async () => {
+            const articlePromises = menus.flatMap((menu) =>
+                menu.articles.map(async (_id: string) => {
+                    if (!articleNames[_id]) {
+                        const name = await fetchArticleName(_id);
+                        setArticleNames((prev) => ({ ...prev, [_id]: name }));
+                    }
+                })
+            );
+
+            await Promise.all(articlePromises);
+        };
+
+        fetchArticles();
+    }, [menus]);
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -88,28 +117,45 @@ const ShowRestaurantMenu: React.FC = () => {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6">
-                {restaurantName ? `Menus de ${restaurantName}` : 'Menus du restaurant'}
-            </h1>
+        <div className="container mx-auto">
+            <div className="relative mb-6 w-full ">
+                <img
+                    className="bg-cover w-full h-100 object-cover bg-center"
+                    src={restaurantImage}
+                    alt="Restaurant"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-transparent bg-opacity-50">
+                    <h1 className="text-3xl text-black bg-gradient-left p-3 outline-4 px-5 shadow-2xl font-extrabold">
+                        {restaurantName ? `Menus de ${restaurantName}` : 'Menus du restaurant'}
+                    </h1>
+                </div>
+            </div>
+
+            <Link to="/create-menu">
+                <button className="bg-text-search-color text-white px-4 py-2 rounded-lg ml-2 mb-7 hover:bg-blue-700 transition duration-300">
+                    Ajouter un menu
+                </button>
+            </Link>
 
             {menus.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 z-1 p-3 gap-6 rounded-2xl">
                     {menus.map((menu) => (
-                        <div key={menu._id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                            <div className="p-4">
-                                <h2 className="text-xl font-bold mb-2">{menu.name}</h2>
-                                <p className="text-gray-700 mb-3">Prix: {menu.price}€</p>
-                                
+                        <div key={menu._id} className="rounded-lg shadow-md bg-white text-black overflow-hidden relative h-80">
+                            <div className="p-6 relative z-20 h-full flex flex-col">
+                                <h2 className="text-2xl font-bold mb-2">{menu.name}</h2>
+                                <p className="mb-3 text-lg">Prix: {menu.price}€</p>
+
                                 <h3 className="font-semibold mt-4 mb-2">Articles inclus:</h3>
                                 {menu.articles && menu.articles.length > 0 ? (
                                     <ul className="list-disc list-inside">
-                                        {menu.articles.map((article, index) => (
-                                            <li key={index} className="text-gray-700">{article.name}</li>
+                                        {menu.articles.map((_id: string) => (
+                                            <li key={_id} className="mb-1">
+                                                {articleNames[_id] || 'Chargement...'}
+                                            </li>
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p className="text-gray-500 italic">Aucun article dans ce menu</p>
+                                    <p className="text-black italic">Aucun article dans ce menu</p>
                                 )}
                             </div>
                         </div>

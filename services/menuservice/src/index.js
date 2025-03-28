@@ -25,7 +25,6 @@ app.use('*', cors({
 }));
 
 app.route('/api/menus', menuRoute);
-app.route('/api/menus/:id', menuRoute);
 
 
 
