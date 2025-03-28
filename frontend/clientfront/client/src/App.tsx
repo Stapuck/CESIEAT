@@ -7,18 +7,21 @@ import NotFoundPage from "./components/NotFoundPage"
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/ReactToastify.css'; // Importer les styles CSS
+import 'react-toastify/dist/ReactToastify.css'; // Importer les styles CSS
+import CreateRestaurant from "./pages/CreateRestaurant"
+import EditRestaurant from "./pages/EditRestaurant"
 
 function App() {
   return (
-    <div className="bg-primary">
+    <div className="bg-primary pt-30 h-full">
       <Navbar />
       <Routes>
         <Route index element={<HomePage />}></Route>
 
         <Route path='/create-product' element={<CreatePage />}></Route>
+        <Route path='/create-restaurant' element={<CreateRestaurant />}></Route>
         <Route path='/edit-product/:id' element={<EditPage />}></Route>
-
+        <Route path='/edit-restaurant/:id' element={<EditRestaurant />}></Route>
 
         <Route path='/test' element={<TestPage />}></Route>
         <Route path="/404" element={<NotFoundPage />} />

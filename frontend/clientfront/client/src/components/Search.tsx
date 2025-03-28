@@ -8,6 +8,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 // Icône personnalisée pour les restaurants
 const customIcon = new L.Icon({
@@ -30,6 +31,7 @@ interface IRestaurant {
     name: string;
     position: [number, number];
     ville: string;
+    url: string;
 }
 
 const Search = () => {
@@ -46,13 +48,14 @@ const Search = () => {
         try {
             setIsLoading(true);
             const response = await axios.get("http://localhost:3001/api/restaurateurs");
-                // Utilisez response.data pour mapper les restaurants
+            // Utilisez response.data pour mapper les restaurants
             setRestaurants(
                 response.data.map((restaurant: any) => ({
                     _id: restaurant._id,
                     name: restaurant.restaurantName, // Utilisez le champ correct pour le nom
                     position: restaurant.position as [number, number], // Utilisez directement le champ position
                     ville: restaurant.address, // Utilisez le champ correct pour la ville ou l'adresse
+                    url: restaurant.url, // Utilisez le champ correct pour l'URL de l'image
                 }))
             );
             setIsLoading(false);
@@ -161,21 +164,12 @@ const Search = () => {
                 )}
             </div>
 
-            {/* Liste des restaurants */}
-        <div className="w-full mt-8 px-3 z-1 max-w-350">
-            <h2 className="text-xl font-bold text-center mb-4">Liste des restaurants</h2>
-            <ul className="bg-white rounded-lg shadow-lg p-4 max-h-60 overflow-y-auto">
-                {restaurants.map((restaurant) => (
-                    <li
-                        key={restaurant._id}
-                        className="border-b border-gray-200 py-2 px-4 hover:bg-gray-100 cursor-pointer"
-                        onClick={() => handleSuggestionClick(restaurant)}
-                    >
-                        <strong>{restaurant.name}</strong> - {restaurant.ville}
-                    </li>
-                ))}
-            </ul>
-        </div>
+            <div>
+                <Link to="/create-restaurant" className="text-white font-bold text-center mt-4">
+                    Create Restaurants
+                </Link>
+
+            </div>
 
             <div className="w-full h-[400px] mt-8 px-3 z-1 max-w-350">
                 <MapContainer
@@ -199,9 +193,12 @@ const Search = () => {
                     {restaurants.map((restaurant) => (
                         <Marker key={restaurant._id} position={restaurant.position} icon={customIcon}>
                             <Popup>
-                                <strong>{restaurant.name}</strong>
-                                <br />
-                                {restaurant.ville}
+                                <div
+                                    className=" flex flex-col items-center justify-center overflow-clip rounded-lg bg-cover bg-center h-32 w-78"
+                                    style={{ backgroundImage: `url(${restaurant.url})` }}
+                                ></div>
+                                <p className="my-0">{restaurant.name}</p>
+
                             </Popup>
                         </Marker>
                     ))}
