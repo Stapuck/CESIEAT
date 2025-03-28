@@ -34,8 +34,8 @@ app.use('*', cors({
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
-
 app.route('/api/menus', menuRoute);
+
 
 
 // mongoose.connect(MONGO_URL)
