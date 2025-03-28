@@ -48,7 +48,7 @@ const CreateMenu = () => {
     useEffect(() => {
         const fetchArticles = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/api/articles");
+                const response = await axios.get("http://localhost:3005/api/articles");
                 setArticles(response.data);
             } catch (error: any) {
                 toast.error(`Erreur lors de la récupération des articles: ${error.message}`);

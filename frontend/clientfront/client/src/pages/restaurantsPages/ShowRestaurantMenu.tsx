@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation as useRestaurant, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { a } from 'motion/react-m';
 
 interface Menu {
     _id: string;
@@ -19,6 +20,13 @@ interface RestaurantState {
     restaurantImage?: string;
 }
 
+interface Article{
+    _id: string;
+    name: string;
+    price: number;
+    image: string;
+}
+
 
 const ShowRestaurantMenu: React.FC = () => {
     const restaurant = useRestaurant();
@@ -29,7 +37,7 @@ const ShowRestaurantMenu: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [restaurantName, setRestaurantName] = useState<string>('');
     const [restaurantImage, setRestaurantImage] = useState<string>('');
-    const [articleNames, setArticleNames] = useState<{ [key: string]: string }>({});
+    const [articles, setArticles] = useState<Article[]>([]);
 
     useEffect(() => {
         if (!state || !state.restaurantId) {
@@ -84,6 +92,9 @@ const ShowRestaurantMenu: React.FC = () => {
     const fetchArticleName = async (id: string) => {
         try {
             const response = await axios.get(`http://localhost:3005/api/articles/${id}`);
+
+            setArticles((prev) => [...prev, response.data]);
+
             return response.data.name;
         } catch (error) {
             console.error(`Erreur lors de la récupération de l'article ${id}:`, error);
@@ -95,9 +106,9 @@ const ShowRestaurantMenu: React.FC = () => {
         const fetchArticles = async () => {
             const articlePromises = menus.flatMap((menu) =>
                 menu.articles.map(async (_id: string) => {
-                    if (!articleNames[_id]) {
+                    if (!articles.some((article) => article._id === _id)) {
                         const name = await fetchArticleName(_id);
-                        setArticleNames((prev) => ({ ...prev, [_id]: name }));
+
                     }
                 })
             );
@@ -150,7 +161,9 @@ const ShowRestaurantMenu: React.FC = () => {
                                     <ul className="list-disc list-inside">
                                         {menu.articles.map((_id: string) => (
                                             <li key={_id} className="mb-1">
-                                                {articleNames[_id] || 'Chargement...'}
+                                                {articles.find((article) => article._id === _id)?.name || 'Chargement...'}
+                                                <img src={articles.find((article) => article._id === _id)?.image} alt={articles.find((article) => article._id === _id)?.name} className="w-10 h-10 rounded-full ml-2" />
+        
                                             </li>
                                         ))}
                                     </ul>
