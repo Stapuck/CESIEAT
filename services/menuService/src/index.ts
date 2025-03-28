@@ -1,3 +1,5 @@
+
+
 import dotenv from 'dotenv';
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
@@ -25,13 +27,15 @@ import menuRoute from './routes/menuRoute.js';
 //   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 // }));
 
-app.route('/api/menus', menuRoute);
+
 
 app.use('*', cors({
   origin: '*', // Autoriser toutes les origines
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
+
+app.route('/api/menus', menuRoute);
 
 
 // mongoose.connect(MONGO_URL)

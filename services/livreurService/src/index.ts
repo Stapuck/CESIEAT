@@ -26,12 +26,13 @@ import livreurRoute from './routes/livreurRoute.js';
 // }));
 
 
-app.route('/api/livreurs', livreurRoute);
 
 app.use('*', cors({
   origin: '*', // Autoriser toutes les origines
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
+
+app.route('/api/livreurs', livreurRoute);
 
 
 

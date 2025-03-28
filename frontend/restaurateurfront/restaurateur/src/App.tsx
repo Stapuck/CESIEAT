@@ -118,7 +118,7 @@ import EditArticle from "./pages/Article/EditArticle";
 import EditMenu from "./pages/Menu/EditMenu";
 import MenuPage from "./pages/Menu/MenuPage";
 import ArticlePage from "./pages/Article/ArticlePage";
-import Historique from "./pages/Historique";
+import HistoriqueCommande from "./pages/Commande/HistoriqueCommande";
 import CommandePage from "./pages/Commande/CommandePage";
 
 function App() {
@@ -265,7 +265,7 @@ function App() {
             <Route path="/menu" element={<MenuPage />} />
             <Route path="/article" element={<ArticlePage />} />
             <Route path="/commande" element={<CommandePage />} />
-            <Route path="/historique" element={<Historique />} />
+            <Route path="/historique" element={<HistoriqueCommande />} />
 
           </Routes>
         </div>
