@@ -26,13 +26,13 @@ import restaurateurRoute from './routes/restaurateurRoute.js';
 // }));
 
 
-app.route('/api/restaurateurs', restaurateurRoute);
 
 app.use('*', cors({
   origin: '*', // Autoriser toutes les origines
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
+app.route('/api/restaurateurs', restaurateurRoute);
 
 
 // mongoose.connect(MONGO_URL)

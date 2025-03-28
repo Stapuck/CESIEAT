@@ -1,41 +1,59 @@
-
 import { Link, Route, Routes } from "react-router-dom"
 import HomePage from "./pages/HomePage"
 import TestPage from "./pages/TestPage"
 import CreatePage from "./pages/CreatePage"
 import EditPage from "./pages/EditPage"
 import NotFoundPage from "./components/NotFoundPage"
+import Navbar from "./components/Navbar"
+import Footer from "./components/Footer"
 import { ToastContainer } from 'react-toastify';
-
+import 'react-toastify/dist/ReactToastify.css'; // Importer les styles CSS
+import CreateRestaurant from "./pages/restaurantsPages/CreateRestaurant"
+import EditRestaurant from "./pages/restaurantsPages/EditRestaurant"
+import CreateMenu from "./pages/menuPages/CreateMenu"
+import EditMenu from "./pages/menuPages/EditMenu"
+import LoginPage from "./pages/LoginPage"
+import SigninPage from "./pages/SigninPage"
+import ShowRestaurantMenu from "./pages/restaurantsPages/ShowRestaurantMenu"
 
 function App() {
   return (
-    <div className="bg-white">
-      <nav className="bg-gray-800">
-        <div className="container mx-auto p-2">
-          <Link to='/'><h2 className="text-white text-2xl font-bold">Client front</h2></Link>
-        </div>
-      </nav>
-
-      <div className='container mx-auto p-2 h-full'>
+    <div className="bg-primary pt-30 h-full">
+      <Navbar />
       <Routes>
-        <Route index element={<HomePage/>}></Route>
-        
-        <Route path='/create-product' element={<CreatePage/>}></Route>
-        <Route path='/edit-product/:id' element={<EditPage/>}></Route>
+        <Route index element={<HomePage />}></Route>
 
+        <Route path='/create-product' element={<CreatePage />}></Route>
+        <Route path='/create-restaurant' element={<CreateRestaurant />}></Route>
+        <Route path='/create-menu' element={<CreateMenu />}></Route>
+        <Route path='/edit-product/:id' element={<EditPage />}></Route>
+        <Route path='/edit-restaurant/:id' element={<EditRestaurant />}></Route>
+        <Route path='/edit-menu/:id' element={<EditMenu />}></Route>
+        <Route path="/restaurant-menus" element={<ShowRestaurantMenu />} />
 
-        <Route path='/test' element={<TestPage/>}></Route>
-        <Route path="/404" element={<NotFoundPage/>} />
-          <Route path="*" element={<NotFoundPage />} />
+        <Route path='/test' element={<TestPage />}></Route>
+        <Route path="/404" element={<NotFoundPage />} />
+        <Route path="*" element={<NotFoundPage />} />
 
-        <Route path='/login' element={<EditPage/>}></Route>
-        <Route path='/signin' element={<EditPage/>}></Route>
+        <Route path='/login' element={<LoginPage />}></Route>
+        <Route path='/signin' element={<SigninPage />}></Route>
       </Routes>
-      </div>
-      <ToastContainer />
+      <Footer />
+
+      {/* Configuration du ToastContainer */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
-    
   )
 }
 
