@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import GalleryRestaurants from "../components/restaurantsComponents/GalleryRestaurants";
 import Hero from "../components/Hero";
 

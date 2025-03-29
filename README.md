@@ -17,3 +17,21 @@ frontend :
 - Restaurateur
 
 // rajouter les ports de chacun 
+
+
+
+Listes des URL env docker (nginx):
+
+FRONTEND
+- http://localhost:8080/client/
+- http://localhost:8080/restaurateur/
+- http://localhost:8080/livreur/
+
+BACKEND
+- http://localhost:8080/api/menus
+- http://localhost:8080/api/restaurateurs
+- http://localhost:8080/api/articles
+- http://localhost:8080/api/clients
+- http://localhost:8080/api/commandes
+- http://localhost:8080/api/livreurs
+

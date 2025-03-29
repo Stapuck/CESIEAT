@@ -250,6 +250,7 @@ function App() {
             <Route path="/" element={<Login authenticated={authenticated} handleLogin={login} />} />
             <Route path="/callback" element={<Callback authenticated={authenticated} setAuth={setAuthenticated} handleLogout={signout} userManager={zitadel.userManager} />} />
             <Route path="/home" element={<HomePage />} />
+            <Route path="/restaurateur/" element={<HomePage />} />
             {/* article */}
             <Route path='/create-article' element={<CreateArticle />} />
             <Route path='/edit-article/:id' element={<EditArticle />} />

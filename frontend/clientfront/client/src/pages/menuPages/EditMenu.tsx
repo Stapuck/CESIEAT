@@ -17,14 +17,6 @@ interface IRestaurant {
     restaurantName: string;
 }
 
-interface IMenu {
-    _id: string;
-    name: string;
-    price: number;
-    articles: string[];
-    restaurant: string;
-}
-
 const EditMenu = () => {
     const { id } = useParams<{ id: string }>();
     const [name, setName] = useState("");

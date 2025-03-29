@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation as useRestaurant, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { a } from 'motion/react-m';
 
 interface Menu {
     _id: string;
@@ -107,7 +106,7 @@ const ShowRestaurantMenu: React.FC = () => {
             const articlePromises = menus.flatMap((menu) =>
                 menu.articles.map(async (_id: string) => {
                     if (!articles.some((article) => article._id === _id)) {
-                        const name = await fetchArticleName(_id);
+                        await fetchArticleName(_id);
 
                     }
                 })

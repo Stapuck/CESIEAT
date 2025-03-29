@@ -1,17 +1,50 @@
 services: # Définition des services à exécuter.
-  # nginx: # Service pour le serveur NGINX.
-  #   image: nginx:latest # Utilisation de l'image officielle de la dernière version de NGINX.
-  #   container_name: gateway # Nom attribué au conteneur NGINX.
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf # Montage d'un fichier de configuration personnalisé (local vers le conteneur).
-  #   ports:
-  #     - "8080:8080" # Le port 8080 du conteneur est mappé au port 8080 de la machine hôte.
-  #   networks:
-  #     - app-network # Connexion au réseau `app-network` pour la communication avec d'autres services.
-  #   depends_on: # Déclare que NGINX dépend du démarrage préalable des services spécifiés.
-  #     - auth # Dépendance au service d'authentification (auth-service).
-  #     - public
-  #     - private
+  nginx:
+    image: nginx:latest
+    container_name: gateway
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      - article-service
+      - client-service
+      - commande-service
+      - livreur-service
+      - menu-service
+      - restaurateur-service
+
+  client-frontend:
+    build:
+      context: ./frontend/clientfront/client
+      dockerfile: Dockerfile
+    container_name: clientFrontend
+    ports:
+      - "5173:5173"
+    networks:
+      - app-network
+  
+  restaurateur-frontend:
+    build:
+      context: ./frontend/restaurateurfront/restaurateur
+      dockerfile: Dockerfile
+    container_name: restaurateurFrontend
+    ports:
+      - "5174:5174"
+    networks:
+      - app-network
+
+  livreur-frontend:
+    build:
+      context: ./frontend/livreurfront/livreur
+      dockerfile: Dockerfile
+    container_name: livreurFrontend
+    ports:
+      - "5175:5175"
+    networks:
+      - app-network
 
   article-service:
     build:

@@ -21,7 +21,7 @@ function App() {
     <div className="bg-primary pt-30 h-full">
       <Navbar />
       <Routes>
-        <Route index element={<HomePage />}></Route>
+        <Route path='/client/' element={<HomePage />}></Route>
 
         <Route path='/create-product' element={<CreatePage />}></Route>
         <Route path='/create-restaurant' element={<CreateRestaurant />}></Route>

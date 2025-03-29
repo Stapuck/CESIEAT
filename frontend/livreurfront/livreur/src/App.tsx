@@ -21,6 +21,7 @@ function App() {
       <div className="container mx-auto p-2 h-full">
       <Routes>
         <Route index element={<HomePage/>}></Route>
+        <Route path='/livreur/' element={<HomePage/>}></Route>
         
         <Route path='/create-product' element={<CreatePage/>}></Route>
         <Route path='/edit-product/:id' element={<EditPage/>}></Route>
