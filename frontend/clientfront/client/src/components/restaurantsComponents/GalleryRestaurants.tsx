@@ -26,7 +26,7 @@ function GalleryRestaurants() {
   const getRestaurants = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3001/api/restaurateurs");
+      const response = await axios.get("http://localhost:8080/api/restaurateurs");
       setRestaurants(response.data);
       setIsLoading(false);
     } catch (error) {

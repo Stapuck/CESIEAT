@@ -27,7 +27,7 @@ const Product = ({ product, getProducts}: { product: IProduct; getProducts: () =
         if (result.isConfirmed){
 
             try {
-                await axios.delete(`http://localhost:3002/api/products/${id}`)
+                await axios.delete(`http://localhost:8080/api/products/${id}`)
                 // await axios.delete(`${VITE_BACKEND_URL_PRODUCT}/api/products/${id}`)
                 toast.success("Delete a product sucessfully")
                 getProducts()

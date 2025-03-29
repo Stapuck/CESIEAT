@@ -22,7 +22,7 @@ function TableauArticle() {
     const getArticles = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get("http://localhost:3005/api/articles");
+            const response = await axios.get("http://localhost:8080/api/articles");
             setArticles(response.data);
             setIsLoading(false);
         } catch (error) {
@@ -45,7 +45,7 @@ function TableauArticle() {
         });
         if (result.isConfirmed) {
             try {
-                await axios.delete(`http://localhost:3005/api/articles/${id}`);
+                await axios.delete(`http://localhost:8080/api/articles/${id}`);
                 toast.success("Article supprimé avec succès");
                 getArticles();
             } catch (error: any) {

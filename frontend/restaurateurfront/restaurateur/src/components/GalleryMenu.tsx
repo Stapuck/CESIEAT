@@ -9,7 +9,7 @@ function GalleryMenu() {
     const getMenus = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get("http://localhost:3006/api/menus");
+            const response = await axios.get("http://localhost:8080/api/menus");
             setMenus(response.data);
             setIsLoading(false);
         } catch (error) {

@@ -37,7 +37,7 @@ const Restaurant: React.FC<RestaurantProps> = ({ id, name, address, url, onDelet
 
         if (result.isConfirmed) {
             try {
-                await axios.delete(`http://localhost:3001/api/restaurateurs/${id}`);
+                await axios.delete(`http://localhost:8080/api/restaurateurs/${id}`);
                 toast.success(`Restaurant "${name}" supprimé avec succès`);
                 // Rafraîchir la liste si la fonction de rappel est fournie
                 if (onDelete) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Restaurant from './Restaurant';
+import Restaurant from './restaurantsComponents/Restaurant';
 import Search from './Search';
 
 // Interface pour définir la structure d'un restaurant
@@ -25,7 +25,7 @@ function GalleryProduct() {
   const getRestaurants = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3001/api/restaurateurs");
+      const response = await axios.get("http://localhost:8080/api/restaurateurs");
       setRestaurants(response.data);
       setIsLoading(false);
     } catch (error) {

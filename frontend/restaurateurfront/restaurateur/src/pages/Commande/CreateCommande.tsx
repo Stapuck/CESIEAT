@@ -16,7 +16,7 @@ const CreateCommande = () => {
     useEffect(() => {
         const fetchRestaurants = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/api/restaurateurs");
+                const response = await axios.get("http://localhost:8080/api/restaurateurs");
                 setRestaurants(response.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des restaurants", error);
@@ -29,7 +29,7 @@ const CreateCommande = () => {
         if (selectedRestaurant) {
             const fetchMenus = async () => {
                 try {
-                    const response = await axios.get(`http://localhost:3006/api/menus?restaurant=${selectedRestaurant}`);
+                    const response = await axios.get(`http://localhost:8080/api/menus?restaurant=${selectedRestaurant}`);
                     setMenus(response.data);
                 } catch (error) {
                     console.error("Erreur lors de la récupération des menus", error);
@@ -84,7 +84,7 @@ const CreateCommande = () => {
 
         try {
             setIsLoading(true);
-            await axios.post("http://localhost:3003/api/commandes", {
+            await axios.post("http://localhost:8080/api/commandes", {
                 client: idclient,
                 restaurant: selectedRestaurant,
                 menus: selectedMenus.map(menu => ({ menuId: menu.menuId, quantity: menu.quantity })),

@@ -16,7 +16,7 @@ const CreateMenu = () => {
     useEffect(() => {
         const fetchArticles = async () => {
             try {
-                const response = await axios.get("http://localhost:3005/api/articles");
+                const response = await axios.get("http://localhost:8080/api/articles");
                 setArticles(response.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des articles", error);
@@ -25,7 +25,7 @@ const CreateMenu = () => {
 
         const fetchRestaurateurs = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/api/restaurateurs");
+                const response = await axios.get("http://localhost:8080/api/restaurateurs");
                 setRestaurateurs(response.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des restaurateurs", error);
@@ -64,7 +64,7 @@ const CreateMenu = () => {
 
         try {
             setIsLoading(true);
-            await axios.post("http://localhost:3006/api/menus", {
+            await axios.post("http://localhost:8080/api/menus", {
                 name,
                 price,
                 articles: selectedArticles,
@@ -180,7 +180,7 @@ export default CreateMenu;
 //     useEffect(() => {
 //         const fetchArticles = async () => {
 //             try {
-//                 const response = await axios.get("http://localhost:3005/api/articles");
+//                 const response = await axios.get("http://localhost:8080/api/articles");
 //                 setArticles(response.data);
 //             } catch (error) {
 //                 console.error("Erreur lors de la récupération des articles", error);
@@ -189,7 +189,7 @@ export default CreateMenu;
 
 //         const fetchRestaurateurs = async () => {
 //             try {
-//                 const response = await axios.get("http://localhost:3001/api/restaurateurs");
+//                 const response = await axios.get("http://localhost:8080/api/restaurateurs");
 //                 setRestaurateurs(response.data);
 //             } catch (error) {
 //                 console.error("Erreur lors de la récupération des restaurateurs", error);
@@ -228,7 +228,7 @@ export default CreateMenu;
 
 //         try {
 //             setIsLoading(true);
-//             await axios.post("http://localhost:3006/api/menus", {
+//             await axios.post("http://localhost:8080/api/menus", {
 //                 name,
 //                 price,
 //                 articles: selectedArticles,

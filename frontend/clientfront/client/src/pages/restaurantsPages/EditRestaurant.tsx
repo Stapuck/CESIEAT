@@ -38,7 +38,7 @@ const EditRestaurant = () => {
             
             try {
                 setIsLoading(true);
-                const response = await axios.get(`http://localhost:3001/api/restaurateurs/${id}`);
+                const response = await axios.get(`http://localhost:8080/api/restaurateurs/${id}`);
                 const restaurant = response.data;
                 
                 setName(restaurant.name || "");
@@ -71,7 +71,7 @@ const EditRestaurant = () => {
 
         try {
             setIsSubmitting(true);
-            const response = await axios.put(`http://localhost:3001/api/restaurateurs/${id}`, {
+            const response = await axios.put(`http://localhost:8080/api/restaurateurs/${id}`, {
                 name,
                 position,
                 managerName,
@@ -107,7 +107,7 @@ const EditRestaurant = () => {
         if (result.isConfirmed) {
             try {
                 setIsSubmitting(true);
-                await axios.delete(`http://localhost:3001/api/restaurateurs/${id}`);
+                await axios.delete(`http://localhost:8080/api/restaurateurs/${id}`);
                 toast.success(`Restaurant "${restaurantName}" supprimé avec succès`);
                 setIsSubmitting(false);
                 navigate("/");

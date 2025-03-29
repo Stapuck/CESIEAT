@@ -47,7 +47,7 @@ const Search = () => {
     const getRestaurants = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get("http://localhost:3001/api/restaurateurs");
+            const response = await axios.get("http://localhost:8080/api/restaurateurs");
             // Utilisez response.data pour mapper les restaurants
             setRestaurants(
                 response.data.map((restaurant: any) => ({

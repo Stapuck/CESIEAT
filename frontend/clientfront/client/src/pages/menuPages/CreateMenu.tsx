@@ -31,7 +31,7 @@ const CreateMenu = () => {
     useEffect(() => {
         const fetchRestaurants = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/api/restaurateurs");
+                const response = await axios.get("http://localhost:8080/api/restaurateurs");
                 setRestaurants(response.data);
                 if (response.data.length > 0) {
                     setRestaurantId(response.data[0]._id);
@@ -48,7 +48,7 @@ const CreateMenu = () => {
     useEffect(() => {
         const fetchArticles = async () => {
             try {
-                const response = await axios.get("http://localhost:3005/api/articles");
+                const response = await axios.get("http://localhost:8080/api/articles");
                 setArticles(response.data);
             } catch (error: any) {
                 toast.error(`Erreur lors de la récupération des articles: ${error.message}`);
@@ -95,7 +95,7 @@ const CreateMenu = () => {
         
         try {
             setIsLoading(true);
-            const response = await axios.post("http://localhost:3001/api/menus", {
+            const response = await axios.post("http://localhost:8080/api/menus", {
                 name,
                 price,
                 articles: selectedArticles,

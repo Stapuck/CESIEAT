@@ -25,7 +25,7 @@ const CommandesPage = () => {
   const getCommandes = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3003/api/commandes");
+      const response = await axios.get("http://localhost:8080/api/commandes");
       setCommandes(response.data);
       setIsLoading(false);
     } catch (error) {

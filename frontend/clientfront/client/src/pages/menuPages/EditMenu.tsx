@@ -36,7 +36,7 @@ const EditMenu = () => {
             
             try {
                 setIsFetching(true);
-                const response = await axios.get(`http://localhost:3001/api/menus/${id}`);
+                const response = await axios.get(`http://localhost:8080/api/menus/${id}`);
                 const menu = response.data;
                 
                 setName(menu.name || "");
@@ -59,7 +59,7 @@ const EditMenu = () => {
     useEffect(() => {
         const fetchRestaurants = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/api/restaurateurs");
+                const response = await axios.get("http://localhost:8080/api/restaurateurs");
                 setRestaurants(response.data);
             } catch (error: any) {
                 toast.error(`Erreur lors de la récupération des restaurants: ${error.message}`);
@@ -73,7 +73,7 @@ const EditMenu = () => {
     useEffect(() => {
         const fetchArticles = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/api/articles");
+                const response = await axios.get("http://localhost:8080/api/articles");
                 setArticles(response.data);
             } catch (error: any) {
                 toast.error(`Erreur lors de la récupération des articles: ${error.message}`);
@@ -120,7 +120,7 @@ const EditMenu = () => {
         
         try {
             setIsLoading(true);
-            const response = await axios.put(`http://localhost:3001/api/menus/${id}`, {
+            const response = await axios.put(`http://localhost:8080/api/menus/${id}`, {
                 name,
                 price,
                 articles: selectedArticles,
@@ -157,7 +157,7 @@ const EditMenu = () => {
         if (result.isConfirmed) {
             try {
                 setIsLoading(true);
-                await axios.delete(`http://localhost:3001/api/menus/${id}`);
+                await axios.delete(`http://localhost:8080/api/menus/${id}`);
                 toast.success(`Menu "${name}" supprimé avec succès`);
                 setIsLoading(false);
                 navigate("/");

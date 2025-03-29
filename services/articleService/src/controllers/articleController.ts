@@ -67,7 +67,7 @@ export const deleteArticle = async (c: Context) => {
 
 // const fetchGenericArticles = async () => {
 //     try {
-//         const response = await axios.get("http://localhost:3002/api/articles", {
+//         const response = await axios.get("http://localhost:8080/api/articles", {
 //             params: { type: ["boisson", "sauce"] }
 //         });
 //         setGenericArticles(response.data);
@@ -79,7 +79,7 @@ export const deleteArticle = async (c: Context) => {
 
 // const fetchRestaurantArticles = async (restaurantId) => {
 //     try {
-//         const response = await axios.get("http://localhost:3002/api/articles", {
+//         const response = await axios.get("http://localhost:8080/api/articles", {
 //             params: { restaurantId }
 //         });
 //         setRestaurantArticles(response.data);

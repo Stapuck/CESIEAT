@@ -15,7 +15,7 @@ const EditMenu = () => {
     useEffect(() => {
         const fetchArticles = async () => {
             try {
-                const response = await axios.get("http://localhost:3005/api/articles");
+                const response = await axios.get("http://localhost:8080/api/articles");
                 setArticles(response.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des articles", error);
@@ -24,7 +24,7 @@ const EditMenu = () => {
 
         const fetchMenu = async () => {
             try {
-                const response = await axios.get(`http://localhost:3006/api/menus/${id}`);
+                const response = await axios.get(`http://localhost:8080/api/menus/${id}`);
                 const menu = response.data;
                 setName(menu.name);
                 setPrice(menu.price);
@@ -64,7 +64,7 @@ const EditMenu = () => {
 
         try {
             setIsLoading(true);
-            await axios.put(`http://localhost:3006/api/menus/${id}`, {
+            await axios.put(`http://localhost:8080/api/menus/${id}`, {
                 name,
                 price,
                 articles: selectedArticles,

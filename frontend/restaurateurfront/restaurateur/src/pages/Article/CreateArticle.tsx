@@ -24,7 +24,7 @@ const CreateArticle = () => {
 
         try {
             setIsLoading(true);
-            await axios.post("http://localhost:3005/api/articles", {
+            await axios.post("http://localhost:8080/api/articles", {
                 name,
                 reference,
                 type,

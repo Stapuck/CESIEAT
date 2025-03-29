@@ -57,7 +57,7 @@ const HistoriqueCommande = () => {
   const getCommandes = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3003/api/commandes");
+      const response = await axios.get("http://localhost:8080/api/commandes");
       setCommandes(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -68,7 +68,7 @@ const HistoriqueCommande = () => {
   const getClients = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3000/api/clients");
+      const response = await axios.get("http://localhost:8080/api/clients");
       setClients(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -79,7 +79,7 @@ const HistoriqueCommande = () => {
   const getRestaurateurs = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3001/api/restaurateurs");
+      const response = await axios.get("http://localhost:8080/api/restaurateurs");
       setRestaurateur(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -90,7 +90,7 @@ const HistoriqueCommande = () => {
   const getLivreurs = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3004/api/livreurs");
+      const response = await axios.get("http://localhost:8080/api/livreurs");
       setLivreur(response.data);
       setIsLoading(false);
     } catch (error) {

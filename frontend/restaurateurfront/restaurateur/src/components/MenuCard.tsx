@@ -27,7 +27,7 @@ const MenuCard = ({ menu, getMenus }: { menu: IMenu; getMenus: () => void }) => 
         
         if (result.isConfirmed) {
             try {
-                await axios.delete(`http://localhost:3006/api/menus/${id}`);
+                await axios.delete(`http://localhost:8080/api/menus/${id}`);
                 toast.success("Menu supprimé avec succès");
                 getMenus();
             } catch (error: any) {

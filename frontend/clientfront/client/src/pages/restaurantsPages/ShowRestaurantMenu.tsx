@@ -61,7 +61,7 @@ const ShowRestaurantMenu: React.FC = () => {
             try {
                 setLoading(true);
 
-                const response = await axios.post(`http://localhost:3006/api/menus/restaurant`, {
+                const response = await axios.post(`http://localhost:8080/api/menus/restaurant`, {
                     restaurantId: state.restaurantId
                 });
 
@@ -69,7 +69,7 @@ const ShowRestaurantMenu: React.FC = () => {
 
                 if (!state.restaurantName) {
                     try {
-                        const restaurantResponse = await axios.post(`http://localhost:3001/api/restaurateurs/details`, {
+                        const restaurantResponse = await axios.post(`http://localhost:8080/api/restaurateurs/details`, {
                             id: state.restaurantId
                         });
                         setRestaurantName(restaurantResponse.data.name);
@@ -90,7 +90,7 @@ const ShowRestaurantMenu: React.FC = () => {
 
     const fetchArticleName = async (id: string) => {
         try {
-            const response = await axios.get(`http://localhost:3005/api/articles/${id}`);
+            const response = await axios.get(`http://localhost:8080/api/articles/${id}`);
 
             setArticles((prev) => [...prev, response.data]);
 
