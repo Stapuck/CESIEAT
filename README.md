@@ -20,6 +20,8 @@ frontend :
 
 
 
+Pour lancer docker : docker-compose up -d --build
+
 Listes des URL env docker (nginx):
 
 FRONTEND
