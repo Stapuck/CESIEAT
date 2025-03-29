@@ -1,4 +1,6 @@
-services: # Définition des services à exécuter.
+version: '3.8'
+
+services:
   nginx:
     image: nginx:latest
     container_name: gateway
@@ -16,36 +18,60 @@ services: # Définition des services à exécuter.
       - menu-service
       - restaurateur-service
 
+  # Client frontend (Vite project)
   client-frontend:
     build:
       context: ./frontend/clientfront/client
       dockerfile: Dockerfile
     container_name: clientFrontend
     ports:
-      - "5173:5173"
+      - "5173:5173" # Expose Vite default port
+    environment:
+      - HOST=0.0.0.0 # Ensure external access
+    volumes:
+      - ./frontend/clientfront/client:/app # Sync local code with container
+      - /app/node_modules # Isolate node_modules from local setup
     networks:
       - app-network
-  
+    command: npm run dev # Run Vite in development mode
+    depends_on:
+      - nginx
+
+  # Restaurateur frontend (Vite project)
   restaurateur-frontend:
     build:
       context: ./frontend/restaurateurfront/restaurateur
       dockerfile: Dockerfile
     container_name: restaurateurFrontend
     ports:
-      - "5174:5174"
+      - "5174:5174" # Expose Vite default port for restaurateur frontend
+    environment:
+      - HOST=0.0.0.0 # Ensure external access
+    volumes:
+      - ./frontend/restaurateurfront/restaurateur:/app # Sync local code with container
+      - /app/node_modules # Isolate node_modules from local setup
     networks:
       - app-network
+    command: npm run dev # Run Vite in development mode
 
+  # Livreur frontend (Vite project)
   livreur-frontend:
     build:
       context: ./frontend/livreurfront/livreur
       dockerfile: Dockerfile
     container_name: livreurFrontend
     ports:
-      - "5175:5175"
+      - "5175:5175" # Expose Vite default port for livreur frontend
+    environment:
+      - HOST=0.0.0.0 # Ensure external access
+    volumes:
+      - ./frontend/livreurfront/livreur:/app # Sync local code with container
+      - /app/node_modules # Isolate node_modules from local setup
     networks:
       - app-network
+    command: npm run dev # Run Vite in development mode
 
+  # Article Service
   article-service:
     build:
       context: ./services/articleService
@@ -56,6 +82,7 @@ services: # Définition des services à exécuter.
     networks:
       - app-network
 
+  # Client Service
   client-service:
     build:
       context: ./services/clientService
@@ -66,6 +93,7 @@ services: # Définition des services à exécuter.
     networks:
       - app-network
 
+  # Commande Service
   commande-service:
     build:
       context: ./services/commandeService
@@ -76,6 +104,7 @@ services: # Définition des services à exécuter.
     networks:
       - app-network
 
+  # Livreur Service
   livreur-service:
     build:
       context: ./services/livreurService
@@ -86,6 +115,7 @@ services: # Définition des services à exécuter.
     networks:
       - app-network
 
+  # Menu Service
   menu-service:
     build:
       context: ./services/menuService
@@ -96,6 +126,7 @@ services: # Définition des services à exécuter.
     networks:
       - app-network
 
+  # Restaurateur Service
   restaurateur-service:
     build:
       context: ./services/restaurateurService
@@ -106,22 +137,6 @@ services: # Définition des services à exécuter.
     networks:
       - app-network
 
-  # auth: # Service pour l'API d'authentification.
-  #   build: # Construction de l'image pour le service d'authentification.
-  #     #context: ./auth # Répertoire contenant les fichiers nécessaires pour construire l'image.
-  #     dockerfile: Dockerfile # Utilisation d'un fichier Dockerfile personnalisé pour configurer le conteneur.
-  #   container_name: auth-service # Nom attribué au conteneur du service d'authentification.
-  #   ports:
-  #     - "3000:3000" # Le port 3000 du conteneur est mappé au port 3000 de la machine hôte.
-  #   networks:
-  #     - app-network # Connexion au réseau `app-network` pour la communication avec d'autres services.
-  #   environment: # Variables d'environnement pour configurer le service.
-  #     - JWT_KEY=API # Clé utilisée pour signer et vérifier les jetons JWT.
-  #     - JWT_REFRESH_KEY=NODE
-  #     - PORT=3000 # Port sur lequel le service écoute à l'intérieur du conteneur.
-
-networks: # Définition des réseaux utilisés par les services. app-network :Nom du réseau. Vous pouvez le nommer comme vous le souhaitez.
+networks:
   app-network:
-    driver: bridge # Type de réseau utilisé (bridge est utilisé pour isoler les services dans un réseau privé). 
-    #Le mode "bridge" est le type de réseau par défaut dans Docker.
-    #Dans ce mode, tous les conteneurs connectés au réseau peuvent communiquer entre eux via leur nom de conteneur ou leur adresse IP interne.
+    driver: bridge # Ensures proper communication between services
