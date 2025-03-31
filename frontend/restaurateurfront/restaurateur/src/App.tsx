@@ -1,112 +1,8 @@
-
-// import { Link, Route, Routes } from "react-router-dom"
-// import HomePage from "./pages/HomePage"
-// import TestPage from "./pages/TestPage"
-// // import CreatePage from "./pages/CreatePage"
-// // import EditPage from "./pages/EditPage"
-// import NotFoundPage from "./components/NotFoundPage"
-
-// import { ToastContainer } from 'react-toastify';
-// import CreateArticle from "./pages/Article/CreateArticle"
-// import CreateMenu from "./pages/Menu/CreateMenu"
-
-// import { useEffect, useState } from "react";
-// import "./App.css";
-// import { createZitadelAuth, ZitadelConfig } from "@zitadel/react";
-// // import { BrowserRouter, Route, Routes } from "react-router-dom";
-
-// import Login from "./components/Login";
-// import Callback from "./components/Callback";
-// import Account from "./pages/Account"
-// import EditArticle from "./pages/Article/EditArticle"
-// import EditMenu from "./pages/Menu/EditMenu";
-
-// function App() {
-//   const config: ZitadelConfig = {
-//     authority: "https://instance1-el5q1i.zitadel.cloud/",
-//     client_id: "312751992336403117",
-//     redirect_uri: "http://localhost:5173/callback",
-//     post_logout_redirect_uri: "http://localhost:5173/"
-//   };
-
-//   const zitadel = createZitadelAuth(config);
-
-//   function login() {
-//     zitadel.authorize();
-//   }
-
-//   function signout() {
-//     zitadel.signout();
-//   }
-
-//   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
-
-//   useEffect(() => {
-//     zitadel.userManager.getUser().then((user) => {
-//       if (user) {
-//         setAuthenticated(true);
-//       } else {
-//         setAuthenticated(false);
-//       }
-//     });
-//   }, [zitadel]);
-
-
-  
-//   return (
-//     <div className="bg-white">
-//       <nav className="bg-gray-800">
-//         <div className="container mx-auto p-2">
-//           <Link to='/home'><h2 className="text-white text-2xl font-bold">restaurateur front</h2></Link>
-//         </div>
-//       </nav>
-//       <div className="container mx-auto p-2 h-full">
-//       <Routes>
-
-//         <Route path="/" element={ <Login authenticated={authenticated} handleLogin={login} />}/>
-//             {/* nested */}
-
-//         <Route path="/callback" element={<Callback authenticated={authenticated} setAuth={setAuthenticated} handleLogout={signout} userManager={zitadel.userManager}/>}/>
-//         <Route path="/home" element={<HomePage/>}></Route>
-
-//         {/* article */}
-//         <Route path='/create-article' element={<CreateArticle/>}></Route>
-//         <Route path='/edit-article/:id' element={<EditArticle/>}></Route>
-
-
-//         {/* menu */}
-//         <Route path='/create-menu' element={<CreateMenu/>}></Route>
-//         <Route path='/edit-menu/:id' element={<EditMenu/>}></Route>
-
-//         {/* all */}
-//         {/* <Route path='/create-product' element={<CreatePage/>}></Route>
-//         <Route path='/edit-product/:id' element={<EditPage/>}></Route> */}
-
-//         {/* restaurant */}
-//         <Route path='/account' element={<Account authenticated={authenticated} setAuth={setAuthenticated} userManager={zitadel.userManager} />}></Route>
-//         <Route path='/test' element={<TestPage/>}></Route>
-        
-//         {/* bad url */}
-//         <Route path="/404" element={<NotFoundPage/>} />
-//         <Route path="*" element={<NotFoundPage />} />
-        
-//       </Routes>
-//       </div>
-//       <ToastContainer/>
-
-
-//     </div>
-//   )
-// }
-
-// export default App
-
 import { Link, Route, Routes, useLocation  } from "react-router-dom";
 import { FaUser, FaList, FaFileAlt, FaShoppingCart, FaHistory, FaBars } from "react-icons/fa"; // Icons
 import { useState, useEffect } from "react";
 import { createZitadelAuth, ZitadelConfig } from "@zitadel/react";
 import HomePage from "./pages/HomePage";
-import TestPage from "./pages/TestPage";
 import NotFoundPage from "./components/NotFoundPage";
 import { ToastContainer } from 'react-toastify';
 import CreateArticle from "./pages/Article/CreateArticle";
@@ -178,6 +74,7 @@ function App() {
           <FaBars size={24} />
         </button>
       </nav>
+      
 
       <div className="flex flex-1">
         {/* Sidebar */}
@@ -189,27 +86,27 @@ function App() {
           <nav>
             <ul>
               <li>
-                <Link to="/account" className={getLinkClassName('/account')}>
+                <Link to="restaurateur/account" className={getLinkClassName('restaurateur/account')}>
                    <FaUser /> <span>Mon Compte</span> {/* {isSidebarOpen ? ('') : (<span>Mon Compte</span>)} */}
                 </Link>
               </li>
               <li>
-                <Link to="/menu" className={getLinkClassName('/menu')}>
+                <Link to="restaurateur/menu" className={getLinkClassName('restaurateur/menu')}>
                   <FaList /> <span>Mes Menu</span>
                 </Link>
               </li>
               <li>
-                <Link to="/article" className={getLinkClassName('/article')}>
+                <Link to="restaurateur/article" className={getLinkClassName('restaurateur/article')}>
                   <FaFileAlt /> <span>Mes Articles</span>
                 </Link>
               </li>
               <li>
-                <Link to="/commande" className={getLinkClassName('/commande')}>
+                <Link to="restaurateur/commande" className={getLinkClassName('restaurateur/commande')}>
                   <FaShoppingCart /> <span>Mes Commandes</span>
                 </Link>
               </li>
               <li>
-                <Link to="/historique" className={getLinkClassName('/historique')}>
+                <Link to="restaurateur/historique" className={getLinkClassName('restaurateur/historique')}>
                   <FaHistory /> <span>Mon Historique</span>
                 </Link>
               </li>
@@ -217,6 +114,7 @@ function App() {
           </nav>
         </div>
 
+  
         {/* Mobile Sidebar (hidden on large screens)
         <div
           className={`lg:hidden w-16 bg-gray-800 text-white flex flex-col items-center space-y-4 py-8 transition-all duration-300 ${
@@ -224,7 +122,7 @@ function App() {
           }`}
         >
           <Link to="/account" className="flex flex-col items-center space-y-2">
-            <FaUser size={24} />
+          <FaUser size={24} />
             <span className="text-xs">Account</span>
           </Link>
           <Link to="/create-menu" className="flex flex-col items-center space-y-2">
@@ -248,29 +146,27 @@ function App() {
         {/* Main Content */}
         <div className="flex-1 p-4 overflow-auto">
           <Routes>
-            <Route path="/" element={<Login authenticated={authenticated} handleLogin={login} />} />
-            <Route path="/callback" element={<Callback authenticated={authenticated} setAuth={setAuthenticated} handleLogout={signout} userManager={zitadel.userManager} />} />
-            <Route path="/home" element={<HomePage />} />
+            <Route path="restaurateur/" element={<Login authenticated={authenticated} handleLogin={login} />} />
+            <Route path="restaurateur/callback" element={<Callback authenticated={authenticated} setAuth={setAuthenticated} handleLogout={signout} userManager={zitadel.userManager} />} />
+            <Route path="restaurateur/home" element={<HomePage />} />
             <Route path="/restaurateur/" element={<HomePage />} />
             {/* article */}
-            <Route path='/create-article' element={<CreateArticle />} />
-            <Route path='/edit-article/:id' element={<EditArticle />} />
+            <Route path='restaurateur/create-article' element={<CreateArticle />} />
+            <Route path='restaurateur/edit-article/:id' element={<EditArticle />} />
             {/* menu */}
-            <Route path='/create-menu' element={<CreateMenu />} />
-            <Route path='/edit-menu/:id' element={<EditMenu />} />
+            <Route path='restaurateur/create-menu' element={<CreateMenu />} />
+            <Route path='restaurateur/edit-menu/:id' element={<EditMenu />} />
 
             {/* provisoir */}
-            <Route path='/create-commande' element={<CreateCommande/>} />
-            
+            <Route path='restaurateur/create-commande' element={<CreateCommande/>} />
 
-            <Route path='/account' element={<Account authenticated={authenticated} setAuth={setAuthenticated} userManager={zitadel.userManager} />} />
-            <Route path='/test' element={<TestPage />} />
-            <Route path="/404" element={<NotFoundPage />} />
+            <Route path='restaurateur/account' element={<Account authenticated={authenticated} setAuth={setAuthenticated} userManager={zitadel.userManager} />} />
+            <Route path="restaurateur/404" element={<NotFoundPage />} />
             <Route path="*" element={<NotFoundPage />} />
-            <Route path="/menu" element={<MenuPage />} />
-            <Route path="/article" element={<ArticlePage />} />
-            <Route path="/commande" element={<CommandePage />} />
-            <Route path="/historique" element={<HistoriqueCommande />} />
+            <Route path="restaurateur/menu" element={<MenuPage />} />
+            <Route path="restaurateur/article" element={<ArticlePage />} />
+            <Route path="restaurateur/commande" element={<CommandePage />} />
+            <Route path="restaurateur/historique" element={<HistoriqueCommande />} />
 
           </Routes>
         </div>
