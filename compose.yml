@@ -78,6 +78,41 @@ services:
       - app-network
     command: npm run dev # Run Vite in development mode
 
+  developer-frontend:
+    build:
+      context: ./frontend/developerfront/developer
+      dockerfile: Dockerfile
+    container_name: developerFrontend
+    ports:
+      - "5176:5176" # Expose Vite default port for developer frontend
+    environment:
+      - HOST=0.0.0.0 # Ensure external access
+    volumes:
+      - ./frontend/developerfront/developer:/app # Sync local code with container
+      - /app/node_modules # Isolate node_modules from local setup
+    restart: unless-stopped  
+    networks:
+      - app-network
+    command: npm run dev # Run Vite in development mode
+
+
+  technical-frontend:
+      build:
+        context: ./frontend/technicalfront/technical
+        dockerfile: Dockerfile
+      container_name: technicalFrontend
+      ports:
+        - "5177:5177" # Expose Vite default port for technical frontend
+      environment:
+        - HOST=0.0.0.0 # Ensure external access
+      volumes:
+        - ./frontend/technicalfront/technical:/app # Sync local code with container
+        - /app/node_modules # Isolate node_modules from local setup
+      restart: unless-stopped  
+      networks:
+        - app-network
+      command: npm run dev # Run Vite in development mode
+
   # Article Service
   article-service:
     build:
