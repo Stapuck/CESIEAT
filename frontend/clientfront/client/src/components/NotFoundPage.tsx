@@ -7,7 +7,7 @@ function NotFoundPage() {
       <img src={FoodPicture} className="h-100" />
       <h1 className="text-6xl font-bold text-red-600">404</h1>
       <p className="text-xl text-gray-600 ">Oops! Page non trouvée.</p>
-      <Link to="/" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-700">
+      <Link to="/client" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-700">
         Retour à l'accueil
       </Link>
     </div>
