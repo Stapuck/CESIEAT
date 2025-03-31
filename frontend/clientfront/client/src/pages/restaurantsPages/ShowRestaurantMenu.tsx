@@ -4,6 +4,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import useCart from '../../hooks/useCart';
+import { motion } from "motion/react";
+
 
 interface Menu {
     _id: string;
@@ -84,7 +86,7 @@ const ShowRestaurantMenu: React.FC = () => {
                 
                 if (response.data && response.data.length > 0) {
                     // Filtrer les menus par restaurant
-                    console.log("Menus récupérés:", response.data, "Current Restaurant", restaurantId);
+
                     const filteredMenus = response.data.filter(
                         (menu: Menu) => {
                             if (Array.isArray(menu.restaurateur)) {
@@ -95,7 +97,6 @@ const ShowRestaurantMenu: React.FC = () => {
                         }
                     );
 
-                    console.log("Menus filtrés:", filteredMenus);
                     
                     if (filteredMenus.length > 0) {
                         setMenus(filteredMenus);
@@ -207,11 +208,17 @@ const ShowRestaurantMenu: React.FC = () => {
                     src={restaurantImage}
                     alt="Restaurant"
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-transparent bg-opacity-50">
+                  <motion.div initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                    duration: 0.0,
+                    scale: { type: "spring", visualDuration: 0.0, bounce: 0.0 },
+                }}
+                 className="absolute inset-0 flex items-center justify-center bg-transparent bg-opacity-50">
                     <h1 className="text-3xl text-black bg-gradient-left p-3 outline-4 px-5 shadow-2xl font-extrabold">
                         {restaurantName ? `Menus de ${restaurantName}` : 'Menus du restaurant'}
                     </h1>
-                </div>
+                </motion.div>
             </div>
 
             <Link to="/client/create-menu" state={{ restaurantId }}>
