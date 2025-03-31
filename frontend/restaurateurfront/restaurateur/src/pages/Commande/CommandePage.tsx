@@ -135,14 +135,6 @@ const CommandesPage = () => {
       //toast
     }
   };
-  
-
-  useEffect(() => {
-    if (livreur && idlivreur) {
-      console.log(livreur);
-      console.log(idlivreur);
-    }
-  }, [livreur, idlivreur]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
