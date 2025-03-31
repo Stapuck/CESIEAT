@@ -6,6 +6,7 @@ import CreditCard from '../../assets/icons/creditcard.fill.svg';
 import ApplePay from '../../assets/shop/Apple_Pay_Mark_RGB_041619.svg';
 import GooglePay from '../../assets/shop/Google_Pay_Logo.svg';
 import PaypalPay from '../../assets/shop/logo_paypal_paiements_fr.png';
+import axios from 'axios';
 
 const Checkout: React.FC = () => {
     const { cartItems, clearCart, getTotalPrice } = useCart();
@@ -34,17 +35,62 @@ const Checkout: React.FC = () => {
         }
 
         try {
-            // Simuler une requête d'envoi de commande
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Simuler un délai réseau
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Commande validée',
-                text: 'Votre commande a été passée avec succès !',
+            let timerInterval: number;
+            await Swal.fire({
+                title: "Traitement du paiement...",
+                timer: 1000,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading();
+                    const timer = Swal.getPopup()?.querySelector("b");
+                    timerInterval = setInterval(() => {
+                        if (timer) {
+                            timer.textContent = `${Swal.getTimerLeft()}`;
+                        }
+                    }, 100);
+                },
+                willClose: () => {
+                    clearInterval(timerInterval);
+                },
             });
 
-            clearCart(); // Vider le panier après validation
-            navigate('/client/shop'); // Rediriger vers la boutique
+            const groupedByRestaurant = cartItems.reduce((acc, item) => {
+                if (!acc[item.restaurantId]) {
+                    acc[item.restaurantId] = [];
+                }
+                acc[item.restaurantId].push(item);
+                return acc;
+            }, {} as Record<string, typeof cartItems>);
+
+            for (const [restaurantId, items] of Object.entries(groupedByRestaurant)) {
+                const menu = items.map(item => item.id);
+
+                const totalAmount = items.reduce((total, item) => total + item.price * item.quantity, 0);
+
+                const payload = {
+                    client: "67e3dbf470e981b549cd0fde",
+                    restaurant: restaurantId,
+                    livreur: null,
+                    menu,
+                    totalAmount,
+                    status: "En attente",
+                };
+
+                await axios.post('http://localhost:8080/api/commandes', payload, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+            }
+
+            Swal.fire({
+                title: "Paiement réussi !",
+                icon: "success",
+                text: "Votre commande a été passée avec succès !",
+            });
+
+            clearCart();
+            navigate('/client/shop');
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -73,7 +119,7 @@ const Checkout: React.FC = () => {
                     </ul>
                     <p className="text-lg font-bold mt-4">Total : {getTotalPrice().toFixed(2)} €</p>
                 </div>
-                <div className='bg-white p-6 rounded-lg shadow-md'>
+                <div className="bg-white p-6 rounded-lg shadow-md">
                     <h2 className="text-xl font-semibold mb-4">Informations client</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
@@ -85,7 +131,7 @@ const Checkout: React.FC = () => {
                                 value={customerInfo.name}
                                 onChange={handleInputChange}
                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-amber-500 focus:border-amber-500"
-                                required
+                                
                             />
                         </div>
                         <div>
@@ -97,7 +143,7 @@ const Checkout: React.FC = () => {
                                 value={customerInfo.email}
                                 onChange={handleInputChange}
                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-amber-500 focus:border-amber-500"
-                                required
+                                
                             />
                         </div>
                         <div>
@@ -109,28 +155,15 @@ const Checkout: React.FC = () => {
                                 value={customerInfo.address}
                                 onChange={handleInputChange}
                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-amber-500 focus:border-amber-500"
-                                required
+                                
                             />
                         </div>
 
-                        <br />
-
                         <h2 className="text-xl font-semibold mb-4">Mode de paiement</h2>
-
-
-                        <div className=" flex max-h-10 ">
-                            <div className='w-full h-10 hover:cursor-pointer '>
-                                <img className=" h-10 inline-block " src={ApplePay} alt="Icon" />
-
-                            </div>
-                            <div className='w-full h-10 items-center hover:cursor-pointer'>
-                                <img className=" h-10 inline-block " src={GooglePay} alt="Icon" />
-
-                            </div>
-                            <div className='w-full h-10 items-center hover:cursor-pointer '>
-                                <img className=" h-10 " src={PaypalPay} alt="Icon" />
-
-                            </div>
+                        <div className="flex max-h-10 space-x-4">
+                            <img className="h-10 cursor-pointer" src={ApplePay} alt="Apple Pay" />
+                            <img className="h-10 cursor-pointer" src={GooglePay} alt="Google Pay" />
+                            <img className="h-10 cursor-pointer" src={PaypalPay} alt="PayPal" />
                         </div>
 
                         <h2 className="text-xl font-light mb-4">Carte bancaire</h2>
@@ -141,9 +174,9 @@ const Checkout: React.FC = () => {
                                     type="text"
                                     id="cardName"
                                     name="cardName"
-                                    placeholder='Nom et prénom'
+                                    placeholder="Nom et prénom"
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-amber-500 focus:border-amber-500"
-                                    required
+                                    
                                 />
                             </div>
                             <div>
@@ -155,7 +188,7 @@ const Checkout: React.FC = () => {
                                     placeholder="1234 5678 9012 3456"
                                     maxLength={16}
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-amber-500 focus:border-amber-500"
-                                    required
+                                    
                                 />
                             </div>
                             <div>
@@ -167,7 +200,7 @@ const Checkout: React.FC = () => {
                                     placeholder="MM/AA"
                                     maxLength={5}
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-amber-500 focus:border-amber-500"
-                                    required
+                                    
                                 />
                             </div>
                             <div>
@@ -179,17 +212,16 @@ const Checkout: React.FC = () => {
                                     placeholder="123"
                                     maxLength={3}
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-amber-500 focus:border-amber-500"
-                                    required
+                                    
                                 />
                             </div>
                         </div>
-
 
                         <button
                             type="submit"
                             className="bg-amber-500 hover:bg-amber-600 text-white py-3 px-6 rounded-lg font-medium transition-colors w-full"
                         >
-                            <img className=" w-6 inline-block mr-2" src={CreditCard} alt="Icon" />
+                            <img className="w-6 inline-block mr-2" src={CreditCard} alt="Carte bancaire" />
                             Payer la commande
                         </button>
                     </form>

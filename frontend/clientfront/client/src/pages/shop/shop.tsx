@@ -52,7 +52,6 @@ const Shop: React.FC = () => {
             const response = await axios.get<Article>(`http://localhost:8080/api/articles/${articleId}`);
             setArticles((prev) => ({ ...prev, [articleId]: response.data }));
         } catch (error) {
-            console.error(`Error fetching article ${articleId}:`, error);
             setArticles((prev) => ({ ...prev, [articleId]: null }));
         }
     };

@@ -51,15 +51,19 @@ const Restaurant: React.FC<RestaurantProps> = ({ id, name, address, url, onDelet
 
     // Fonction pour naviguer vers la page des menus du restaurant
     const goToRestaurantMenus = () => {
-        if (id) {
-            // Utiliser le state de React Router au lieu de l'ID dans l'URL
-            navigate(`/restaurant-menus`, { 
+        if (id && /^[0-9a-fA-F]{24}$/.test(id)) {
+            // Utiliser un slug dans l'URL basé sur le nom du restaurant pour SEO
+            const restaurantSlug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+            navigate(`/client/restaurant/${restaurantSlug}`, { 
                 state: { 
                     restaurantId: id,
                     restaurantName: name,
                     restaurantImage: url
                 } 
             });
+        } else {
+            console.error("ID de restaurant invalide:", id);
+            toast.error("ID de restaurant invalide. Impossible de naviguer vers les menus.");
         }
     };
 

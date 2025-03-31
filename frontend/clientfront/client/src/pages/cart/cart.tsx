@@ -32,7 +32,6 @@ const ShoppingCart: React.FC = () => {
             const uniqueRestaurantIds = Array.from(
                 new Set(cartItems.flatMap(item => Array.isArray(item.restaurantId) ? item.restaurantId : [item.restaurantId]))
             );
-            console.log('Unique restaurant IDs:', uniqueRestaurantIds);
 
             const names: Record<string, string> = {};
 
@@ -61,7 +60,6 @@ const ShoppingCart: React.FC = () => {
 
     // Gérer la modification de la quantité
     const handleQuantityChange = (item: CartItem, newQuantity: number) => {
-        console.log('handleQuantityChange', item, newQuantity);
         if (newQuantity <= 0) { // Supprimer l'article si la quantité est inférieure ou égale à 0
             removeItemFromCart(item.id);
         } else {
@@ -126,17 +124,11 @@ const ShoppingCart: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-center">
-                                    <button onClick={() => {
-                                        console.log('Decreasing quantity for item:', item);
-                                        handleQuantityChange(item, item.quantity - 1);
-                                    }} className="w-5 rounded-2xl hover:cursor-pointer hover:transform hover:scale-110 transition-transform duration-200">
+                                    <button onClick={() => handleQuantityChange(item, item.quantity - 1)} className="w-5 rounded-2xl hover:cursor-pointer hover:transform hover:scale-110 transition-transform duration-200">
                                         <img className='w-full' src={FaMinus} alt="-" />
                                     </button>
                                     <span className="px-4">{item.quantity}</span>
-                                    <button onClick={() => {
-                                        console.log('Increasing quantity for item:', item);
-                                        handleQuantityChange(item, item.quantity + 1);
-                                    }} className="w-5 rounded-2xl hover:cursor-pointer hover:transform hover:scale-110 transition-transform duration-200">
+                                    <button onClick={() => handleQuantityChange(item, item.quantity + 1)} className="w-5 rounded-2xl hover:cursor-pointer hover:transform hover:scale-110 transition-transform duration-200">
                                         <img className="w-full" src={FaPlus} alt="+" />
                                     </button>
                                     <span className="font-medium text-amber-700 ml-4">{(item.price * item.quantity).toFixed(2)} €</span>

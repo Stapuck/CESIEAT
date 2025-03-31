@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation as useRestaurant, useNavigate } from 'react-router-dom';
+import { Link, useLocation as useRestaurant, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -30,7 +30,8 @@ interface Article{
 const ShowRestaurantMenu: React.FC = () => {
     const restaurant = useRestaurant();
     const navigate = useNavigate();
-    const state = restaurant.state as RestaurantState;
+    const { slug } = useParams<{ slug: string }>();
+    const state = restaurant.state as RestaurantState | null;
 
     const [menus, setMenus] = useState<Menu[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -39,20 +40,23 @@ const ShowRestaurantMenu: React.FC = () => {
     const [articles, setArticles] = useState<Article[]>([]);
 
     useEffect(() => {
+        // Si on n'a pas d'état (accès direct à l'URL), afficher un message et rediriger
         if (!state || !state.restaurantId) {
-            toast.error("Information de restaurant manquante");
-            navigate('/');
+            toast.error("Information de restaurant manquante. Redirection vers l'accueil...");
+            navigate('/client/');
             return;
         }
 
         if (state.restaurantName) {
             setRestaurantName(state.restaurantName);
+            // Mettre à jour le titre de la page pour SEO
+            document.title = `Menus de ${state.restaurantName} | CESIEAT`;
         }
 
         if (state.restaurantImage) {
             setRestaurantImage(state.restaurantImage);
         }
-    }, [state, navigate]);
+    }, [state, navigate, slug]);
 
     useEffect(() => {
         const fetchMenus = async () => {
@@ -61,32 +65,41 @@ const ShowRestaurantMenu: React.FC = () => {
             try {
                 setLoading(true);
 
-                const response = await axios.post(`http://localhost:8080/api/menus/restaurant`, {
-                    restaurantId: state.restaurantId
-                });
+                if (!/^[0-9a-fA-F]{24}$/.test(state.restaurantId)) {
+                    throw new Error("ID de restaurant invalide");
+                }
+                console.log("Fetching menus for restaurateur ID:", state.restaurantId);
 
-                setMenus(response.data);
+                // Utiliser directement l'ID comme paramètre de requête pour simplicité maximale
+                const response = await axios.get(`http://localhost:8080/api/menus/byRestaurant?id=${state.restaurantId}`);
+                console.log("Réponse du backend:", response);
 
-                if (!state.restaurantName) {
-                    try {
-                        const restaurantResponse = await axios.post(`http://localhost:8080/api/restaurateurs/details`, {
-                            id: state.restaurantId
-                        });
-                        setRestaurantName(restaurantResponse.data.name);
-                    } catch (error) {
-                        console.error("Erreur lors de la récupération des détails du restaurant:", error);
-                    }
+                if (response.data && response.data.length > 0) {
+                    console.log("Menus fetched successfully:", response.data);
+                    setMenus(response.data); 
+                } else {
+                    console.warn("Aucun menu trouvé pour ce restaurateur. Réponse:", response.data);
+                    toast.warn("Aucun menu disponible pour ce restaurateur.");
                 }
             } catch (error) {
-                console.error("Erreur lors de la récupération des menus:", error);
-                toast.error("Impossible de charger les menus du restaurant");
+                if (axios.isAxiosError(error)) {
+                    console.error("Erreur Axios:", error.response?.data);
+                    if (error.response?.status === 404) {
+                        toast.error("Menus introuvables pour ce restaurateur.");
+                    } else {
+                        toast.error("Erreur lors de la récupération des menus.");
+                    }
+                } else {
+                    console.error("Erreur lors de la récupération des menus:", error);
+                    toast.error("Impossible de charger les menus du restaurateur.");
+                }
             } finally {
                 setLoading(false);
             }
         };
 
         fetchMenus();
-    }, [state]);
+    }, [state, navigate]); // Dépendance sur `state` pour recharger les menus si l'état change
 
     const fetchArticleName = async (id: string) => {
         try {
@@ -141,7 +154,7 @@ const ShowRestaurantMenu: React.FC = () => {
                 </div>
             </div>
 
-            <Link to="/create-menu">
+            <Link to="/client/create-menu">
                 <button className="bg-text-search-color text-white px-4 py-2 rounded-lg ml-2 mb-7 hover:bg-blue-700 transition duration-300">
                     Ajouter un menu
                 </button>
