@@ -8,7 +8,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // Icône personnalisée pour les restaurants
 const customIcon = new L.Icon({
@@ -34,6 +34,17 @@ interface IRestaurant {
     url: string;
 }
 
+interface RestaurantProps {
+    id?: string;
+    name: string;
+    address: string;
+    ville: string;
+    phone: string;
+    url: string;
+    position: [number, number];
+    onDelete?: () => void; // Pour rafraîchir la liste après suppression
+}
+
 const Search = () => {
     const [restaurants, setRestaurants] = useState<IRestaurant[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +54,25 @@ const Search = () => {
     const [loading, setLoading] = useState(false);
     const [zoom, setZoom] = useState(5);
     const searchQueryRef = useRef("");
+    const navigate = useNavigate();
+
+    // Fonction pour naviguer vers la page des menus du restaurant
+    const goToRestaurantMenus = (id: string, name: string, url: string) => {
+        if (id && /^[0-9a-fA-F]{24}$/.test(id)) {
+            // Utiliser un slug dans l'URL basé sur le nom du restaurant pour SEO
+            const restaurantSlug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+            navigate(`/client/restaurant/${restaurantSlug}`, {
+                state: {
+                    restaurantId: id,
+                    restaurantName: name,
+                    restaurantImage: url
+                }
+            });
+        } else {
+            console.error("ID de restaurant invalide:", id);
+            toast.error("ID de restaurant invalide. Impossible de naviguer vers les menus.");
+        }
+    };
 
     const getRestaurants = async () => {
         try {
@@ -192,6 +222,17 @@ const Search = () => {
                                     style={{ backgroundImage: `url(${restaurant.url})` }}
                                 ></div>
                                 <p className="my-0">{restaurant.name}</p>
+
+                                <button
+                                    className=" w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors hover:cursor-pointer"
+                                    onClick={(e) => {
+                                        e.preventDefault(); // Empêcher toute navigation par défaut
+                                        e.stopPropagation(); // Arrêter la propagation de l'événement
+                                        goToRestaurantMenus(restaurant._id, restaurant.name, restaurant.url); // Passer les informations du restaurant
+                                    }}
+                                >
+                                    Voir les menus
+                                </button>
 
                             </Popup>
                         </Marker>
