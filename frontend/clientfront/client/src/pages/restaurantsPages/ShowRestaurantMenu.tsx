@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation as useRestaurant, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
+import useCart from '../../hooks/useCart';
 
 interface Menu {
     _id: string;
     name: string;
     price: number;
     articles: any[];
-    restaurant: string;
+    restaurateur: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -19,25 +21,28 @@ interface RestaurantState {
     restaurantImage?: string;
 }
 
-interface Article{
+interface Article {
     _id: string;
     name: string;
     price: number;
     image: string;
+    type?: string;
+    isInStock?: boolean;
 }
-
 
 const ShowRestaurantMenu: React.FC = () => {
     const restaurant = useRestaurant();
     const navigate = useNavigate();
     const { slug } = useParams<{ slug: string }>();
     const state = restaurant.state as RestaurantState | null;
+    const { addItemToCart } = useCart();
 
     const [menus, setMenus] = useState<Menu[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [restaurantName, setRestaurantName] = useState<string>('');
     const [restaurantImage, setRestaurantImage] = useState<string>('');
-    const [articles, setArticles] = useState<Article[]>([]);
+    const [articles, setArticles] = useState<Record<string, Article>>({});
+    const [restaurantId, setRestaurantId] = useState<string>('');
 
     useEffect(() => {
         // Si on n'a pas d'état (accès direct à l'URL), afficher un message et rediriger
@@ -47,10 +52,16 @@ const ShowRestaurantMenu: React.FC = () => {
             return;
         }
 
+        // Stocker l'ID du restaurant dans l'état local seulement si c'est une valeur valide
+        if (state.restaurantId && /^[0-9a-fA-F]{24}$/.test(state.restaurantId)) {
+            setRestaurantId(state.restaurantId);
+        }
+
         if (state.restaurantName) {
             setRestaurantName(state.restaurantName);
             // Mettre à jour le titre de la page pour SEO
             document.title = `Menus de ${state.restaurantName} | CESIEAT`;
+
         }
 
         if (state.restaurantImage) {
@@ -58,78 +69,127 @@ const ShowRestaurantMenu: React.FC = () => {
         }
     }, [state, navigate, slug]);
 
+    // Séparons l'effet de chargement des menus pour éviter les cycles de re-rendu
     useEffect(() => {
         const fetchMenus = async () => {
-            if (!state || !state.restaurantId) return;
-
+            if (!restaurantId || !(/^[0-9a-fA-F]{24}$/.test(restaurantId))) {
+                return; // N'exécute pas la requête si on n'a pas d'ID valide
+            }
+            
             try {
                 setLoading(true);
-
-                if (!/^[0-9a-fA-F]{24}$/.test(state.restaurantId)) {
-                    throw new Error("ID de restaurant invalide");
-                }
-                console.log("Fetching menus for restaurateur ID:", state.restaurantId);
-
-                // Utiliser directement l'ID comme paramètre de requête pour simplicité maximale
-                const response = await axios.get(`http://localhost:8080/api/menus/byRestaurant?id=${state.restaurantId}`);
-                console.log("Réponse du backend:", response);
-
+                
+                // Récupérer tous les menus
+                const response = await axios.get('http://localhost:8080/api/menus');
+                
                 if (response.data && response.data.length > 0) {
-                    console.log("Menus fetched successfully:", response.data);
-                    setMenus(response.data); 
+                    // Filtrer les menus par restaurant
+                    console.log("Menus récupérés:", response.data, "Current Restaurant", restaurantId);
+                    const filteredMenus = response.data.filter(
+                        (menu: Menu) => {
+                            if (Array.isArray(menu.restaurateur)) {
+                                return menu.restaurateur.includes(restaurantId);
+                            } else {
+                                return menu.restaurateur === restaurantId;
+                            }
+                        }
+                    );
+
+                    console.log("Menus filtrés:", filteredMenus);
+                    
+                    if (filteredMenus.length > 0) {
+                        setMenus(filteredMenus);
+                    } else {
+                        toast.warn("Aucun menu disponible pour ce restaurateur.");
+                        setMenus([]);
+                    }
                 } else {
-                    console.warn("Aucun menu trouvé pour ce restaurateur. Réponse:", response.data);
-                    toast.warn("Aucun menu disponible pour ce restaurateur.");
+                    toast.warn("Aucun menu disponible.");
+                    setMenus([]);
                 }
             } catch (error) {
                 if (axios.isAxiosError(error)) {
-                    console.error("Erreur Axios:", error.response?.data);
-                    if (error.response?.status === 404) {
-                        toast.error("Menus introuvables pour ce restaurateur.");
-                    } else {
-                        toast.error("Erreur lors de la récupération des menus.");
-                    }
+                    toast.error("Erreur lors de la récupération des menus.");
                 } else {
-                    console.error("Erreur lors de la récupération des menus:", error);
-                    toast.error("Impossible de charger les menus du restaurateur.");
+                    toast.error("Impossible de charger les menus.");
                 }
+                setMenus([]);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchMenus();
-    }, [state, navigate]); // Dépendance sur `state` pour recharger les menus si l'état change
+    }, [restaurantId]); // On ne dépend que de l'ID du restaurant
 
-    const fetchArticleName = async (id: string) => {
+    const fetchArticleDetails = async (id: string) => {
+        if (articles[id]) return;
+        
         try {
             const response = await axios.get(`http://localhost:8080/api/articles/${id}`);
-
-            setArticles((prev) => [...prev, response.data]);
-
-            return response.data.name;
+            setArticles(prev => ({
+                ...prev,
+                [id]: {
+                    ...response.data,
+                    isInStock: response.data.isInStock ?? true,
+                    type: response.data.type ?? 'Non spécifié'
+                }
+            }));
+            return response.data;
         } catch (error) {
-            console.error(`Erreur lors de la récupération de l'article ${id}:`, error);
-            return 'Article inconnu';
+            return null;
         }
     };
 
     useEffect(() => {
-        const fetchArticles = async () => {
-            const articlePromises = menus.flatMap((menu) =>
-                menu.articles.map(async (_id: string) => {
-                    if (!articles.some((article) => article._id === _id)) {
-                        await fetchArticleName(_id);
-
-                    }
-                })
-            );
-
-            await Promise.all(articlePromises);
+        // Préchargement des articles
+        const fetchAllArticles = async () => {
+            const articleIds = menus.flatMap(menu => 
+                menu.articles.map(articleId => articleId));
+            
+            const uniqueArticleIds = [...new Set(articleIds)];
+            
+            for (const articleId of uniqueArticleIds) {
+                if (!articles[articleId]) {
+                    await fetchArticleDetails(articleId);
+                }
+            }
         };
 
-        fetchArticles();
+        if (menus.length > 0) {
+            fetchAllArticles();
+        }
     }, [menus]);
+
+    const handleAddToCart = (menu: Menu) => {
+        if (!menu._id || !menu.restaurateur) {
+            toast.error("Impossible d'ajouter ce menu au panier: informations manquantes");
+            return;
+        }
+
+        try {
+            const itemToAdd = {
+                id: menu._id,
+                name: menu.name,
+                price: menu.price,
+                quantity: 1,
+                restaurantId: menu.restaurateur,
+                image: articles[menu.articles[0]]?.image || '',
+            };
+
+            addItemToCart(itemToAdd);
+
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: `${menu.name} a été ajouté à votre panier`,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } catch (error) {
+            toast.error("Impossible d'ajouter ce menu au panier");
+        }
+    };
 
     if (loading) {
         return (
@@ -141,7 +201,7 @@ const ShowRestaurantMenu: React.FC = () => {
 
     return (
         <div className="container mx-auto">
-            <div className="relative mb-6 w-full ">
+            <div className="relative mb-6 w-full">
                 <img
                     className="bg-cover w-full h-100 object-cover bg-center"
                     src={restaurantImage}
@@ -154,37 +214,72 @@ const ShowRestaurantMenu: React.FC = () => {
                 </div>
             </div>
 
-            <Link to="/client/create-menu">
+            <Link to="/client/create-menu" state={{ restaurantId }}>
                 <button className="bg-text-search-color text-white px-4 py-2 rounded-lg ml-2 mb-7 hover:bg-blue-700 transition duration-300">
                     Ajouter un menu
                 </button>
             </Link>
 
             {menus.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 z-1 p-3 gap-6 rounded-2xl">
-                    {menus.map((menu) => (
-                        <div key={menu._id} className="rounded-lg shadow-md bg-white text-black overflow-hidden relative h-80">
-                            <div className="p-6 relative z-20 h-full flex flex-col">
-                                <h2 className="text-2xl font-bold mb-2">{menu.name}</h2>
-                                <p className="mb-3 text-lg">Prix: {menu.price}€</p>
+                <div className="container mx-auto py-8 px-4">
+                    <h1 className="text-3xl font-bold mb-6">Nos menus</h1>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {menus.map((menu) => (
+                            <div key={menu._id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                                <div className="p-4">
+                                    <h2 className="text-xl font-semibold mb-3">{menu.name}</h2>
+                                    
+                                    <div className="mb-4">
+                                        <h3 className="font-medium mb-2">Contenu du menu:</h3>
+                                        <ul className="divide-y divide-gray-200">
+                                            {menu.articles && menu.articles.length > 0 ? (
+                                                menu.articles.map((articleId, index) => {
+                                                    const articleDetails = articles[articleId];
+                                                    if (!articleDetails) {
+                                                        fetchArticleDetails(articleId);
+                                                    }
 
-                                <h3 className="font-semibold mt-4 mb-2">Articles inclus:</h3>
-                                {menu.articles && menu.articles.length > 0 ? (
-                                    <ul className="list-disc list-inside">
-                                        {menu.articles.map((_id: string) => (
-                                            <li key={_id} className="mb-1">
-                                                {articles.find((article) => article._id === _id)?.name || 'Chargement...'}
-                                                <img src={articles.find((article) => article._id === _id)?.image} alt={articles.find((article) => article._id === _id)?.name} className="w-10 h-10 rounded-full ml-2" />
-        
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p className="text-black italic">Aucun article dans ce menu</p>
-                                )}
+                                                    return (
+                                                        <li key={`${menu._id}-${articleId}-${index}`} className="py-2">
+                                                            <div className="flex flex-col md:flex-row">
+                                                                {articleDetails?.image && (
+                                                                    <img
+                                                                        src={articleDetails.image}
+                                                                        alt={articleDetails.name || ""}
+                                                                        className="w-20 h-20 object-cover rounded mr-3 mb-2 md:mb-0"
+                                                                    />
+                                                                )}
+                                                                <div>
+
+                                                                    <p className="font-medium">{articleDetails?.name || 'Chargement...'}</p>
+                                                                    <p className="text-sm text-gray-600">{articleDetails?.type || 'Chargement...'}</p>
+                                                                    <p className="text-sm">{articleDetails?.isInStock ? 'En stock' : 'Rupture de stock'}</p>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    );
+                                                })
+                                            ) : (
+                                                <li key={`${menu._id}-no-articles`}>Aucun article disponible pour ce menu.</li>
+                                            )}
+                                        </ul>
+                                    </div>
+                                    
+                                    <div className="flex justify-between items-center pt-3 border-t">
+                                        <div>
+                                            <p className="text-lg font-bold text-amber-600">{menu.price.toFixed(2)} €</p>
+                                        </div>
+                                        <button
+                                            onClick={() => handleAddToCart(menu)}
+                                            className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition-colors"
+                                        >
+                                            Ajouter au panier
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             ) : (
                 <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">

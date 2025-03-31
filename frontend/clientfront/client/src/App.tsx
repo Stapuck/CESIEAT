@@ -21,7 +21,6 @@ import LoginPage from "./pages/LoginPage";
 import SigninPage from "./pages/SigninPage";
 import ShowRestaurantMenu from "./pages/restaurantsPages/ShowRestaurantMenu";
 import Cart from "./pages/cart/cart";
-import Shop from "./pages/shop/shop";
 import Checkout from "./pages/checkout/checkout";
 
 function App() {
@@ -46,7 +45,6 @@ function App() {
 
             {/* Routes liées au panier */}
             <Route path="/client/cart" element={<Cart />} />
-            <Route path="/client/shop" element={<Shop />} />
             <Route path="/client/checkout" element={<Checkout />} />
 
             {/* Routes d'authentification */}

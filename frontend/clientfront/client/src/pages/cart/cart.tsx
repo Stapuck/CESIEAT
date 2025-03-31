@@ -106,7 +106,7 @@ const ShoppingCart: React.FC = () => {
                     </div>
                     <h2 className="text-2xl font-semibold mb-4">Votre panier est vide</h2>
                     <p className="text-gray-600 mb-8">Ajoutez des articles pour continuer vos achats !</p>
-                    <Link to="/client/shop" className="bg-amber-500 hover:bg-amber-600 text-white py-3 px-6 rounded-full font-medium transition-colors">Explorer les produits</Link>
+                    <Link to="/client" className="bg-amber-500 hover:bg-amber-600 text-white py-3 px-6 rounded-full font-medium transition-colors">Explorer les produits</Link>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
