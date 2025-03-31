@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import CommandeCard from "./CommandeCard";
 import {
@@ -104,7 +104,7 @@ const CommandesPage = () => {
       console.log("Code livreur :", codeLivreur);
   
       // Récupération du livreur
-      const response = await axios.get(`http://localhost:3004/api/livreurs/codelivreur/${codeLivreur}`);
+      const response = await axios.get(`http://localhost:8080/api/livreurs/codelivreur/${codeLivreur}`);
       const livreur = response.data;
       setLivreur(livreur);
       setIdLivreur(livreur._id);
@@ -140,12 +140,12 @@ const CommandesPage = () => {
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="flex justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Gestion des Commandes</h1>
-        <Link to='/historique' className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        <Link to='/restaurateur/historique' className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
           Historique des commandes
         </Link>
       </div>
 
-      <Link to='/create-commande' className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+      <Link to='/restaurateur/create-commande' className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
           Create (provisoir)
         </Link>
 

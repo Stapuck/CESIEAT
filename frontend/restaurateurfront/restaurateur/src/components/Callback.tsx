@@ -25,6 +25,7 @@ const Callback = ({
           if (user) {
             setAuth(true);
             setUserInfo(user);
+           
           } else {
             setAuth(false);
           }
@@ -41,6 +42,7 @@ const Callback = ({
           if (user) {
             setAuth(true);
             setUserInfo(user);
+            
             
           } else {
             setAuth(false);
@@ -60,6 +62,8 @@ const Callback = ({
         <p>Name: {userInfo.profile.name}</p>
         <p>Email: {userInfo.profile.email}</p>
         <p>Email Verified: {userInfo.profile.email_verified ? "Yes" : "No"}</p>
+        <p>sub: {userInfo.sub}</p>
+
         <p>
           Roles:{" "}
           {JSON.stringify(

@@ -53,9 +53,9 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const [codeLivreur, setcodeLivreur] = useState<string>("");
 
   const GetClientById = async () => {
-    try { // todo changer les ports en 8080. 
+    try { 
       const response = await axios.get(
-        `http://localhost:3000/api/clients/${commande.client}`
+        `http://localhost:8080/api/clients/${commande.client}`
       );
       setClient(response.data);
     } catch (error) {
@@ -66,7 +66,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetLivreurById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3004/api/livreurs/${commande.livreur}`
+        `http://localhost:8080/api/livreurs/${commande.livreur}`
       );
       setLivreur(response.data);
     } catch (error) {

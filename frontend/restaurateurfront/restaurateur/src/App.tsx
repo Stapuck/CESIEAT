@@ -32,8 +32,8 @@ function App() {
   const config: ZitadelConfig = {
     authority: "https://instance1-el5q1i.zitadel.cloud/",
     client_id: "312751992336403117",
-    redirect_uri: "http://localhost:5173/callback",
-    post_logout_redirect_uri: "http://localhost:5173/",
+    redirect_uri: "http://localhost:5174/restaurateur/callback",
+    post_logout_redirect_uri: "http://localhost:5174/restaurateur/home",
   };
 
   const zitadel = createZitadelAuth(config);
@@ -73,7 +73,7 @@ function App() {
       <div className="bg-white flex flex-col h-screen">
         {/* Navbar */}
         <nav className="bg-gray-800 flex items-center justify-between p-4">
-          <Link to="/home" className="text-white text-2xl font-bold">
+          <Link to="/restaurateur/home" className="text-white text-2xl font-bold">
             Restaurateur Front
           </Link>
 
@@ -97,8 +97,8 @@ function App() {
               <ul>
                 <li>
                   <Link
-                    to="restaurateur/account"
-                    className={getLinkClassName("restaurateur/account")}
+                    to="/restaurateur/account"
+                    className={getLinkClassName("/restaurateur/account")}
                   >
                     <FaUser /> <span>Mon Compte</span>{" "}
                     {/* {isSidebarOpen ? ('') : (<span>Mon Compte</span>)} */}
@@ -106,32 +106,32 @@ function App() {
                 </li>
                 <li>
                   <Link
-                    to="restaurateur/menu"
-                    className={getLinkClassName("restaurateur/menu")}
+                    to="/restaurateur/menu"
+                    className={getLinkClassName("/restaurateur/menu")}
                   >
                     <FaList /> <span>Mes Menu</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="restaurateur/article"
-                    className={getLinkClassName("restaurateur/article")}
+                    to="/restaurateur/article"
+                    className={getLinkClassName("/restaurateur/article")}
                   >
                     <FaFileAlt /> <span>Mes Articles</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="restaurateur/commande"
-                    className={getLinkClassName("restaurateur/commande")}
+                    to="/restaurateur/commande"
+                    className={getLinkClassName("/restaurateur/commande")}
                   >
                     <FaShoppingCart /> <span>Mes Commandes</span>
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="restaurateur/historique"
-                    className={getLinkClassName("restaurateur/historique")}
+                    to="/restaurateur/historique"
+                    className={getLinkClassName("/restaurateur/historique")}
                   >
                     <FaHistory /> <span>Mon Historique</span>
                   </Link>
@@ -174,7 +174,7 @@ function App() {
           <div className="flex-1 p-4 overflow-auto">
             <Routes>
               <Route
-                path="restaurateur/"
+                path="restaurateur/login"
                 element={
                   <Login authenticated={authenticated} handleLogin={login} />
                 }

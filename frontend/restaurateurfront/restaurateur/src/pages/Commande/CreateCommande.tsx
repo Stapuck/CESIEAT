@@ -94,7 +94,7 @@ const CreateCommande = () => {
 
             toast.success("Commande créée avec succès");
             setIsLoading(false);
-            navigate("/commande");
+            navigate("/restaurateur/commande");
         } catch (error: any) {
             toast.error(error.message);
             setIsLoading(false);
