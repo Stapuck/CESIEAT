@@ -2,6 +2,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CommandeCard from "./CommandeCard";
+import {
+  useQuery,
+} from "@tanstack/react-query";
 
 interface ICommande {
   _id: string;
@@ -26,6 +29,20 @@ interface ILivreur {
 }
 
 const CommandesPage = () => {
+  
+  const [intervalMs, setIntervalMs] = useState(3000);
+
+  const { status, data, error, isFetching } = useQuery({
+    queryKey: ["todos"],
+    queryFn: async (): Promise<Array<ICommande>> => {
+      // const response = await fetch("http://localhost:3003/api/commandes");
+      const response = await fetch("http://localhost:8080/api/commandes");
+      return await response.json();
+    },
+    // Refetch the data every second
+    refetchInterval: intervalMs,
+  });
+
   const [commandes, setCommandes] = useState<ICommande[]>([]);
   const [livreur, setLivreur] = useState<ILivreur>();
   const [idlivreur, setIdLivreur]= useState();
@@ -39,30 +56,15 @@ const CommandesPage = () => {
   const [showLivreeCommande, setShowLivreeCommande] = useState(true);
   const [showAnnuleeCommande, setShowAnnuleeCommande] = useState(true);
 
-  const getCommandes = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get("http://localhost:8080/api/commandes");
-      setCommandes(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getCommandes();
-  }, []);
-
-
-
+  if (status === "pending") return <h1>Loading...</h1>;
+  if (status === "error") return <span>Error: {error.message}</span>;
   // Filtrer les commandes par statut
-  const nouvellesCommandes = commandes.filter((commande) => commande.status === "En attente");
-  const enPreparationCommandes = commandes.filter((commande) => commande.status === "Préparation");
-  const enAttenteDeRecupCommandes = commandes.filter((commande) => commande.status === "Prêt");
-  const enLivraisonCommandes = commandes.filter((commande) => commande.status === "En livraison");
-  const LivreeCommande = commandes.filter((commande) => commande.status === "Livrée");
-  const AnnuleeCommande = commandes.filter((commande) => commande.status === "Annulée");
+  const nouvellesCommandes = data.filter((commande) => commande.status === "En attente");
+  const enPreparationCommandes = data.filter((commande) => commande.status === "Préparation");
+  const enAttenteDeRecupCommandes = data.filter((commande) => commande.status === "Prêt");
+  const enLivraisonCommandes = data.filter((commande) => commande.status === "En livraison");
+  const LivreeCommande = data.filter((commande) => commande.status === "Livrée");
+  const AnnuleeCommande = data.filter((commande) => commande.status === "Annulée");
 
   const handleValidation = (commande: ICommande) => {
     console.log("Commande validée:", commande._id);
