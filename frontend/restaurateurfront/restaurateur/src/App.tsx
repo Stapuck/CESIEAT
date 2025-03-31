@@ -25,6 +25,8 @@ import HistoriqueCommande from "./pages/Commande/HistoriqueCommande";
 import CommandePage from "./pages/Commande/CommandePage";
 import CreateCommande from "./pages/Commande/CreateCommande";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Test from "./components/test";
 
 const queryClient = new QueryClient();
 
@@ -73,7 +75,10 @@ function App() {
       <div className="bg-white flex flex-col h-screen">
         {/* Navbar */}
         <nav className="bg-gray-800 flex items-center justify-between p-4">
-          <Link to="/restaurateur/home" className="text-white text-2xl font-bold">
+          <Link
+            to="/restaurateur/home"
+            className="text-white text-2xl font-bold"
+          >
             Restaurateur Front
           </Link>
 
@@ -100,8 +105,7 @@ function App() {
                     to="/restaurateur/account"
                     className={getLinkClassName("/restaurateur/account")}
                   >
-                    <FaUser /> <span>Mon Compte</span>{" "}
-                    {/* {isSidebarOpen ? ('') : (<span>Mon Compte</span>)} */}
+                    <FaUser /> <span>Mon Compte</span>
                   </Link>
                 </li>
                 <li>
@@ -109,7 +113,7 @@ function App() {
                     to="/restaurateur/menu"
                     className={getLinkClassName("/restaurateur/menu")}
                   >
-                    <FaList /> <span>Mes Menu</span>
+                    <FaList /> <span>Mes Menus</span>
                   </Link>
                 </li>
                 <li>
@@ -137,11 +141,30 @@ function App() {
                   </Link>
                 </li>
               </ul>
+
+              {/* Section pour les boutons Login/Logout */}
+              <div className="mt-auto pt-4 border-t border-gray-700">
+                {authenticated === false && (
+                  <button
+                    onClick={login}
+                    className="flex items-center space-x-2 py-3 px-4 w-full hover:bg-gray-700 rounded text-white font-semibold"
+                  >
+                    <FaUser /> <span>Se connecter</span>
+                  </button>
+                )}
+                {authenticated === true && (
+                  <button
+                    onClick={signout}
+                    className="flex items-center space-x-2 py-3 px-4 w-full hover:bg-gray-700 rounded text-white font-semibold"
+                  >
+                    <FaUser /> <span>Se déconnecter</span>
+                  </button>
+                )}
+              </div>
             </nav>
           </div>
 
-          {
-            /* Mobile Sidebar (hidden on large screens)
+          {/* Mobile Sidebar (hidden on large screens)
         <div
           className={`lg:hidden w-16 bg-gray-800 text-white flex flex-col items-center space-y-4 py-8 transition-all duration-300 ${
             isSidebarOpen ? 'block' : 'hidden'
@@ -167,8 +190,7 @@ function App() {
             <FaHistory size={24} />
             <span className="text-xs">Historique</span>
           </Link>
-        </div> */
-          }
+        </div> */}
 
           {/* Main Content */}
           <div className="flex-1 p-4 overflow-auto">
@@ -192,44 +214,69 @@ function App() {
               />
               <Route path="restaurateur/home" element={<HomePage />} />
               <Route path="/restaurateur/" element={<HomePage />} />
-              {/* article */}
               <Route
-                path="restaurateur/create-article"
-                element={<CreateArticle />}
-              />
+                  path="restaurateur/test"
+                  element={<Test/>}
+                />
               <Route
-                path="restaurateur/edit-article/:id"
-                element={<EditArticle />}
-              />
-              {/* menu */}
-              <Route path="restaurateur/create-menu" element={<CreateMenu />} />
-              <Route path="restaurateur/edit-menu/:id" element={<EditMenu />} />
-
-              {/* provisoir */}
-              <Route
-                path="restaurateur/create-commande"
-                element={<CreateCommande />}
-              />
-
-              <Route
-                path="restaurateur/account"
                 element={
-                  <Account
+                  <ProtectedRoute
                     authenticated={authenticated}
                     setAuth={setAuthenticated}
+                    handleLogout={signout}
                     userManager={zitadel.userManager}
                   />
                 }
-              />
+              >
+               
+
+                <Route
+                  path="restaurateur/create-article"
+                  element={<CreateArticle />}
+                />
+                <Route
+                  path="restaurateur/edit-article/:id"
+                  element={<EditArticle />}
+                />
+                <Route
+                  path="restaurateur/create-menu"
+                  element={<CreateMenu />}
+                />
+                <Route
+                  path="restaurateur/edit-menu/:id"
+                  element={<EditMenu />}
+                />
+
+                <Route
+                  path="restaurateur/create-commande"
+                  element={<CreateCommande />}
+                />
+
+                <Route
+                  path="restaurateur/account"
+                  element={
+                    <Account
+                      authenticated={authenticated}
+                      setAuth={setAuthenticated}
+                      userManager={zitadel.userManager}
+                    />
+                  }
+                />
+
+                <Route path="restaurateur/menu" element={<MenuPage />} />
+                <Route path="restaurateur/article" element={<ArticlePage />} />
+                <Route
+                  path="restaurateur/commande"
+                  element={<CommandePage />}
+                />
+                <Route
+                  path="restaurateur/historique"
+                  element={<HistoriqueCommande />}
+                />
+              </Route>
+
               <Route path="restaurateur/404" element={<NotFoundPage />} />
               <Route path="*" element={<NotFoundPage />} />
-              <Route path="restaurateur/menu" element={<MenuPage />} />
-              <Route path="restaurateur/article" element={<ArticlePage />} />
-              <Route path="restaurateur/commande" element={<CommandePage />} />
-              <Route
-                path="restaurateur/historique"
-                element={<HistoriqueCommande />}
-              />
             </Routes>
           </div>
         </div>
