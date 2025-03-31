@@ -92,6 +92,7 @@ const CreateMenu = () => {
             toast.error("Veuillez remplir tous les champs et sélectionner au moins un article");
             return;
         }
+        console.log("Données du menu à créer:", { name, price, selectedArticles, restaurantId });
         
         try {
             setIsLoading(true);
@@ -99,7 +100,7 @@ const CreateMenu = () => {
                 name,
                 price,
                 articles: selectedArticles,
-                restaurant: restaurantId
+                restaurateur: restaurantId
             });
            
             Swal.fire({
@@ -110,7 +111,7 @@ const CreateMenu = () => {
             });
             
             setIsLoading(false);
-            navigate("/");
+            navigate("/client");
         } catch (error: any) {
             toast.error(`Erreur: ${error.message}`);
             setIsLoading(false);
@@ -202,7 +203,7 @@ const CreateMenu = () => {
                     <div className="flex gap-2 pt-3">
                         <button 
                             type="button" 
-                            onClick={() => navigate('/')} 
+                            onClick={() => navigate('/client')} 
                             className="block w-full bg-gray-500 text-white rounded-sm px-4 py-2 font-bold hover:bg-gray-600 hover:cursor-pointer"
                         >
                             Annuler
