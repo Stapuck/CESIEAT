@@ -62,7 +62,7 @@ function App() {
     <div className="bg-white flex flex-col h-screen">
       {/* Navbar */}
       <nav className="bg-gray-800 flex items-center justify-between p-4">
-        <Link to="/home" className="text-white text-2xl font-bold">
+        <Link to="restaurateur/home" className="text-white text-2xl font-bold">
           Restaurateur Front
         </Link>
         
@@ -146,7 +146,7 @@ function App() {
         {/* Main Content */}
         <div className="flex-1 p-4 overflow-auto">
           <Routes>
-            <Route path="restaurateur/" element={<Login authenticated={authenticated} handleLogin={login} />} />
+            <Route path="restaurateur/login" element={<Login authenticated={authenticated} handleLogin={login} />} />
             <Route path="restaurateur/callback" element={<Callback authenticated={authenticated} setAuth={setAuthenticated} handleLogout={signout} userManager={zitadel.userManager} />} />
             <Route path="restaurateur/home" element={<HomePage />} />
             <Route path="/restaurateur/" element={<HomePage />} />

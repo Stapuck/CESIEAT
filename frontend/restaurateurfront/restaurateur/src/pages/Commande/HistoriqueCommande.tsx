@@ -54,6 +54,9 @@ const HistoriqueCommande = () => {
   const [endDate, setEndDate] = useState<string>('');
   const [filterByDate, setFilterByDate] = useState<boolean>(false);  // State to toggle between all orders and date filter
 
+  const [filterByAll, setFilterByAll] = useState<boolean>(true);  // Show all orders by default
+  const [filterByToday, setFilterByToday] = useState<boolean>(false);  // Filter for today's orders only
+
   const getCommandes = async () => {
     try {
       setIsLoading(true);
@@ -114,8 +117,27 @@ const HistoriqueCommande = () => {
     return createdAt >= start && createdAt <= end;
   });
 
-  // Determine the orders to show based on filterByDate state
-  const ordersToDisplay = filterByDate ? filteredCommandes : commandes;
+  // Filter for today's orders
+  const filteredTodayCommandes = commandes.filter(commande => {
+    const createdAt = new Date(commande.createdAt);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const startOfDay = today;
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return createdAt >= startOfDay && createdAt <= endOfDay;
+  });
+
+  // Determine the orders to show based on different filter states
+  let ordersToDisplay: ICommande[] = [];
+  if (filterByAll) {
+    ordersToDisplay = commandes;
+  } else if (filterByToday) {
+    ordersToDisplay = filteredTodayCommandes;
+  } else if (filterByDate) {
+    ordersToDisplay = filteredCommandes;
+  }
 
   // Calculate the sum of total amounts for displayed orders
   const totalSum = ordersToDisplay.reduce((sum, commande) => sum + commande.totalAmount, 0);
@@ -124,16 +146,26 @@ const HistoriqueCommande = () => {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Historique des Commandes ({ordersToDisplay.length})</h1>
 
-      {/* Toggle Filter Mode (All Orders or Date Filter) */}
+      {/* Filter Buttons */}
       <div className="mb-4">
-        <label className="mr-2">Filter By Date:</label>
-        <input
-          type="checkbox"
-          checked={filterByDate}
-          onChange={() => setFilterByDate(prev => !prev)}
-          className="mr-2"
-        />
-        <span>{filterByDate ? 'Enabled' : 'Disabled'}</span>
+        <button
+          className={`mr-4 px-4 py-2 ${filterByAll ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+          onClick={() => { setFilterByAll(true); setFilterByDate(false); setFilterByToday(false); }}
+        >
+          Toutes les Commandes
+        </button>
+        <button
+          className={`mr-4 px-4 py-2 ${filterByToday ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+          onClick={() => { setFilterByToday(true); setFilterByAll(false); setFilterByDate(false); }}
+        >
+          Commandes du Jour
+        </button>
+        <button
+          className={`mr-4 px-4 py-2 ${filterByDate ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+          onClick={() => { setFilterByDate(true); setFilterByAll(false); setFilterByToday(false); }}
+        >
+          Filtrer par Date
+        </button>
       </div>
 
       {/* Date Filter Section (only visible if filterByDate is true) */}

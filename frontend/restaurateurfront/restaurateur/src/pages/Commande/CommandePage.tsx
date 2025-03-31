@@ -28,6 +28,7 @@ interface ILivreur {
 const CommandesPage = () => {
   const [commandes, setCommandes] = useState<ICommande[]>([]);
   const [livreur, setLivreur] = useState<ILivreur>();
+  const [idlivreur, setIdLivreur]= useState();
   const [isLoading, setIsLoading] = useState(false);
 
 
@@ -52,6 +53,8 @@ const CommandesPage = () => {
   useEffect(() => {
     getCommandes();
   }, []);
+
+
 
   // Filtrer les commandes par statut
   const nouvellesCommandes = commandes.filter((commande) => commande.status === "En attente");
@@ -91,62 +94,53 @@ const CommandesPage = () => {
       .catch((error) => console.log("Erreur de mise à jour:", error));
   };
   
-  // const handleLivraison = (commande : ICommande) => {
-  //   // Logique pour marquer la commande comme livrée
-  //   console.log("Commande en livraison:", commande._id);
-  //   console.log("livreur : ", commande.livreur)
 
 
-  //   // Mise à jour de l'état des commandes
-  //   setCommandes((prevCommandes) =>
-  //     prevCommandes.map((cmd) =>
-  //       cmd._id === commande._id ? { ...cmd, status: "En livraison" } : cmd
-  //     )
-  //   );
-  
-  //   axios
-  //     .put(`http://localhost:8080/api/commandes/${commande._id}`, { status: "En livraison"})
-  //     .catch((error) => console.log("Erreur de mise à jour:", error));
-
-  // };
-
-
-
-  const rechercherLivreur = async (codeLivreur : string) => {
-
+  const handleLivraison = async (commande: ICommande, codeLivreur: string) => {
     try {
+      console.log("Commande en livraison:", commande._id);
+      console.log("Code livreur :", codeLivreur);
+  
+      // Récupération du livreur
       const response = await axios.get(`http://localhost:3004/api/livreurs/codelivreur/${codeLivreur}`);
-      setLivreur(response.data);
-      console.log(response.data);
-      return response.data;
+      const livreur = response.data;
+      setLivreur(livreur);
+      setIdLivreur(livreur._id);
+  
+      if (!livreur || !livreur._id) {
+        console.error("Livreur non trouvé");
+        alert("Livreur non trouvé !");
+        return;
+      }
+  
+  
+      // Mise à jour de l'état local des commandes
+      setCommandes((prevCommandes) =>
+        prevCommandes.map((cmd) =>
+          cmd._id === commande._id ? { ...cmd, status: "En livraison", livreur: livreur._id } : cmd
+        )
+      );
+  
+      // Mise à jour de la commande côté backend
+      await axios.put(`http://localhost:8080/api/commandes/${commande._id}`, {
+        status: "En livraison",
+        livreur: livreur._id, // Ajout de l'ID du livreur
+      });
+  
     } catch (error) {
-      console.error("Erreur lors de la recherche du livreur :", error);
-      alert("Livreur non trouvé");
-      // toastify
+      console.error("Erreur lors de la mise à jour de la commande :", error);
+      alert("Erreur lors de la mise à jour de la commande.");
+      //toast
     }
   };
   
 
-  const handleLivraison = (commande : ICommande, codelivreur : string) => {
-    // Logique pour marquer la commande comme livrée
-    console.log("Commande en livraison:", commande._id);
-    // console.log("livreur : ", commande.livreur);
-    // console.log("code livreur : ", codelivreur);
-
-    rechercherLivreur(codelivreur);
-
-
-
-    // console.log(livreur);
-    // console.log(commandes);
-
-
-  
-
-
-
-  };
-  
+  useEffect(() => {
+    if (livreur && idlivreur) {
+      console.log(livreur);
+      console.log(idlivreur);
+    }
+  }, [livreur, idlivreur]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">

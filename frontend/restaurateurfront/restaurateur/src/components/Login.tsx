@@ -20,7 +20,7 @@ const Login = ({ authenticated, handleLogin }: Props) => {
           </button>
         </div>
       )}
-      {authenticated && <Navigate to="/callback" />}
+      {authenticated && <Navigate to="/restaurateur/callback" />}
     </div>
   );
 };
