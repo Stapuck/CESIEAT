@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from "react-router-dom"
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import HomePage from "./pages/HomePage"
 import TestPage from "./pages/TestPage"
 import CreatePage from "./pages/CreatePage"
@@ -15,6 +15,9 @@ import EditMenu from "./pages/menuPages/EditMenu"
 import LoginPage from "./pages/LoginPage"
 import SigninPage from "./pages/SigninPage"
 import ShowRestaurantMenu from "./pages/restaurantsPages/ShowRestaurantMenu"
+import Cart from "./pages/cart/cart"
+import Shop from "./pages/shop/shop"
+import Checkout from "./pages/checkout/checkout"
 
 function App() {
   return (
@@ -35,7 +38,13 @@ function App() {
         <Route path="/404" element={<NotFoundPage />} />
         <Route path="*" element={<NotFoundPage />} />
 
-        <Route path='/login' element={<LoginPage />}></Route>
+
+        <Route path="/client/cart" element={<Cart />} />
+        <Route path="/client/shop" element={<Shop/>} />
+        <Route path="/client/checkout" element={<Checkout/>} />
+
+
+        <Route path='/login' element={<LoginPage />}/>
         <Route path='/signin' element={<SigninPage />}></Route>
       </Routes>
       <Footer />

@@ -59,11 +59,11 @@ function GalleryRestaurants() {
         <h1 className='text-3xl font-bold text-start p-3 ml-4 mt-5 mb-5'>Nos restaurants à proximité</h1>
       </div>
 
-      <Link to="/create-restaurant">
+      {/* <Link to="/create-restaurant">
         <button className="bg-text-search-color text-white px-4 py-2 rounded-lg ml-5 hover:bg-blue-700 transition duration-300">
           Ajouter un restaurant
         </button>
-      </Link>
+      </Link> */}
 
       <div className='grid grid-cols-1 bg-white rounded-2xl m-5 lg:grid-cols-3 sm:grid-cols-2 xl:grid-cols-3 mt-5'>
         {isLoading ? (

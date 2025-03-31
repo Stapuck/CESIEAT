@@ -28,7 +28,7 @@ const Hero = () => {
     }, []);
     return (
         <div
-            className="flex flex-col justify-center hero-content relative items-center z-0 bg-cover bg-center h-full w-full overflow-clip mt-20 bg-no-repeat"
+            className="flex flex-col justify-center hero-content relative items-center z-0 bg-cover bg-center h-full w-full overflow-clip mt-1 bg-no-repeat"
             style={{ backgroundImage: `url(${BackgroundFood})` }}
         >
             <motion.div initial={{ opacity: 0, scale: 0 }}

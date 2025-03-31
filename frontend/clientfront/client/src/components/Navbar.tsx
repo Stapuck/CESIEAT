@@ -24,7 +24,7 @@ const Navbar = () => {
             </div>
             <div className="flex  p-2 hover:cursor-pointer hover:scale-110 transition-transform duration-200">
 
-                <Link to="/" className="flex flex-col justify-center items-center">
+                <Link to="/client/cart" className="flex flex-col justify-center items-center">
                     <img src={PanierLogo} alt="Panier" className="h-7 w-7 mb-1" />
                     <h2 className="text-black font-Inter text-xs">Panier</h2>
                 </Link>
