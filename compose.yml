@@ -27,6 +27,8 @@ services:
     container_name: clientFrontend
     ports:
       - "5173:5173" # Expose Vite default port
+    restart: unless-stopped
+
     environment:
       - HOST=0.0.0.0 # Ensure external access
     volumes:
@@ -48,6 +50,8 @@ services:
       - "5174:5174" # Expose Vite default port for restaurateur frontend
     environment:
       - HOST=0.0.0.0 # Ensure external access
+    restart: unless-stopped
+
     volumes:
       - ./frontend/restaurateurfront/restaurateur:/app # Sync local code with container
       - /app/node_modules # Isolate node_modules from local setup
@@ -68,6 +72,8 @@ services:
     volumes:
       - ./frontend/livreurfront/livreur:/app # Sync local code with container
       - /app/node_modules # Isolate node_modules from local setup
+    restart: unless-stopped
+
     networks:
       - app-network
     command: npm run dev # Run Vite in development mode
@@ -80,6 +86,8 @@ services:
     container_name: articleService
     ports:
       - "3005:3000"
+    restart: unless-stopped
+
     networks:
       - app-network
 
@@ -91,6 +99,7 @@ services:
     container_name: clientService
     ports:
       - "3000:3000"
+    restart: unless-stopped    
     networks:
       - app-network
 
@@ -100,6 +109,8 @@ services:
       context: ./services/commandeService
       dockerfile: Dockerfile
     container_name: commandeService
+    restart: unless-stopped
+
     ports:
       - "3003:3000"
     networks:
@@ -111,6 +122,8 @@ services:
       context: ./services/livreurService
       dockerfile: Dockerfile
     container_name: livreurService
+    restart: unless-stopped
+
     ports:
       - "3004:3000"
     networks:
@@ -122,6 +135,8 @@ services:
       context: ./services/menuService
       dockerfile: Dockerfile
     container_name: menuService
+    restart: unless-stopped
+ 
     ports:
       - "3006:3000"
     networks:
@@ -133,6 +148,8 @@ services:
       context: ./services/restaurateurService
       dockerfile: Dockerfile
     container_name: restaurateurService
+    restart: unless-stopped
+
     ports:
       - "3001:3000"
     networks:
