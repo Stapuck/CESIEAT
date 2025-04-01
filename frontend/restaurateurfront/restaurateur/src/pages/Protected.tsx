@@ -19,21 +19,14 @@ function Protected() {
         return <div>Oops... {auth.error.kind} caused {auth.error.message}</div>;
     }
 
-
     if (auth.isAuthenticated) {
-    console.log(" 🟩 AUTH")
-        return (
-            <div>
-                Hello {auth.user?.profile.sub}{" "}
-                <button onClick={() => void auth.removeUser()}>Log out</button>
-                <Outlet></Outlet>
-            </div>
-        );
+        console.log(" 🟩 AUTH");
+        return <Outlet></Outlet>;
     }
 
-    console.log("🤡 NOT AUTH")
+    console.log("🤡 NOT AUTH");
 
-    return <Navigate to ="/login"/>
+    return <Navigate to="/login" />;
 }
 
 export default Protected;
