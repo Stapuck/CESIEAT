@@ -11,6 +11,7 @@ type ContainerStatus = 'running' | 'stopped' | 'restarting' | 'error';
 interface DockerContainer {
   id: string;
   name: string;
+  uuid: string; // New property to store UUID
   image: string;
   status: ContainerStatus;
   uptime: string;
@@ -21,7 +22,7 @@ interface DockerContainer {
 }
 
 // URL de l'API cAdvisor via le proxy Nginx
-const CADVISOR_API_URL = 'api/v1.3/subcontainers/docker';
+const CADVISOR_API_URL = '/api/v1.3/subcontainers/docker';
 
 const DockerContainersPage: React.FC = () => {
   const [containers, setContainers] = useState<DockerContainer[]>([]);
@@ -30,7 +31,7 @@ const DockerContainersPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [error, setError] = useState<string | null>(null);
-  const [refreshInterval, setRefreshInterval] = useState<number>(10000); // 5 secondes par défaut
+  const [refreshInterval, setRefreshInterval] = useState<number>(10000); // 10 secondes par défaut
 
   // Fonction pour récupérer les données des conteneurs depuis cAdvisor
   const fetchContainerData = async () => {
@@ -40,8 +41,6 @@ const DockerContainersPage: React.FC = () => {
     try {
       console.log('Tentative de récupération des données depuis:', CADVISOR_API_URL);
       const response = await axios.get(CADVISOR_API_URL);
-      
-      console.log('Données reçues:', response.data);
       
       // Transformer les données du format cAdvisor au format attendu par l'application
       const formattedData = formatCAdvisorData(response.data);
@@ -57,54 +56,99 @@ const DockerContainersPage: React.FC = () => {
     }
   };
 
+  // Fonction utilitaire pour extraire l'UUID d'un nom de conteneur
+  const extractUUID = (containerName: string): string => {
+    // Vérifie si le nom suit le pattern "/docker/[UUID]" et exclut "/docker"
+    const uuidRegex = /\/docker\/([a-f0-9]{12,})/i;
+
+    const match = containerName.match(uuidRegex);
+
+    // Si un UUID valide est trouvé, le retourner, sinon retourner le nom original
+    return match && match[1].length >= 12 ? match[1] : containerName;
+  };
+
+  // Fonction pour formater la taille de la mémoire en KB, MB, GB ou TB selon la taille
+  const formatMemorySize = (bytes: number): string => {
+    if (bytes === 0) return '0 B';
+    
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    
+    // Ne pas dépasser l'index du tableau des unités
+    const unitIndex = Math.min(i, units.length - 1);
+    
+    // Convertir en unité appropriée et formater avec 2 décimales
+    return `${(bytes / Math.pow(1024, unitIndex)).toFixed(2)} ${units[unitIndex]}`;
+  };
+
   // Fonction pour transformer les données de cAdvisor au format attendu
   const formatCAdvisorData = (cadvisorData: any): DockerContainer[] => {
     if (!cadvisorData) return [];
     
-    return Object.values(cadvisorData).map((container: any) => {
-      // Extraire les informations nécessaires du format cAdvisor
-      const spec = container.spec || {};
-      const stats = container.stats && container.stats.length > 0 ? container.stats[container.stats.length - 1] : {};
-      
-      // Déterminer le statut à partir des données disponibles
-      let status: ContainerStatus = 'stopped';
-      if (stats.cpu && stats.memory) {
-        status = 'running';
-      } else if (container.id && container.name && !stats.cpu) {
-        status = 'stopped';
-      }
-      
-      // Calculer l'utilisation CPU et mémoire
-      const cpuUsage = stats.cpu ? `${(stats.cpu.usage.total / 1000000000).toFixed(2)}%` : '0%';
-      const memoryUsage = stats.memory ? 
-        `${(stats.memory.usage / (1024 * 1024)).toFixed(2)}MB / ${(spec.memory?.limit / (1024 * 1024)).toFixed(2)}MB` : 
-        '0MB / 0MB';
-      
-      // Extraire les informations de ports
-      const ports = spec.ports ? 
-        spec.ports.map((p: any) => `${p.hostPort}:${p.containerPort}`).join(', ') : 
-        '';
-      
-      // Calculer l'uptime
-      const creationTime = container.creation_time ? new Date(container.creation_time * 1000) : new Date();
-      const now = new Date();
-      const uptimeMs = now.getTime() - creationTime.getTime();
-      const uptimeHours = Math.floor(uptimeMs / (1000 * 60 * 60));
-      const uptimeMinutes = Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60));
-      const uptime = `${uptimeHours}h ${uptimeMinutes}m`;
-      
-      return {
-        id: container.id || '',
-        name: container.name || container.id || '',
-        image: spec.image || 'unknown',
-        status,
-        uptime,
-        cpu: cpuUsage,
-        memory: memoryUsage,
-        ports,
-        network: Object.keys(stats.network || {}).join(', ') || 'none'
-      };
-    });
+    // Filtrer et transformer les données
+    return Object.values(cadvisorData)
+      .filter((container: any) => {
+        // Exclure les entrées "/docker" et celles commençant par "/docker/"
+        const containerName = container.name || '';
+        return containerName !== '/docker' && containerName !== '/docker/buildkit' && containerName !== '/docker/buildx'  ;
+      })
+      .map((container: any, index) => {
+        // Extraire les informations nécessaires du format cAdvisor
+        const spec = container.spec || {};
+        const stats = container.stats && container.stats.length > 0 ? container.stats[container.stats.length - 1] : {};
+        
+        // Assurer un ID unique pour chaque conteneur
+        const uniqueId = container.id || container.name || `container-${index}`;
+        
+        // Déterminer le statut à partir des données disponibles
+        let status: ContainerStatus = 'stopped';
+        if (stats.cpu && stats.memory) {
+          status = 'running';
+        } else if (container.id && container.name && !stats.cpu) {
+          status = 'stopped';
+        }
+        
+        // Calculer l'utilisation CPU et mémoire
+        const cpuUsage = stats.cpu ? `${(stats.cpu.usage.total / 1000000000).toFixed(2)}%` : '0%';
+        
+        // Format amélioré de la mémoire
+        const memoryUsed = stats.memory ? stats.memory.usage : 0;
+        const memoryLimit = spec.memory?.limit || 0;
+        
+        const formattedMemoryUsed = formatMemorySize(memoryUsed);
+        const formattedMemoryLimit = memoryLimit > 0 ? formatMemorySize(memoryLimit) : '∞';
+        const memoryUsage = `${formattedMemoryUsed} `;
+        
+        // Extraire les informations de ports
+        const ports = spec.ports ? 
+          spec.ports.map((p: any) => `${p.hostPort}:${p.containerPort}`).join(', ') : 
+          '';
+        
+        // Calculer l'uptime
+        const creationTime = container.creation_time ? new Date(container.creation_time * 1000) : new Date();
+        const now = new Date();
+        const uptimeMs = now.getTime() - creationTime.getTime();
+        const uptimeHours = Math.floor(uptimeMs / (1000 * 60 * 60));
+        const uptimeMinutes = Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60));
+        const uptime = `${uptimeHours}h ${uptimeMinutes}m`;
+        
+        // Récupérer le nom et extraire l'UUID si le format est "/docker/[UUID]"
+        const containerName = container.name || uniqueId;
+        const uuid = extractUUID(containerName);
+        
+        return {
+          id: uniqueId,
+          name: containerName,
+          uuid: uuid, // Stocker l'UUID extrait
+          image: spec.image || 'unknown',
+          status,
+          uptime,
+          cpu: cpuUsage,
+          memory: memoryUsage,
+          ports,
+          network: Object.keys(stats.network || {}).join(', ') || 'none'
+        };
+      });
   };
 
   // Appeler l'API au chargement initial puis à intervalle régulier
@@ -120,8 +164,9 @@ const DockerContainersPage: React.FC = () => {
   useEffect(() => {
     const checkApiHealth = async () => {
       try {
-        const response = await axios.get(CADVISOR_API_URL);
-        console.log('API cAdvisor en ligne et fonctionnelle');
+        // Utiliser l'URL correcte pour vérifier la santé de l'API
+        const response = await axios.get('/cadvisor/api/v1.3/version');
+        console.log('API cAdvisor en ligne et fonctionnelle:', response.data);
       } catch (err) {
         console.error('Impossible de contacter l\'API cAdvisor:', err);
       }
@@ -139,7 +184,8 @@ const DockerContainersPage: React.FC = () => {
       result = result.filter(container => 
         container.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
         container.image.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        container.id.toLowerCase().includes(searchTerm.toLowerCase())
+        container.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        container.uuid.toLowerCase().includes(searchTerm.toLowerCase()) // Ajout de la recherche par UUID
       );
     }
     
@@ -344,8 +390,12 @@ const DockerContainersPage: React.FC = () => {
                   {filteredContainers.map((container) => (
                     <tr key={container.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{container.name}</div>
-                        <div className="text-xs text-gray-500">{container.id}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {container.name.includes('/docker/') ? `Container ${container.uuid.substring(0, 12)}...` : container.name}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {container.uuid !== container.name ? container.uuid : container.id}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{container.image}</div>

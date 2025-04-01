@@ -26,7 +26,7 @@ import Checkout from "./pages/checkout/checkout";
 function App() {
   return (
     <CartProvider>
-      <ErrorBoundary fallback={<Navigate to="/client/404" />}>
+      <ErrorBoundary fallback={<Navigate to="/client/" />}>
         <div className="bg-primary pt-30 h-full">
           <Navbar />
           <Routes>
