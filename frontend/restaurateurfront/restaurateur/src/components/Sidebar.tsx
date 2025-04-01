@@ -49,8 +49,8 @@ const Sidebar = ({ isSidebarOpen }: SidebarProps) => {
               <FaHistory /> <span>Mon Historique</span>
             </Link>
           </li>
-          <li>
-            <LoginButton/>
+          <li >
+            <LoginButton />
           </li>
         </ul>
       </nav>
