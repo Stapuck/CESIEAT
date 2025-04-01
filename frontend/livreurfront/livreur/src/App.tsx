@@ -8,17 +8,15 @@ import NotFoundPage from "./components/NotFoundPage"
 import { ToastContainer } from 'react-toastify';
 import Account from "./pages/Account"
 import Livraison from "./pages/Livraison"
+import Navbar from "./components/Navbar"
+import Footer from "./components/Footer"
 
 
 function App() {
   return (
-    <div className="bg-white">
-      <nav className="bg-gray-800">
-        <div className="container mx-auto p-2">
-          <Link to='/'><h2 className="text-white text-2xl font-bold">Livreur front</h2></Link>
-        </div>
-      </nav>
-      <div className="container mx-auto p-2 h-full">
+    <div className="bg-primary">
+      <Navbar/>
+      <div className="container mx-auto mt-30 h-full">
       <Routes>
         <Route index element={<HomePage/>}></Route>
         <Route path='/livreur/' element={<HomePage/>}></Route>
@@ -36,6 +34,7 @@ function App() {
       </Routes>
       </div>
       <ToastContainer/>
+      <Footer/>
 
 
     </div>
