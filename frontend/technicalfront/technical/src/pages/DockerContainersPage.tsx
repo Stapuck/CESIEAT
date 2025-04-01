@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import FaPlay from "../assets/icons/play.fill.svg";
 import FaStop from "../assets/icons/stop.circle.fill.svg";
 import FaRedo from "../assets/icons/arrow.uturn.backward.svg";
@@ -19,8 +20,8 @@ interface DockerContainer {
   network: string;
 }
 
-// URL de l'API Docker (directement, sans Prometheus)
-const DOCKER_API_URL = 'http://localhost:8080/api/docker';
+// URL de l'API cAdvisor via le proxy Nginx
+const CADVISOR_API_URL = 'api/v1.3/subcontainers/docker';
 
 const DockerContainersPage: React.FC = () => {
   const [containers, setContainers] = useState<DockerContainer[]>([]);
@@ -29,35 +30,81 @@ const DockerContainersPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [error, setError] = useState<string | null>(null);
-  const [refreshInterval, setRefreshInterval] = useState<number>(5000); // 5 secondes par défaut
+  const [refreshInterval, setRefreshInterval] = useState<number>(10000); // 5 secondes par défaut
 
-  // Fonction pour récupérer les données des conteneurs depuis notre API Docker
+  // Fonction pour récupérer les données des conteneurs depuis cAdvisor
   const fetchContainerData = async () => {
     setLoading(true);
     setError(null);
     
     try {
-      console.log('Tentative de récupération des données depuis:', `${DOCKER_API_URL}/stats`);
-      const response = await fetch(`${DOCKER_API_URL}/stats`);
+      console.log('Tentative de récupération des données depuis:', CADVISOR_API_URL);
+      const response = await axios.get(CADVISOR_API_URL);
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Réponse API non-OK:', response.status, errorText);
-        throw new Error(`Erreur lors de la récupération des données: ${response.status}${errorText ? ' - ' + errorText : ''}`);
-      }
+      console.log('Données reçues:', response.data);
       
-      // Les données arrivent déjà formatées depuis notre API
-      const data = await response.json();
-      console.log('Données reçues:', data);
-      setContainers(data);
+      // Transformer les données du format cAdvisor au format attendu par l'application
+      const formattedData = formatCAdvisorData(response.data);
+      setContainers(formattedData);
       setLoading(false);
     } catch (err) {
       console.error('Erreur lors de la récupération des données:', err);
-      
-      
-
+      const errorMessage = axios.isAxiosError(err) 
+        ? `Erreur lors de la récupération des données: ${err.response?.status || ''} ${err.response?.data || err.message}`
+        : "Impossible de récupérer les données des conteneurs";
+      setError(errorMessage);
       setLoading(false);
     }
+  };
+
+  // Fonction pour transformer les données de cAdvisor au format attendu
+  const formatCAdvisorData = (cadvisorData: any): DockerContainer[] => {
+    if (!cadvisorData) return [];
+    
+    return Object.values(cadvisorData).map((container: any) => {
+      // Extraire les informations nécessaires du format cAdvisor
+      const spec = container.spec || {};
+      const stats = container.stats && container.stats.length > 0 ? container.stats[container.stats.length - 1] : {};
+      
+      // Déterminer le statut à partir des données disponibles
+      let status: ContainerStatus = 'stopped';
+      if (stats.cpu && stats.memory) {
+        status = 'running';
+      } else if (container.id && container.name && !stats.cpu) {
+        status = 'stopped';
+      }
+      
+      // Calculer l'utilisation CPU et mémoire
+      const cpuUsage = stats.cpu ? `${(stats.cpu.usage.total / 1000000000).toFixed(2)}%` : '0%';
+      const memoryUsage = stats.memory ? 
+        `${(stats.memory.usage / (1024 * 1024)).toFixed(2)}MB / ${(spec.memory?.limit / (1024 * 1024)).toFixed(2)}MB` : 
+        '0MB / 0MB';
+      
+      // Extraire les informations de ports
+      const ports = spec.ports ? 
+        spec.ports.map((p: any) => `${p.hostPort}:${p.containerPort}`).join(', ') : 
+        '';
+      
+      // Calculer l'uptime
+      const creationTime = container.creation_time ? new Date(container.creation_time * 1000) : new Date();
+      const now = new Date();
+      const uptimeMs = now.getTime() - creationTime.getTime();
+      const uptimeHours = Math.floor(uptimeMs / (1000 * 60 * 60));
+      const uptimeMinutes = Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60));
+      const uptime = `${uptimeHours}h ${uptimeMinutes}m`;
+      
+      return {
+        id: container.id || '',
+        name: container.name || container.id || '',
+        image: spec.image || 'unknown',
+        status,
+        uptime,
+        cpu: cpuUsage,
+        memory: memoryUsage,
+        ports,
+        network: Object.keys(stats.network || {}).join(', ') || 'none'
+      };
+    });
   };
 
   // Appeler l'API au chargement initial puis à intervalle régulier
@@ -73,14 +120,10 @@ const DockerContainersPage: React.FC = () => {
   useEffect(() => {
     const checkApiHealth = async () => {
       try {
-        const response = await fetch(`${DOCKER_API_URL}/healthcheck`);
-        if (response.ok) {
-          console.log('API Docker en ligne et fonctionnelle');
-        } else {
-          console.error('API Docker répond, mais avec une erreur:', response.status);
-        }
+        const response = await axios.get(CADVISOR_API_URL);
+        console.log('API cAdvisor en ligne et fonctionnelle');
       } catch (err) {
-        console.error('Impossible de contacter l\'API Docker:', err);
+        console.error('Impossible de contacter l\'API cAdvisor:', err);
       }
     };
     
@@ -113,40 +156,10 @@ const DockerContainersPage: React.FC = () => {
     try {
       setError(null);
       
-      // Appel à l'API Docker pour effectuer l'action
-      const response = await fetch(`${DOCKER_API_URL}/containers/${id}/${action}`, {
-        method: 'POST',
-      });
+      // Note: cAdvisor est principalement une API en lecture seule - les actions réelles
+      // nécessiteraient une API Docker séparée ou une implémentation API spécifique
+      setError("Les actions sur les conteneurs ne sont pas disponibles directement via cAdvisor. Utilisez Docker CLI ou Docker Desktop.");
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Erreur lors de l'action ${action}`);
-      }
-      
-      // Mettre à jour l'état local pour refléter immédiatement l'action
-      setContainers(prevContainers => 
-        prevContainers.map(container => {
-          if (container.id === id) {
-            let newStatus: ContainerStatus = container.status;
-            switch (action) {
-              case 'start':
-                newStatus = 'running';
-                break;
-              case 'stop':
-                newStatus = 'stopped';
-                break;
-              case 'restart':
-                newStatus = 'restarting';
-                break;
-            }
-            return { ...container, status: newStatus };
-          }
-          return container;
-        })
-      );
-      
-      // Rafraîchir les données après un court délai pour refléter le changement d'état
-      setTimeout(fetchContainerData, 2000);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Une erreur est survenue";
       setError(errorMessage);
@@ -171,7 +184,7 @@ const DockerContainersPage: React.FC = () => {
 
   return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">État des Containers Docker</h1>
+        <h1 className="text-2xl font-bold mb-6">État des Containers Docker via cAdvisor</h1>
         
         {/* Affichage des erreurs */}
         {error && (
@@ -187,24 +200,27 @@ const DockerContainersPage: React.FC = () => {
         )}
         
         {/* Contrôle du rafraîchissement */}
-        <div className="mb-6 flex items-center">
-          <label htmlFor="refreshInterval" className="mr-2 text-sm font-medium text-gray-700">
-            Intervalle de rafraîchissement:
-          </label>
-          <select
-            id="refreshInterval"
-            value={refreshInterval}
-            onChange={(e) => setRefreshInterval(Number(e.target.value))}
-            className="border rounded-md p-2 text-sm"
-          >
-            <option value={2000}>2 secondes</option>
-            <option value={5000}>5 secondes</option>
-            <option value={10000}>10 secondes</option>
-            <option value={30000}>30 secondes</option>
-          </select>
+        <div className="mb-6 flex flex-wrap items-center gap-4">
+          <div className="flex items-center">
+            <label htmlFor="refreshInterval" className="mr-2 text-sm font-medium text-gray-700">
+              Intervalle de rafraîchissement:
+            </label>
+            <select
+              id="refreshInterval"
+              value={refreshInterval}
+              onChange={(e) => setRefreshInterval(Number(e.target.value))}
+              className="border rounded-md p-2 text-sm"
+            >
+              <option value={2000}>2 secondes</option>
+              <option value={5000}>5 secondes</option>
+              <option value={10000}>10 secondes</option>
+              <option value={30000}>30 secondes</option>
+            </select>
+          </div>
+          
           <button
             onClick={fetchContainerData}
-            className="ml-4 bg-blue-100 hover:bg-blue-200 text-blue-800 py-2 px-4 rounded text-sm"
+            className="bg-blue-100 hover:bg-blue-200 text-blue-800 py-2 px-4 rounded text-sm"
           >
             Rafraîchir maintenant
           </button>

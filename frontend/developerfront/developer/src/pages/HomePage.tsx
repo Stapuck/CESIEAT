@@ -14,9 +14,9 @@ const HomePage = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold mb-4">Gestion du Compte</h2>
           <div className="flex flex-col gap-2">
-            <Link to="/profile" className="text-blue-600 hover:underline">Consulter mon profil</Link>
-            <Link to="/profile/edit" className="text-blue-600 hover:underline">Modifier mon compte</Link>
-            <Link to="/profile/settings" className="text-blue-600 hover:underline">Paramètres du compte</Link>
+            <Link to="/developer/profile" className="text-blue-600 hover:underline">Consulter mon profil</Link>
+            <Link to="/developer/profile/edit" className="text-blue-600 hover:underline">Modifier mon compte</Link>
+            <Link to="/developer/profile/settings" className="text-blue-600 hover:underline">Paramètres du compte</Link>
           </div>
         </div>
 
@@ -24,9 +24,9 @@ const HomePage = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold mb-4">API & Intégration</h2>
           <div className="flex flex-col gap-2">
-            <Link to="/api-keys" className="text-blue-600 hover:underline">Mes clés d'API</Link>
-            <Link to="/api-documentation" className="text-blue-600 hover:underline">Documentation API</Link>
-            <Link to="/api-usage" className="text-blue-600 hover:underline">Statistiques d'utilisation</Link>
+            <Link to="/developer/api-keys" className="text-blue-600 hover:underline">Mes clés d'API</Link>
+            <Link to="/developer/api-documentation" className="text-blue-600 hover:underline">Documentation API</Link>
+            <Link to="/developer/api-usage" className="text-blue-600 hover:underline">Statistiques d'utilisation</Link>
           </div>
         </div>
       </div>
@@ -36,10 +36,10 @@ const HomePage = () => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Composants Disponibles</h2>
           <div className="flex gap-2">
-            <Link to="/create-product" className="bg-blue-700 text-white rounded-md px-4 py-2 font-medium hover:bg-blue-500 transition-colors">
+            <Link to="/developer/create-product" className="bg-blue-700 text-white rounded-md px-4 py-2 font-medium hover:bg-blue-500 transition-colors">
               Créer un composant
             </Link>
-            <Link to="/my-downloads" className="bg-green-600 text-white rounded-md px-4 py-2 font-medium hover:bg-green-500 transition-colors">
+            <Link to="/developer/my-downloads" className="bg-green-600 text-white rounded-md px-4 py-2 font-medium hover:bg-green-500 transition-colors">
               Mes téléchargements
             </Link>
           </div>
