@@ -1,13 +1,13 @@
 
 import { Link, Route, Routes } from "react-router-dom"
 import HomePage from "./pages/HomePage"
-import TestPage from "./pages/TestPage"
 import CreatePage from "./pages/CreatePage"
 import EditPage from "./pages/EditPage"
 import NotFoundPage from "./components/NotFoundPage"
-import LoginPage from "./pages/LoginPage"
-import SigninPage from "./pages/SigninPage"
+
 import { ToastContainer } from 'react-toastify';
+import Account from "./pages/Account"
+import Livraison from "./pages/Livraison"
 
 
 function App() {
@@ -25,14 +25,14 @@ function App() {
         
         <Route path='/create-product' element={<CreatePage/>}></Route>
         <Route path='/edit-product/:id' element={<EditPage/>}></Route>
+        <Route path='/account' element={<Account/>}></Route>
+        <Route path='/livraison/:id' element={<Livraison/>}></Route>
 
 
-        <Route path='/test' element={<TestPage/>}></Route>
+
         <Route path="/404" element={<NotFoundPage/>} />
-          <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={<NotFoundPage />} />
 
-        <Route path='/login' element={<LoginPage/>}></Route>
-        <Route path='/signin' element={<SigninPage/>}></Route>
       </Routes>
       </div>
       <ToastContainer/>
