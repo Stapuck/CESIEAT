@@ -1,7 +1,6 @@
 import { Link, Route, Routes, useLocation  } from "react-router-dom";
 import { FaUser, FaList, FaFileAlt, FaShoppingCart, FaHistory, FaBars } from "react-icons/fa"; // Icons
-import { useState, useEffect } from "react";
-import { createZitadelAuth, ZitadelConfig } from "@zitadel/react";
+import { useState } from "react";
 import HomePage from "./pages/HomePage";
 import TestPage from "./pages/TestPage";
 import NotFoundPage from "./components/NotFoundPage";
@@ -20,37 +19,14 @@ import CommandePage from "./pages/Commande/CommandePage";
 import CreateCommande from "./pages/Commande/CreateCommande";
 
 function App() {
-  const config: ZitadelConfig = {
-    authority: "https://instance1-el5q1i.zitadel.cloud/",
-    client_id: "312751992336403117",
-    redirect_uri: "http://localhost:5173/callback",
-    post_logout_redirect_uri: "http://localhost:5173/"
-  };
 
-  const zitadel = createZitadelAuth(config);
+
   
-  function login() {
-    zitadel.authorize();
-  }
 
-  function signout() {
-    zitadel.signout();
-  }
 
-  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Ajouter l'état pour la sidebar
-
-  useEffect(() => {
-    zitadel.userManager.getUser().then((user) => {
-      if (user) {
-        setAuthenticated(true);
-      } else {
-        setAuthenticated(false);
-      }
-    });
-  }, [zitadel]);
 
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Ajouter l'état pour la sidebar
   
   const getLinkClassName = (path : string) => {
     // Vérifie si le chemin actuel correspond à celui du lien
@@ -118,9 +94,7 @@ function App() {
         {/* Main Content */}
         <div className="flex-1 p-4 overflow-auto">
           <Routes>
-            <Route path="/" element={<Login authenticated={authenticated} handleLogin={login} />} />
-            <Route path="/callback" element={<Callback authenticated={authenticated} setAuth={setAuthenticated} handleLogout={signout} userManager={zitadel.userManager} />} />
-            <Route path="/home" element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/restaurateur/" element={<HomePage />} />
             {/* article */}
             <Route path='/create-article' element={<CreateArticle />} />
@@ -133,7 +107,6 @@ function App() {
             <Route path='/create-commande' element={<CreateCommande/>} />
             
 
-            <Route path='/account' element={<Account authenticated={authenticated} setAuth={setAuthenticated} userManager={zitadel.userManager} />} />
             <Route path='/test' element={<TestPage />} />
             <Route path="/404" element={<NotFoundPage />} />
             <Route path="*" element={<NotFoundPage />} />
