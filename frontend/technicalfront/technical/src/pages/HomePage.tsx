@@ -60,19 +60,22 @@ const HomePage = () => {
           <div className="bg-white rounded-lg shadow p-4">
             <h3 className="font-semibold mb-2 text-yellow-700">Gestion des composants</h3>
             <div className="flex flex-col gap-2">
-              <Link to="/tech/components/manage" className="text-blue-600 hover:underline">Gérer les composants</Link>
-              <Link to="/tech/components/add" className="text-blue-600 hover:underline">Ajouter un composant</Link>
-              <Link to="/tech/components/remove" className="text-blue-600 hover:underline">Supprimer des composants</Link>
+              <Link to="/technical/components/manage" className="text-blue-600 hover:underline">Gérer les composants</Link>
+              <Link to="/technical/components/add" className="text-blue-600 hover:underline">Ajouter un composant</Link>
+              <Link to="/technical/components/remove" className="text-blue-600 hover:underline">Supprimer des composants</Link>
             </div>
           </div>
           
           {/* Logs et statistiques */}
           <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="font-semibold mb-2 text-yellow-700">Monitoring</h3>
+            <h3 className="font-semibold mb-2 text-yellow-700">Monitoring Docker</h3>
             <div className="flex flex-col gap-2">
-              <Link to="/tech/logs/connections" className="text-blue-600 hover:underline">Logs de connexions</Link>
-              <Link to="/tech/logs/downloads" className="text-blue-600 hover:underline">Logs de téléchargement</Link>
-              <Link to="/tech/stats/performance" className="text-blue-600 hover:underline">Statistiques de performance</Link>
+              <Link to="/technical/logs/connections" className="text-blue-600 hover:underline">Logs de connexions</Link>
+              <Link to="/technical/logs/downloads" className="text-blue-600 hover:underline">Logs de téléchargement</Link>
+              <Link to="/technical/stats/performance" className="text-blue-600 hover:underline">Statistiques de performance</Link>
+              <Link to="/technical/docker/containers" className="text-blue-600 hover:underline">État des containers</Link>
+              <Link to="/technical/docker/resources" className="text-blue-600 hover:underline">Utilisation des ressources</Link>
+              <Link to="/technical/docker/logs" className="text-blue-600 hover:underline">Logs des containers</Link>
             </div>
           </div>
           
@@ -80,9 +83,9 @@ const HomePage = () => {
           <div className="bg-white rounded-lg shadow p-4">
             <h3 className="font-semibold mb-2 text-yellow-700">Infrastructure</h3>
             <div className="flex flex-col gap-2">
-              <Link to="/tech/routes" className="text-blue-600 hover:underline">Orchestration des routes</Link>
-              <Link to="/tech/deploy" className="text-blue-600 hover:underline">Déploiement de services</Link>
-              <Link to="/tech/notifications" className="text-blue-600 hover:underline">Centre de notifications <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">3</span></Link>
+              <Link to="/technical/routes" className="text-blue-600 hover:underline">Orchestration des routes</Link>
+              <Link to="/technical/deploy" className="text-blue-600 hover:underline">Déploiement de services</Link>
+              <Link to="/technical/notifications" className="text-blue-600 hover:underline">Centre de notifications <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">3</span></Link>
             </div>
           </div>
         </div>
