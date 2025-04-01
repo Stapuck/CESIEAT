@@ -78,6 +78,25 @@ services:
       - app-network
     command: npm run dev # Run Vite in development mode
 
+  # Commercial frontend (Vite project)
+  commercial-frontend:
+    build:
+      context: ./frontend/commercialfront/commercial
+      dockerfile: Dockerfile
+    container_name: commercialFrontend
+    ports:
+      - "5176:5176" # Expose Vite default port for commercial frontend
+    environment:
+      - HOST=0.0.0.0 # Ensure external access
+    volumes:
+      - ./frontend/commercialfront/commercial:/app # Sync local code with container
+      - /app/node_modules # Isolate node_modules from local setup
+    restart: unless-stopped
+
+    networks:
+      - app-network
+    command: npm run dev # Run Vite in development mode
+
   # Article Service
   article-service:
     build:
