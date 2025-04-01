@@ -2,26 +2,30 @@ import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 import { FaWalking, FaTrash, FaRedoAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 // Importer leaflet-ant-path après Leaflet
-import 'leaflet-ant-path';
+import "leaflet-ant-path";
 
 // Correction pour les icônes Leaflet
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
+import LocateIcon from "../assets/icons/mappin.and.ellipse.circle.fill.svg";
+import Refresh from "../assets/icons/arrow.trianglehead.2.clockwise.svg";
+import CompteLogo from "../assets/icons/person.crop.circle.svg";
 
 // Configuration de l'icône par défaut pour Leaflet
 const DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
   iconSize: [25, 41],
-  iconAnchor: [12, 41]
+  iconAnchor: [12, 41],
 });
 
 // Créer des icônes personnalisées
 const RestaurantIcon = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
   shadowUrl: iconShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -29,7 +33,8 @@ const RestaurantIcon = L.icon({
 });
 
 const ClientIcon = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
   shadowUrl: iconShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -38,7 +43,8 @@ const ClientIcon = L.icon({
 
 // Icône pour la position actuelle
 const CurrentLocationIcon = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
   shadowUrl: iconShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -50,7 +56,7 @@ interface ICommande {
   client: number;
   restaurant: number;
   livreur?: number;
-  menu: [];
+  menu: any[];
   totalAmount: number;
   status: string;
   createdAt: string;
@@ -76,6 +82,8 @@ interface IRestaurateur {
   restaurantName: string;
   address: string;
   phone: string;
+  url: string; // Utilisé pour l'image du restaurant
+  ville: string; // Ajout de la propriété ville
   position?: [number, number]; // Ajout de la position
 }
 
@@ -97,13 +105,17 @@ export default function HomePage() {
   const [commandes, setCommandes] = useState<ICommande[]>([]);
   const [clients, setClients] = useState<IClient[]>([]);
   const [restaurateurs, setRestaurateur] = useState<IRestaurateur[]>([]);
-  const [restaurantLocations, setRestaurantLocations] = useState<IRestaurantLocation[]>([]);
+  const [restaurantLocations, setRestaurantLocations] = useState<
+    IRestaurantLocation[]
+  >([]);
   const [routes, setRoutes] = useState<IRoute[]>([]);
   const [selectedCommande, setSelectedCommande] = useState<string | null>(null);
-  const [currentLocation, setCurrentLocation] = useState<[number, number] | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<
+    [number, number] | null
+  >(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [hiddenCommandes, setHiddenCommandes] = useState<string[]>([]);
-  
+
   // Référence pour le conteneur de la carte
   const mapRef = useRef<HTMLDivElement>(null);
   // Référence pour l'instance de la carte Leaflet
@@ -122,133 +134,153 @@ export default function HomePage() {
 
   // Fonction pour charger toutes les données
   const loadAllData = async () => {
-    setIsLoading(true);
     try {
-      await Promise.all([
-        getCommandes(),
-        getClients(),
-        getRestaurateurs()
-      ]);
+      setIsLoading(true);
+      await Promise.all([getCommandes(), getClients(), getRestaurateurs()]);
+      setIsLoading(false);
     } catch (error) {
       console.error("Erreur lors du chargement des données:", error);
-    } finally {
       setIsLoading(false);
     }
   };
 
-  // Obtenir la position actuelle de l'utilisateur
-  const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurrentLocation([
-            position.coords.latitude,
-            position.coords.longitude
-          ]);
-          setLocationError(null);
-        },
-        (error) => {
-          console.error("Erreur de géolocalisation:", error);
-          setLocationError("Impossible de déterminer votre position. " + error.message);
-          // Position par défaut: Paris
-          setCurrentLocation([48.8566, 2.3522]);
-        },
-        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-      );
-    } else {
-      setLocationError("La géolocalisation n'est pas supportée par ce navigateur.");
-      // Position par défaut: Paris
-      setCurrentLocation([48.8566, 2.3522]);
-    }
-  };
-
+  // Récupérer les commandes disponibles (seulement Préparation et Prêt)
   const getCommandes = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/commandes");
-      setCommandes(response.data);
+      // Filtrer pour n'inclure que les statuts "Préparation" et "Prêt"
+      const filteredCommandes = response.data.filter(
+        (cmd: ICommande) =>
+          cmd.status === "Préparation" || cmd.status === "Prêt"
+      );
+      setCommandes(filteredCommandes);
     } catch (error) {
-      console.log(error);
-      throw error;
+      console.error("Erreur lors de la récupération des commandes:", error);
     }
   };
 
   const getClients = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/clients");
-      // Ajouter des positions simulées aux clients
+      // Ajouter des positions simulées pour les clients (à remplacer par des données réelles)
       const clientsWithPositions = response.data.map((client: any) => ({
         ...client,
         position: [
           48.8566 + (Math.random() - 0.5) * 0.05,
-          2.3522 + (Math.random() - 0.5) * 0.05
-        ] as [number, number]
+          2.3522 + (Math.random() - 0.5) * 0.05,
+        ] as [number, number],
       }));
+
       setClients(clientsWithPositions);
     } catch (error) {
-      console.log(error);
-      throw error;
+      console.error("Erreur lors de la récupération des clients:", error);
     }
   };
 
   const getRestaurateurs = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/restaurateurs");
-      // Ajouter des positions simulées aux restaurants
+      const response = await axios.get(
+        "http://localhost:8080/api/restaurateurs"
+      );
+      // Ajouter des positions simulées pour les restaurants (à remplacer par des données réelles)
       const restaurateursWithPositions = response.data.map((resto: any) => ({
         ...resto,
         position: [
           48.8566 + (Math.random() - 0.5) * 0.05,
-          2.3522 + (Math.random() - 0.5) * 0.05
-        ] as [number, number]
+          2.3522 + (Math.random() - 0.5) * 0.05,
+        ] as [number, number],
       }));
+
+      console.log(
+        "Restaurateurs avec positions:",
+        restaurateursWithPositions
+      );
       setRestaurateur(restaurateursWithPositions);
     } catch (error) {
-      console.log(error);
-      throw error;
+      console.error("Erreur lors de la récupération des restaurateurs:", error);
+    }
+  };
+
+  // Obtenir la géolocalisation de l'utilisateur
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation([
+            position.coords.latitude,
+            position.coords.longitude,
+          ]);
+          setLocationError(null);
+        },
+        (error) => {
+          console.error("Erreur de géolocalisation:", error);
+          setLocationError("Impossible d'obtenir votre position actuelle.");
+          // Position par défaut (Paris)
+          setCurrentLocation([48.8566, 2.3522]);
+        }
+      );
+    } else {
+      setLocationError(
+        "La géolocalisation n'est pas prise en charge par ce navigateur."
+      );
+      // Position par défaut (Paris)
+      setCurrentLocation([48.8566, 2.3522]);
     }
   };
 
   // Générer les itinéraires entre restaurants et clients
   useEffect(() => {
-    if (commandes.length > 0 && restaurateurs.length > 0 && clients.length > 0) {
+    if (
+      commandes.length > 0 &&
+      restaurateurs.length > 0 &&
+      clients.length > 0
+    ) {
       const newRoutes: IRoute[] = [];
-      
-      commandes.forEach(commande => {
-        const restaurant = restaurateurs.find(r => r._id === commande.restaurant);
-        const client = clients.find(c => c._id === commande.client);
-        
+
+      commandes.forEach((commande) => {
+        const restaurant = restaurateurs.find(
+          (r) => r._id === commande.restaurant
+        );
+        const client = clients.find((c) => c._id === commande.client);
+
         if (restaurant?.position && client?.position) {
           newRoutes.push({
             id: `${commande._id}-route`,
             from: restaurant.position,
             to: client.position,
-            commandeId: commande._id
+            commandeId: commande._id,
           });
         }
       });
-      
+
       setRoutes(newRoutes);
     }
   }, [commandes, restaurateurs, clients]);
 
-  // Initialiser la carte Leaflet
+  // Initialiser la carte
   useEffect(() => {
-    // Si les restaurants sont chargés et le container existe
-    if (mapRef.current && !mapInstanceRef.current) {
-      // Centre de la carte (Paris par défaut)
-      const defaultPosition: [number, number] = [48.8566, 2.3522];
-      
-      // Créer l'instance de la carte
-      const map = L.map(mapRef.current).setView(defaultPosition, 12);
-      mapInstanceRef.current = map;
-      
-      // Ajouter le fond de carte OpenStreetMap
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
+    if (!mapRef.current) return;
+
+    if (!mapInstanceRef.current) {
+      // Centre de la carte (position actuelle ou Paris par défaut)
+      const defaultPosition: [number, number] = currentLocation || [
+        48.8566, 2.3522,
+      ];
+
+      // Créer la carte
+      mapInstanceRef.current = L.map(mapRef.current).setView(
+        defaultPosition,
+        13
+      );
+
+      // Ajouter le fond de carte
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(mapInstanceRef.current);
     }
-    
-    // Nettoyer la carte lors du démontage du composant
+
+    // Nettoyage lors du démontage du composant
     return () => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
@@ -256,110 +288,80 @@ export default function HomePage() {
       }
     };
   }, []);
-  
-  // Mettre à jour la position actuelle sur la carte
-  useEffect(() => {
-    if (!mapInstanceRef.current || !currentLocation) return;
-    
-    const map = mapInstanceRef.current;
-    
-    // Supprimer l'ancien marqueur de position
-    if (currentLocationMarkerRef.current) {
-      currentLocationMarkerRef.current.remove();
-    }
-    
-    // Ajouter le nouveau marqueur de position
-    currentLocationMarkerRef.current = L.marker(currentLocation, { 
-      icon: CurrentLocationIcon,
-      zIndexOffset: 1000 // S'assurer qu'il est au-dessus des autres marqueurs
-    }).addTo(map)
-      .bindPopup("<b>Votre position</b>")
-      .openPopup();
-    
-    // Centrer la carte sur la position actuelle
-    map.setView(currentLocation, 13);
-    
-  }, [currentLocation]);
-  
-  // Mettre à jour les marqueurs et les chemins
+
+  // Mettre à jour les marqueurs et routes lorsque les données changent
   useEffect(() => {
     if (!mapInstanceRef.current) return;
-    
+
     const map = mapInstanceRef.current;
-    
+
     // Supprimer les anciens chemins animés
-    antPathsRef.current.forEach(path => path.remove());
+    antPathsRef.current.forEach((path) => path.remove());
     antPathsRef.current = [];
-    
-    // Nettoyer tous les calques existants (sauf le fond de carte)
-    map.eachLayer(layer => {
-      if (layer instanceof L.TileLayer) return; // Garder le fond de carte
-      if (layer === currentLocationMarkerRef.current) return; // Garder le marqueur de position actuelle
-      layer.remove();
+
+    // Nettoyer les couches existantes sauf le fond de carte
+    map.eachLayer((layer) => {
+      if (layer instanceof L.TileLayer) return;
+      map.removeLayer(layer);
     });
-    
+
+    // Ajouter le marqueur de position actuelle
+    if (currentLocation) {
+      if (currentLocationMarkerRef.current) {
+        currentLocationMarkerRef.current.remove();
+      }
+
+      currentLocationMarkerRef.current = L.marker(currentLocation, {
+        icon: CurrentLocationIcon,
+      })
+        .addTo(map)
+        .bindPopup("Votre position actuelle");
+    }
+
     // Ajouter les marqueurs des restaurants
-    restaurateurs.forEach(resto => {
-      if (resto.position) {
-        const marker = L.marker(resto.position, { icon: RestaurantIcon })
-          .addTo(map)
-          .bindPopup(`
-            <div style="text-align: center">
-              <b>${resto.restaurantName}</b><br>
-              ${resto.address}<br>
-              <span style="color: #666; font-size: 0.9em">${resto.phone}</span>
-            </div>
-          `);
-      }
-    });
-    
+    restaurateurs
+      .filter((resto) => commandes.some((cmd) => cmd.restaurant === resto._id))
+      .forEach((resto) => {
+        if (resto.position) {
+          L.marker(resto.position, { icon: RestaurantIcon })
+            .addTo(map)
+            .bindPopup(`<b>${resto.restaurantName}</b><br>${resto.address}`);
+        }
+      });
+
     // Ajouter les marqueurs des clients
-    clients.forEach(client => {
-      if (client.position) {
-        const marker = L.marker(client.position, { icon: ClientIcon })
-          .addTo(map)
-          .bindPopup(`
-            <div style="text-align: center">
-              <b>${client.name}</b><br>
-              ${client.address}<br>
-              <span style="color: #666; font-size: 0.9em">${client.phone}</span>
-            </div>
-          `);
-      }
-    });
-    
-    // Ne montrer que les routes pour les commandes visibles
-    const visibleRoutes = routes.filter(
-      route => !hiddenCommandes.includes(route.commandeId)
-    );
-    
-    // Ajouter les chemins animés
-    visibleRoutes.forEach(route => {
-      // Vérifier si c'est la route sélectionnée
+    clients
+      .filter((client) => commandes.some((cmd) => cmd.client === client._id))
+      .forEach((client) => {
+        if (client.position) {
+          L.marker(client.position, { icon: ClientIcon })
+            .addTo(map)
+            .bindPopup(`<b>${client.name}</b><br>${client.address}`);
+        }
+      });
+
+    // Créer les chemins animés pour les itinéraires
+    routes.forEach((route) => {
       const isSelected = selectedCommande === route.commandeId;
-      
+
       try {
-        // @ts-ignore - Ignorer les erreurs TypeScript pour antPath
-        const antPath = L.polyline.antPath([route.from, route.to], {
-          delay: 800,
-          dashArray: [10, 20],
-          weight: isSelected ? 5 : 3,
-          color: isSelected ? "#FF0000" : "#0000FF",
-          pulseColor: "#FFFFFF",
-          paused: false,
-          reverse: false,
-          hardwareAccelerated: true
-        }).addTo(map);
-        
-        // Ajouter un événement de clic sur le chemin
-        antPath.on('click', () => {
-          handleSelectCommande(route.commandeId);
-        });
-        
-        // Stocker la référence pour pouvoir le supprimer plus tard
+        // @ts-ignore
+        const antPath = L.polyline
+          .antPath([route.from, route.to], {
+            delay: 800,
+            dashArray: [10, 20],
+            weight: isSelected ? 5 : 3,
+            color: isSelected ? "#FF0000" : "#0000FF",
+            pulseColor: "#FFFFFF",
+            paused: false,
+            reverse: false,
+            hardwareAccelerated: true,
+          })
+          .addTo(map);
+
         antPathsRef.current.push(antPath);
-        
-        // Si c'est la route sélectionnée, zoom dessus
+
+        // Si c'est la route sélectionnée, zoomer dessus
         if (isSelected) {
           const bounds = L.latLngBounds([route.from, route.to]);
           map.fitBounds(bounds, { padding: [50, 50] });
@@ -368,148 +370,177 @@ export default function HomePage() {
         console.error("Erreur lors de la création du chemin animé:", error);
       }
     });
-    
-  }, [restaurateurs, clients, routes, selectedCommande, hiddenCommandes]);
-  
-  // Fonction pour sélectionner une commande
+  }, [restaurateurs, clients, routes, selectedCommande, currentLocation]);
+
+  // Fonction pour gérer la sélection d'une commande
   const handleSelectCommande = (commandeId: string) => {
-    setSelectedCommande(commandeId === selectedCommande ? null : commandeId);
+    if (selectedCommande === commandeId) {
+      setSelectedCommande(null);
+    } else {
+      setSelectedCommande(commandeId);
+
+      // Trouver la route correspondante et centrer la carte
+      const route = routes.find((r) => r.commandeId === commandeId);
+      if (route && mapInstanceRef.current) {
+        const bounds = L.latLngBounds([route.from, route.to]);
+        mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }
   };
 
-  // Fonction pour masquer une commande
+  // Masquer une commande
   const hideCommande = (commandeId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setHiddenCommandes(prev => [...prev, commandeId]);
+    setHiddenCommandes((prev) => [...prev, commandeId]);
   };
-  
-  // Fonction pour réinitialiser la vue de la carte
-  const resetMapView = () => {
-    if (!mapInstanceRef.current || !currentLocation) return;
-    mapInstanceRef.current.setView(currentLocation, 13);
+
+  // Rafraîchir la position actuelle
+  const refreshCurrentLocation = () => {
+    getCurrentLocation();
   };
-  
-  // Filtrer les commandes pour n'afficher que celles qui ne sont pas masquées
-  const visibleCommandes = commandes.filter(commande => !hiddenCommandes.includes(commande._id));
- 
+
+  // Filtrer les commandes masquées
+  const visibleCommandes = commandes.filter(
+    (cmd) => !hiddenCommandes.includes(cmd._id)
+  );
+
   return (
-    <div className="bg-gray-800 min-h-screen flex flex-col items-center p-4">
-      <div className="bg-purple-300 w-full max-w-md p-4 flex justify-between items-center rounded-t-xl">
-        <h1 className="text-xl font-bold">CESIEAT Livreur</h1>
-        <Link to={'/account'}>
-          <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white">👤</div>
+    <div className="flex flex-col items-center p-4">
+      <div className=" bg-secondary flex  justify-between w-full p-4 my-3 items-center rounded-xl">
+        <h1 className="text-xl font-bold">Livraisons disponibles</h1>
+        <Link to={"/livreur/account"}>
+          <img src={LocateIcon} className="w-10 ml-10" alt="Position" />
         </Link>
       </div>
-      <div className="bg-white w-full max-w-md p-4 rounded-b-xl">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Commandes à proximité</h2>
-          <div className="flex space-x-2">
-            <button 
-              onClick={resetMapView}
-              className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600"
-              title="Centrer sur ma position"
-            >
-              <FaMapMarkerAlt className="text-lg" />
-            </button>
-            <button 
-              onClick={loadAllData}
-              className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600"
-              title="Rafraîchir"
-            >
-              <FaRedoAlt className="text-lg" />
-            </button>
-          </div>
+
+      <div className="  w-full pt-4 rounded-b-xl ">
+        {/* Carte interactive */}
+        <div className="relative mb-4 flex flex-col items-center ">
+          <div
+            ref={mapRef}
+            className="w-full h-64 rounded-lg shadow-inner border border-gray-200"
+            style={{ height: "300px" }}
+          ></div>
+
+          {/* Bouton pour rafraîchir la position */}
+          <button
+            onClick={refreshCurrentLocation}
+            className="  flex items-center justify-between right-2 bg-white mt-2 p-2 px-4 rounded-2xl shadow-md hover:bg-gray-100"
+            title="Actualiser ma position"
+          >
+            Actualiser ma position
+            <img src={Refresh} alt="Refresh" className=" ml-3 w-5 h-5" />
+          </button>
+
+          {/* Message d'erreur de localisation */}
+          {locationError && (
+            <div className="mt-2 p-2 bg-red-100 text-red-700 rounded-md text-sm">
+              {locationError}
+            </div>
+          )}
         </div>
-        
-        {locationError && (
-          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
-            <p>{locationError}</p>
-          </div>
-        )}
-        
-        <div 
-          ref={mapRef} 
-          className="w-full mb-4 rounded-lg shadow-md"
-          style={{ height: '300px' }}
-        ></div>
-        
-        <div className="space-y-2 mt-4">
+
+        {/* Liste des commandes disponibles */}
+        <h2 className="text-lg font-semibold mb-2">
+          Commandes disponibles ({visibleCommandes.length})
+        </h2>
+
+        <div className="space-y-3">
           {isLoading ? (
-            <div className="text-center py-4 flex flex-col items-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-purple-500 mb-2"></div>
-              <p>Chargement des commandes...</p>
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
             </div>
           ) : (
             <>
-              {visibleCommandes.length > 0 ? (
-                visibleCommandes.map((commande, index) => {
-                  const restaurant = restaurateurs.find(r => r._id === commande.restaurant);
-                  const client = clients.find(c => c._id === commande.client);
-                  
+              {visibleCommandes.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  Aucune commande disponible pour le moment.
+                </div>
+              ) : (
+                visibleCommandes.map((commande) => {
+                  const restaurant = restaurateurs.find(
+                    (r) => r._id === commande.restaurant
+                  );
+                  const client = clients.find((c) => c._id === commande.client);
+
+                  const statusColor =
+                    commande.status === "Préparation"
+                      ? "bg-yellow-200"
+                      : commande.status === "Prêt"
+                      ? "bg-green-200"
+                      : "bg-gray-200";
+
                   return (
-                    <div 
-                      key={index} 
-                      className={`${selectedCommande === commande._id ? 'bg-purple-300' : 'bg-purple-200'} 
-                        flex justify-between items-center p-3 rounded-lg shadow cursor-pointer transition-colors`}
+                    <div
+                      key={commande._id}
+                      className={`${
+                        selectedCommande === commande._id
+                          ? "border-2 border-purple-500"
+                          : ""
+                      } ${statusColor} rounded-lg shadow p-3 cursor-pointer transition-all hover:shadow-md`}
                       onClick={() => handleSelectCommande(commande._id)}
                     >
-                      <div className="flex-1">
-                        <p className="font-semibold">
-                          {restaurant?.restaurantName || "Restaurant inconnu"} 
-                          → {client?.name || "Client inconnu"} 
-                        </p>
-                        <p className="font-semibold text-xs">
-                          {restaurant?.address || "Restaurant address inconnu"} 
-                          → {client?.address || "Client address inconnu"} 
-                        </p>
-                        <div className="flex items-center justify-between mt-1">
-                          <p className="text-sm font-bold">
-                            {commande.totalAmount}€
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-opacity-80 text-gray-800">
+                              {commande.status}
+                            </span>
+                            <span className="text-sm font-bold">
+                              {commande.totalAmount}€
+                            </span>
+                          </div>
+
+                          <img
+                            src={restaurant?.url} // Utiliser url au lieu de image
+                            alt="Logo"
+                            className="w-full h-32 object-cover"
+                          />
+                          <h3 className="font-semibold">
+                            {restaurant?.restaurantName || "Restaurant inconnu"}
+                          </h3>
+                          <p className="text-sm text-gray-600 truncate">
+                            {restaurant?.address || "Adresse inconnue"}
                           </p>
-                          <span className="text-xs bg-gray-200 rounded px-2 py-1">
-                            {commande.status}
-                          </span>
+
+                          <div className=" items-center mt-2">
+                            <div className="border-l-2 border-gray-300 pl-2 my-2 ml-2">
+                              <img
+                                src={CompteLogo}
+                                alt="Logo"
+                                className="w-6 h-6 m-2"
+                              />
+                              <h3 className="font-semibold">
+                                {client?.name || "Client inconnu"}
+                              </h3>
+                              <p className="text-sm text-gray-600 truncate">
+                                {client?.address || "Adresse inconnue"}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center">
-                        <Link 
-                          to={`/livraison/${commande._id}`} 
-                          className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600 mr-2"
-                        >
-                          <FaWalking className="text-lg" />
-                        </Link>
-                        <button 
-                          className="bg-gray-200 text-gray-600 p-2 rounded-full hover:bg-gray-300"
-                          onClick={(e) => hideCommande(commande._id, e)}
-                          title="Masquer cette commande"
-                        >
-                          <FaTrash className="text-lg" />
-                        </button>
+
+                        <div className="flex flex-col space-y-2 ml-2">
+                          <Link
+                            to={`/livreur/livraison/${commande._id}`}
+                            className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600 transition-colors"
+                            title="Accepter la livraison"
+                          >
+                            <FaWalking className="text-lg" />
+                          </Link>
+
+                          <button
+                            onClick={(e) => hideCommande(commande._id, e)}
+                            className="bg-gray-200 text-gray-600 p-2 rounded-full hover:bg-gray-300 transition-colors"
+                            title="Masquer cette commande"
+                          >
+                            <FaTrash className="text-lg" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );
                 })
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p className="mb-2 text-xl">🍽️</p>
-                  <p>Aucune commande disponible pour le moment</p>
-                  <button 
-                    onClick={loadAllData}
-                    className="mt-2 bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 transition"
-                  >
-                    Rafraîchir les commandes
-                  </button>
-                </div>
-              )}
-              
-              {hiddenCommandes.length > 0 && (
-                <div className="text-center mt-4">
-                  <button 
-                    className="text-sm text-purple-600 underline"
-                    onClick={() => setHiddenCommandes([])}
-                  >
-                    Afficher {hiddenCommandes}
-                  </button>
-                </div>
               )}
             </>
           )}
