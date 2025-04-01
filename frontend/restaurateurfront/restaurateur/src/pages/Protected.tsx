@@ -34,17 +34,6 @@ function Protected() {
     console.log("🤡 NOT AUTH")
 
     return <Navigate to ="/login"/>
-
-
-    // return (
-    //     <div>
-            // <button onClick={() => setUser(!user)}>login</button>
-    //         <br />
-    //         <div>{user ? "jon" : "not auth"}</div>
-    //         {user ? <Outlet></Outlet> : <Navigate to={"/login"} />}
-    //         {/* {user ? <Outlet></Outlet> : <div>not auth</div>} */}
-    //     </div>
-    // );
 }
 
 export default Protected;
