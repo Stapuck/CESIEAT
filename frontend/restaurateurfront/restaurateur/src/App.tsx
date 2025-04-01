@@ -1,288 +1,46 @@
-import { Link, Route, Routes, useLocation } from "react-router-dom";
-import {
-  FaBars,
-  FaFileAlt,
-  FaHistory,
-  FaList,
-  FaShoppingCart,
-  FaUser,
-} from "react-icons/fa"; // Icons
-import { useEffect, useState } from "react";
-import { createZitadelAuth, ZitadelConfig } from "@zitadel/react";
+
+
+
+import { Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import NotFoundPage from "./components/NotFoundPage";
-import { ToastContainer } from "react-toastify";
-import CreateArticle from "./pages/Article/CreateArticle";
-import CreateMenu from "./pages/Menu/CreateMenu";
-import Login from "./components/Login";
-import Callback from "./components/Callback";
+import Login from "./pages/Login";
 import Account from "./pages/Account";
+import CreateArticle from "./pages/Article/CreateArticle";
 import EditArticle from "./pages/Article/EditArticle";
+import CreateMenu from "./pages/Menu/CreateMenu";
 import EditMenu from "./pages/Menu/EditMenu";
 import MenuPage from "./pages/Menu/MenuPage";
 import ArticlePage from "./pages/Article/ArticlePage";
 import HistoriqueCommande from "./pages/Commande/HistoriqueCommande";
 import CommandePage from "./pages/Commande/CommandePage";
 import CreateCommande from "./pages/Commande/CreateCommande";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Test from "./components/test";
 
 const queryClient = new QueryClient();
 
 function App() {
-  const config: ZitadelConfig = {
-    authority: "https://instance1-el5q1i.zitadel.cloud/",
-    client_id: "312751992336403117",
-    redirect_uri: "http://localhost:5174/restaurateur/callback",
-    post_logout_redirect_uri: "http://localhost:5174/restaurateur/home",
-  };
-
-  const zitadel = createZitadelAuth(config);
-
-  function login() {
-    zitadel.authorize();
-  }
-
-  function signout() {
-    zitadel.signout();
-  }
-
-  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Ajouter l'état pour la sidebar
-
-  useEffect(() => {
-    zitadel.userManager.getUser().then((user) => {
-      if (user) {
-        setAuthenticated(true);
-      } else {
-        setAuthenticated(false);
-      }
-    });
-  }, [zitadel]);
-
-  const location = useLocation();
-
-  const getLinkClassName = (path: string) => {
-    // Vérifie si le chemin actuel correspond à celui du lien
-    return location.pathname === path
-      ? "flex items-center space-x-2 py-3 hover:bg-gray-700 rounded text-white font-semibold"
-      : "flex items-center space-x-2 py-3 hover:bg-gray-700 rounded text-gray-400";
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="bg-white flex flex-col h-screen">
-        {/* Navbar */}
-        <nav className="bg-gray-800 flex items-center justify-between p-4">
-          <Link
-            to="/restaurateur/home"
-            className="text-white text-2xl font-bold"
-          >
-            Restaurateur Front
-          </Link>
 
-          {/* Button to toggle sidebar */}
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)} // Toggle sidebar
-            className="text-white lg:hidden"
-          >
-            <FaBars size={24} />
-          </button>
-        </nav>
-
-        <div className="flex flex-1">
-          {/* Sidebar */}
-          <div
-            className={`w-fit bg-gray-800 text-white p-4 transition-all duration-300 ${
-              isSidebarOpen ? "block" : "hidden lg:block"
-            }`}
-          >
-            <nav>
-              <ul>
-                <li>
-                  <Link
-                    to="/restaurateur/account"
-                    className={getLinkClassName("/restaurateur/account")}
-                  >
-                    <FaUser /> <span>Mon Compte</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/restaurateur/menu"
-                    className={getLinkClassName("/restaurateur/menu")}
-                  >
-                    <FaList /> <span>Mes Menus</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/restaurateur/article"
-                    className={getLinkClassName("/restaurateur/article")}
-                  >
-                    <FaFileAlt /> <span>Mes Articles</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/restaurateur/commande"
-                    className={getLinkClassName("/restaurateur/commande")}
-                  >
-                    <FaShoppingCart /> <span>Mes Commandes</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/restaurateur/historique"
-                    className={getLinkClassName("/restaurateur/historique")}
-                  >
-                    <FaHistory /> <span>Mon Historique</span>
-                  </Link>
-                </li>
-              </ul>
-
-              {/* Section pour les boutons Login/Logout */}
-              <div className="mt-auto pt-4 border-t border-gray-700">
-                {authenticated === false && (
-                  <button
-                    onClick={login}
-                    className="flex items-center space-x-2 py-3 px-4 w-full hover:bg-gray-700 rounded text-white font-semibold"
-                  >
-                    <FaUser /> <span>Se connecter</span>
-                  </button>
-                )}
-                {authenticated === true && (
-                  <button
-                    onClick={signout}
-                    className="flex items-center space-x-2 py-3 px-4 w-full hover:bg-gray-700 rounded text-white font-semibold"
-                  >
-                    <FaUser /> <span>Se déconnecter</span>
-                  </button>
-                )}
-              </div>
-            </nav>
-          </div>
-
-          {/* Mobile Sidebar (hidden on large screens)
-        <div
-          className={`lg:hidden w-16 bg-gray-800 text-white flex flex-col items-center space-y-4 py-8 transition-all duration-300 ${
-            isSidebarOpen ? 'block' : 'hidden'
-          }`}
-        >
-          <Link to="/account" className="flex flex-col items-center space-y-2">
-          <FaUser size={24} />
-            <span className="text-xs">Account</span>
-          </Link>
-          <Link to="/create-menu" className="flex flex-col items-center space-y-2">
-            <FaList size={24} />
-            <span className="text-xs">Menu</span>
-          </Link>
-          <Link to="/create-article" className="flex flex-col items-center space-y-2">
-            <FaFileAlt size={24} />
-            <span className="text-xs">Article</span>
-          </Link>
-          <Link to="/test" className="flex flex-col items-center space-y-2">
-            <FaShoppingCart size={24} />
-            <span className="text-xs">Commande</span>
-          </Link>
-          <Link to="/home" className="flex flex-col items-center space-y-2">
-            <FaHistory size={24} />
-            <span className="text-xs">Historique</span>
-          </Link>
-        </div> */}
-
-          {/* Main Content */}
-          <div className="flex-1 p-4 overflow-auto">
-            <Routes>
-              <Route
-                path="restaurateur/login"
-                element={
-                  <Login authenticated={authenticated} handleLogin={login} />
-                }
-              />
-              <Route
-                path="restaurateur/callback"
-                element={
-                  <Callback
-                    authenticated={authenticated}
-                    setAuth={setAuthenticated}
-                    handleLogout={signout}
-                    userManager={zitadel.userManager}
-                  />
-                }
-              />
-              <Route path="restaurateur/home" element={<HomePage />} />
-              <Route path="/restaurateur/" element={<HomePage />} />
-              <Route
-                  path="restaurateur/test"
-                  element={<Test/>}
-                />
-              <Route
-                element={
-                  <ProtectedRoute
-                    authenticated={authenticated}
-                    setAuth={setAuthenticated}
-                    handleLogout={signout}
-                    userManager={zitadel.userManager}
-                  />
-                }
-              >
-               
-
-                <Route
-                  path="restaurateur/create-article"
-                  element={<CreateArticle />}
-                />
-                <Route
-                  path="restaurateur/edit-article/:id"
-                  element={<EditArticle />}
-                />
-                <Route
-                  path="restaurateur/create-menu"
-                  element={<CreateMenu />}
-                />
-                <Route
-                  path="restaurateur/edit-menu/:id"
-                  element={<EditMenu />}
-                />
-
-                <Route
-                  path="restaurateur/create-commande"
-                  element={<CreateCommande />}
-                />
-
-                <Route
-                  path="restaurateur/account"
-                  element={
-                    <Account
-                      authenticated={authenticated}
-                      setAuth={setAuthenticated}
-                      userManager={zitadel.userManager}
-                    />
-                  }
-                />
-
-                <Route path="restaurateur/menu" element={<MenuPage />} />
-                <Route path="restaurateur/article" element={<ArticlePage />} />
-                <Route
-                  path="restaurateur/commande"
-                  element={<CommandePage />}
-                />
-                <Route
-                  path="restaurateur/historique"
-                  element={<HistoriqueCommande />}
-                />
-              </Route>
-
-              <Route path="restaurateur/404" element={<NotFoundPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </div>
-        </div>
-
-        <ToastContainer />
-      </div>
+        <Routes>
+          <Route path="restaurateur/login" element={<Login />} />
+          <Route element={<Layout />}>
+            <Route path="restaurateur/home" element={<HomePage />} />
+            <Route path="restaurateur/account" element={<Account />} />
+            <Route path="restaurateur/menu" element={<MenuPage />} />
+            <Route path="restaurateur/article" element={<ArticlePage />} />
+            <Route path="restaurateur/commande" element={<CommandePage />} />
+            <Route path="restaurateur/historique" element={<HistoriqueCommande />} />
+            <Route path="restaurateur/create-article" element={<CreateArticle />} />
+            <Route path="restaurateur/edit-article/:id" element={<EditArticle />} />
+            <Route path="restaurateur/create-menu" element={<CreateMenu />} />
+            <Route path="restaurateur/edit-menu/:id" element={<EditMenu />} />
+            <Route path="restaurateur/create-commande" element={<CreateCommande />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
     </QueryClientProvider>
   );
 }

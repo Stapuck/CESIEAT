@@ -52,10 +52,10 @@ const HistoriqueCommande = () => {
 
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
-  const [filterByDate, setFilterByDate] = useState<boolean>(false);  // State to toggle between all orders and date filter
+  const [filterByDate, setFilterByDate] = useState<boolean>(false);  
 
-  const [filterByAll, setFilterByAll] = useState<boolean>(true);  // Show all orders by default
-  const [filterByToday, setFilterByToday] = useState<boolean>(false);  // Filter for today's orders only
+  const [filterByAll, setFilterByAll] = useState<boolean>(true); 
+  const [filterByToday, setFilterByToday] = useState<boolean>(false); 
 
   const getCommandes = async () => {
     try {
@@ -108,16 +108,14 @@ const HistoriqueCommande = () => {
     getLivreurs();
   }, []);
 
-  // Filter commandes based on date range
   const filteredCommandes = commandes.filter(commande => {
     const createdAt = new Date(commande.createdAt);
-    const start = startDate ? new Date(startDate) : new Date(0); // If no start date, use very old date
-    const end = endDate ? new Date(endDate) : new Date(); // If no end date, use the current date
+    const start = startDate ? new Date(startDate) : new Date(0); 
+    const end = endDate ? new Date(endDate) : new Date();
 
     return createdAt >= start && createdAt <= end;
   });
 
-  // Filter for today's orders
   const filteredTodayCommandes = commandes.filter(commande => {
     const createdAt = new Date(commande.createdAt);
     const today = new Date();
@@ -129,7 +127,6 @@ const HistoriqueCommande = () => {
     return createdAt >= startOfDay && createdAt <= endOfDay;
   });
 
-  // Determine the orders to show based on different filter states
   let ordersToDisplay: ICommande[] = [];
   if (filterByAll) {
     ordersToDisplay = commandes;
@@ -139,14 +136,12 @@ const HistoriqueCommande = () => {
     ordersToDisplay = filteredCommandes;
   }
 
-  // Calculate the sum of total amounts for displayed orders
   const totalSum = ordersToDisplay.reduce((sum, commande) => sum + commande.totalAmount, 0);
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Historique des Commandes ({ordersToDisplay.length})</h1>
 
-      {/* Filter Buttons */}
       <div className="mb-4">
         <button
           className={`mr-4 px-4 py-2 ${filterByAll ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
@@ -168,7 +163,6 @@ const HistoriqueCommande = () => {
         </button>
       </div>
 
-      {/* Date Filter Section (only visible if filterByDate is true) */}
       {filterByDate && (
         <div className="mb-4">
           <label className="mr-2">Start Date:</label>
@@ -187,6 +181,15 @@ const HistoriqueCommande = () => {
           />
         </div>
       )}
+      <div className="mt-4 mb-4">
+       <label className="font-bold">Total des Montants des Commandes: </label>
+       <input
+          type="text"
+          value={`${totalSum.toFixed(2)}€`}
+          readOnly
+          className="border border-gray-400 p-2 mt-2 rounded-lg w-24"
+        />
+      </div>
 
       <table className="table-auto w-full border-collapse border border-gray-300">
         <thead>
@@ -232,17 +235,6 @@ const HistoriqueCommande = () => {
           )}
         </tbody>
       </table>
-
-      {/* Display the sum of the total amounts */}
-      <div className="mt-4">
-        <label className="font-bold">Total des Montants des Commandes: </label>
-        <input
-          type="text"
-          value={`${totalSum}€`}
-          readOnly
-          className="border border-gray-300 p-2 mt-2"
-        />
-      </div>
     </div>
   );
 };
