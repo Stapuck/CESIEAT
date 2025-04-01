@@ -1,82 +1,27 @@
-import { useEffect, useState } from "react";
-import { UserManager, User } from "oidc-client-ts";
+import { useAuth } from "react-oidc-context";
 
-type Props = {
-  authenticated: boolean | null;
-  setAuth: (authenticated: boolean | null) => void;
-  userManager: UserManager;
-};
 
-const Account = ({
-  authenticated,
-  setAuth,
-  userManager,
-}: Props) => {
-  const [userInfo, setUserInfo] = useState<User | null>(null);
+const Account = () => {
+  const auth = useAuth();
 
-  useEffect(() => {
-    if (authenticated === null) {
-      userManager
-        .signinRedirectCallback()
-        .then((user: User) => {
-          if (user) {
-            setAuth(true);
-            setUserInfo(user);
-          } else {
-            setAuth(false);
-          }
-        })
-        .catch((error: any) => {
-          console.log(error.message)
-          setAuth(false);
-        });
-    }
-    if (authenticated === true && userInfo === null) {
-      userManager
-        .getUser()
-        .then((user) => {
-          if (user) {
-            setAuth(true);
-            setUserInfo(user);
-            
-          } else {
-            setAuth(false);
-          }
-        })
-        .catch((error: any) => {
-          console.log(error.message)
-          setAuth(false);
-        });
-    }
-  }, [authenticated, userManager, setAuth]);
-  if (authenticated === true && userInfo) {
-    return (
-      <div className="user">
-        <h2>Welcome on account, {userInfo.profile.name}!</h2>
-        <p className="description">Your ZITADEL Profile Information</p>
-        <p>Name: {userInfo.profile.name}</p>
-        <p>Email: {userInfo.profile.email}</p>
-        <p>Email Verified: {userInfo.profile.email_verified ? "Yes" : "No"}</p>
-        <p>
-          Roles:{" "}
-          {JSON.stringify(
-            userInfo.profile[
-              "urn:zitadel:iam:org:project:roles"
-            ]
-          )}
-        </p>
+  // console.log(auth); 
+  // console.log(auth.user); 
+  console.log(auth.user?.profile); 
 
-        <div>
-          gerer le parainage ici : code parainage
-        </div>
+  // auth.isAuthenticated
+  
+  return (
+    <div>
+      account 
 
-      </div>
+      <p> id user : {auth.user?.profile.sub}</p>
+      <p> id user : {auth.user?.profile.sub}</p>
 
+    </div>
+    
       
-    );
-  } else {
-    return <div>Loading...</div>;
-  }
+  )
+ 
 };
 
 export default Account;

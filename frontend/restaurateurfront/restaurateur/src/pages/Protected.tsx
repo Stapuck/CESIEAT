@@ -16,7 +16,7 @@ function Protected() {
     }
 
     if (auth.error) {
-        return <div>Oops... {auth.error.kind} caused {auth.error.message}</div>;
+        return <div>Oops an error occured caused {auth.error.message}</div>;
     }
 
     if (auth.isAuthenticated) {
@@ -26,7 +26,7 @@ function Protected() {
 
     console.log("🤡 NOT AUTH");
 
-    return <Navigate to="/login" />;
+    return <Navigate to="/restaurateur/" />;
 }
 
 export default Protected;

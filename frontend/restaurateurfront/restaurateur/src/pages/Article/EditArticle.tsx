@@ -59,7 +59,7 @@ const EditArticle = () => {
 
             toast.success("Article mis à jour avec succès");
             setIsLoading(false);
-            navigate("/article");
+            navigate("/restaurateur/article");
         } catch (error: any) {
             toast.error(error.message);
             setIsLoading(false);

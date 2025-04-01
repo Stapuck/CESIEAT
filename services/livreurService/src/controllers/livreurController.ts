@@ -26,6 +26,22 @@ export const getLivreur = async (c: Context) => {
     }
 };
 
+export const getLivreurByCodeLivreur = async (c: Context) => {
+    try {
+        const codelivreur = c.req.param('codelivreur');  // Récupérer le code du livreur
+
+        const livreur = await Livreur.findOne({ codeLivreur: codelivreur });
+
+        if (!livreur) {
+            return c.json({ message: `Livreur avec le code ${codelivreur} non trouvé` }, 404);
+        }
+
+        return c.json(livreur);
+    } catch (error) {
+        return handleError(error, c);
+    }
+};
+
 export const createLivreur = async (c: Context) => {
     try {
         const body = await c.req.json();
