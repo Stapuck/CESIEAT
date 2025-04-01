@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import Swal from 'sweetalert2';
+import { useAuth } from "react-oidc-context";
+
 
 interface IArticle {
     _id: string;
@@ -18,11 +20,14 @@ interface IArticle {
 function TableauArticle() {
     const [articles, setArticles] = useState<IArticle[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-  
-    const getArticles = async () => {
+    const auth = useAuth();
+
+
+
+    const getArticlesByRestaurant = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get("http://localhost:8080/api/articles");
+            const response = await axios.get(`http://localhost:8080/api/articles/restaurateur/${auth.user?.profile.sub}`);
             setArticles(response.data);
             setIsLoading(false);
         } catch (error) {
@@ -31,7 +36,7 @@ function TableauArticle() {
     };
   
     useEffect(() => {
-        getArticles();
+        getArticlesByRestaurant();
     }, []);
 
     const deleteArticle = async (id: string) => {
@@ -47,7 +52,7 @@ function TableauArticle() {
             try {
                 await axios.delete(`http://localhost:8080/api/articles/${id}`);
                 toast.success("Article supprimé avec succès");
-                getArticles();
+                getArticlesByRestaurant();
             } catch (error: any) {
                 toast.error(error.message);
             }
@@ -81,7 +86,7 @@ function TableauArticle() {
                                         <td className="border px-4 py-2">{article.isInStock ? "En stock" : "Rupture de stock"}</td>
                                         <td className="border px-4 py-2">{article.restaurantid}</td>
                                         <td className="border px-4 py-2 flex gap-2">
-                                        <Link to={`/edit-article/${article._id}`} className="inline-block w-full text-center shadow-md text-sm bg-gray-700 text-white rounded-sm px-4 py-1 font-bold hover:bg-gray-600 hover:cursor-pointer">
+                                        <Link to={`/restaurateur/edit-article/${article._id}`} className="inline-block w-full text-center shadow-md text-sm bg-gray-700 text-white rounded-sm px-4 py-1 font-bold hover:bg-gray-600 hover:cursor-pointer">
                                           Modifier
                                         </Link>
                                         <button onClick={() => deleteArticle(article._id)} className="inline-block w-full text-center shadow-md text-sm bg-red-700 text-white rounded-sm px-4 py-1 font-bold hover:bg-red-600 hover:cursor-pointer">

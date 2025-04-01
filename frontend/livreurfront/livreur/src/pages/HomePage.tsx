@@ -59,7 +59,7 @@ export default function HomePage() {
   const getCommandes = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3003/api/commandes");
+      const response = await axios.get("http://localhost:8080/api/commandes");
       setCommandes(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -70,7 +70,7 @@ export default function HomePage() {
   const getClients = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3000/api/clients");
+      const response = await axios.get("http://localhost:8080/api/clients");
       setClients(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -81,7 +81,7 @@ export default function HomePage() {
   const getRestaurateurs = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3001/api/restaurateurs");
+      const response = await axios.get("http://localhost:8080/api/restaurateurs");
       setRestaurateur(response.data);
       setIsLoading(false);
     } catch (error) {

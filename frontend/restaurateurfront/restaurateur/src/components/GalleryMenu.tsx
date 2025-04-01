@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import MenuCard from './MenuCard';
+import { useAuth } from "react-oidc-context";
+
 
 function GalleryMenu() {
     const [menus, setMenus] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const auth = useAuth();
 
-    const getMenus = async () => {
+    const getMenusByRestaurateur = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get("http://localhost:8080/api/menus");
+            const response = await axios.get(`http://localhost:8080/api/menus/restaurateur/${auth.user?.profile.sub}`);
             setMenus(response.data);
             setIsLoading(false);
         } catch (error) {
@@ -18,7 +21,7 @@ function GalleryMenu() {
     };
 
     useEffect(() => {
-      getMenus();
+      getMenusByRestaurateur();
     }, []);
 
     return (
@@ -28,7 +31,7 @@ function GalleryMenu() {
                     {menus.length > 0 ? (
                         <>
                             {menus.map((menu, index) => (
-                                <MenuCard key={index} menu={menu} getMenus={getMenus} />
+                                <MenuCard key={index} menu={menu} getMenus={getMenusByRestaurateur} />
                             ))}
                         </>
                     ) : (

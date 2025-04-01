@@ -12,18 +12,17 @@ const Account = () => {
 
   return (
     <div>
-      <h2>Account</h2>
+      <h2>Account </h2>
       <p><strong>email  :</strong> {auth.user?.profile.email}</p>
       <p><strong>ID utilisateur :</strong> {auth.user?.profile.sub}</p>
       <p><strong>name  :</strong> {auth.user?.profile.family_name}</p>
       <p><strong>last name :</strong> {auth.user?.profile.given_name}</p>
-
-      <h3>Rôles :</h3>
+      <p><strong>Rôles :</strong> </p>
       {roleEntries.length > 0 ? (
         <ul>
           {roleEntries.map(([role, value]) => (
             <li key={value}>
-              <strong>{role} </strong> 
+              <p>{role} </p>
             </li>
           ))}
         </ul>
