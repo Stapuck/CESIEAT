@@ -17,27 +17,71 @@ interface IArticle {
     restaurantid?: string;
 }
 
+interface IRestaurateur {
+    _id: string;
+    managerName: string;
+    email: string;
+    restaurantName: string;
+    address: string;
+    phone: string;
+    name: string;
+    position: [number, number];
+    url: string;
+    managerId: string;
+  }
+
 function TableauArticle() {
     const [articles, setArticles] = useState<IArticle[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [restaurant, setRestaurant] = useState<IRestaurateur>();
+
+
     const auth = useAuth();
 
+    const getRestaurateurByManagerId = async () => {
+        try {
+            setIsLoading(true);
+            const response = await axios.get(
+                `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
+            );
+            if (response.data.length > 0) {
+                setRestaurant(response.data[0]);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
 
 
     const getArticlesByRestaurant = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`http://localhost:8080/api/articles/restaurateur/${auth.user?.profile.sub}`);
+
+            
+            
+            const response = await axios.get(`http://localhost:8080/api/articles/restaurateur/${restaurant?._id}`);
             setArticles(response.data);
             setIsLoading(false);
+
+            
         } catch (error) {
             console.log(error);
         }
     };
   
-    useEffect(() => {
-        getArticlesByRestaurant();
-    }, []);
+        useEffect(() => {
+            getRestaurateurByManagerId();
+        }, []);
+        
+        useEffect(() => {
+            if (restaurant?._id) {
+                getArticlesByRestaurant();
+            }
+        }, [restaurant]); 
+  
 
     const deleteArticle = async (id: string) => {
         const result = await Swal.fire({
@@ -67,6 +111,7 @@ function TableauArticle() {
                         <table className="min-w-full bg-white border border-gray-300">
                             <thead>
                                 <tr className="bg-gray-200">
+                                    <th className="border px-4 py-2">_id</th>
                                     <th className="border px-4 py-2">Nom</th>
                                     <th className="border px-4 py-2">Référence</th>
                                     <th className="border px-4 py-2">Type</th>
@@ -79,6 +124,7 @@ function TableauArticle() {
                             <tbody>
                                 {articles.map((article, index) => (
                                     <tr key={index} className="border">
+                                        <td className="border px-4 py-2">{article._id}</td>
                                         <td className="border px-4 py-2">{article.name}</td>
                                         <td className="border px-4 py-2">{article.reference}</td>
                                         <td className="border px-4 py-2">{article.type}</td>

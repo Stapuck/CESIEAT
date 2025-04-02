@@ -10,6 +10,7 @@ interface IRestaurateur extends Document {
     name: string;
     position: [number, number];
     url: string;
+    managerId: string;
 }
 
 const restaurateurSchema = new Schema(
@@ -23,6 +24,7 @@ const restaurateurSchema = new Schema(
         address: { type: String, required: true },
         phone: { type: String, required: true },
         url: { type: String, required: true },
+        managerId: { type: String, required: true },
     },
     { timestamps: true }
 );

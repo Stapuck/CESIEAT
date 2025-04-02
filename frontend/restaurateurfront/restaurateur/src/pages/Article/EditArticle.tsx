@@ -101,9 +101,9 @@ const EditArticle = () => {
                         <label>Image URL</label>
                         <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="w-full block border p-3 rounded" />
                     </div>
-                    <div>
+                    <div className="hidden">
                         <label>ID du restaurant</label>
-                        <input type="text" value={restaurantid} onChange={(e) => setRestaurantId(e.target.value)} className="w-full block border p-3 rounded" />
+                        <input type="text" value={restaurantid}  className="w-full block border p-3 rounded" />
                     </div>
                     <div>
                         {!isLoading && (
