@@ -38,8 +38,8 @@ const CommandesPage = () => {
   const { status, data, error, isFetching } = useQuery({
     queryKey: ["todos"],
     queryFn: async (): Promise<Array<ICommande>> => {
-      // const response = await fetch("http://localhost:8080/api/commandes");
-      const response = await fetch(`http://localhost:8080/api/commandes/restaurateur/${auth.user?.profile.sub}`);
+      // const response = await fetch("http://localhost:3003/api/commandes");
+      const response = await fetch(`http://localhost:3003/api/commandes/restaurateur/67e662084c3d03db52c56f97`);
       return await response.json();
     },
     // Refetch the data every second

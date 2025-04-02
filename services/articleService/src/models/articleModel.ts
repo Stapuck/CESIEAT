@@ -7,7 +7,8 @@ interface IArticle extends Document {
     price: number;
     isInStock: boolean;
     image?: string;
-    restaurantid?: string;
+    restaurantid: mongoose.Types.ObjectId; 
+
 }
 
 const articleSchema = new Schema(
@@ -18,7 +19,8 @@ const articleSchema = new Schema(
         price: { type: Number, required: true },
         isInStock: { type: Boolean, default: true },
         image: { type: String },
-        restaurantid: { type: String }
+        restaurantid: [{ type: Schema.Types.ObjectId, ref: 'Restaurateur', required: true }]
+
     },
     { timestamps: true }
 );

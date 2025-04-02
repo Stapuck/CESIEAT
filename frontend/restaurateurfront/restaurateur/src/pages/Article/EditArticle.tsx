@@ -19,7 +19,7 @@ const EditArticle = () => {
     useEffect(() => {
         const fetchArticle = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/api/articles/${id}`);
+                const response = await axios.get(`http://localhost:3005/api/articles/${id}`);
                 const article = response.data;
                 setName(article.name);
                 setReference(article.reference);
@@ -47,7 +47,7 @@ const EditArticle = () => {
 
         try {
             setIsLoading(true);
-            await axios.put(`http://localhost:8080/api/articles/${id}`, {
+            await axios.put(`http://localhost:3005/api/articles/${id}`, {
                 name,
                 reference,
                 type,
@@ -101,9 +101,9 @@ const EditArticle = () => {
                         <label>Image URL</label>
                         <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="w-full block border p-3 rounded" />
                     </div>
-                    <div>
+                    <div className="hidden">
                         <label>ID du restaurant</label>
-                        <input type="text" value={restaurantid} onChange={(e) => setRestaurantId(e.target.value)} className="w-full block border p-3 rounded" />
+                        <input type="text" value={restaurantid}  className="w-full block border p-3 rounded" />
                     </div>
                     <div>
                         {!isLoading && (

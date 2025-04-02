@@ -30,13 +30,13 @@ const Sidebar = ({ isSidebarOpen }: SidebarProps) => {
             </Link>
           </li>
           <li>
-            <Link to="/restaurateur/menu" className={getLinkClassName("/restaurateur/menu")}>
-              <FaList /> <span>Mes Menus</span>
+            <Link to="/restaurateur/article" className={getLinkClassName("/restaurateur/article")}>
+              <FaFileAlt /> <span>Mes Articles</span>
             </Link>
           </li>
           <li>
-            <Link to="/restaurateur/article" className={getLinkClassName("/restaurateur/article")}>
-              <FaFileAlt /> <span>Mes Articles</span>
+            <Link to="/restaurateur/menu" className={getLinkClassName("/restaurateur/menu")}>
+              <FaList /> <span>Mes Menus</span>
             </Link>
           </li>
           <li>

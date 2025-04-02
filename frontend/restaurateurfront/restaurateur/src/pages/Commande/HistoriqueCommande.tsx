@@ -51,7 +51,7 @@ const HistoriqueCommande = () => {
   const [commandes, setCommandes] = useState<ICommande[]>([]);
   const [clients, setClients] = useState<IClient[]>([]);
   const [livreurs, setLivreur] = useState<ILivreur[]>([]);
-  const [restaurateurs, setRestaurateur] = useState<IRestaurateur[]>([]);
+  const [restaurantmanager, setRestaurantManager] = useState<IRestaurateur | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const [startDate, setStartDate] = useState<string>('');
@@ -61,13 +61,31 @@ const HistoriqueCommande = () => {
   const [filterByAll, setFilterByAll] = useState<boolean>(true); 
   const [filterByToday, setFilterByToday] = useState<boolean>(false); 
 
+  const getRestaurateurByManagerId = async () => {
+    try {
+        setIsLoading(true);
+        const response = await axios.get(
+            `http://localhost:3001/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        );
+
+        if (Array.isArray(response.data) && response.data.length > 0) {
+            setRestaurantManager(response.data[0]);
+        } else {
+            console.log("Aucun restaurant trouvé pour ce manager.");
+            setRestaurantManager(null);
+        }
+    } catch (error) {
+        console.error("Erreur lors de la récupération du restaurateur:", error);
+    } finally {
+        setIsLoading(false);
+    }
+};
 
 
   const getCommandesByRestaurateur = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`http://localhost:3003/api/commandes`);
-      // const response = await axios.get(`http://localhost:8080/api/commandes/restaurateur/${auth.user?.profile.sub}`);
+      const response = await axios.get(`http://localhost:3003/api/commandes/restaurateur/${restaurantmanager?._id}`);
       setCommandes(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -86,17 +104,6 @@ const HistoriqueCommande = () => {
     }
   };
 
-  const getRestaurateurs = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get("http://localhost:8080/api/restaurateurs");
-      setRestaurateur(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const getLivreurs = async () => {
     try {
       setIsLoading(true);
@@ -108,13 +115,18 @@ const HistoriqueCommande = () => {
     }
   };
 
-  useEffect(() => {
-    // getCommandes();
-    getCommandesByRestaurateur();
-    getClients();
-    getRestaurateurs();
-    getLivreurs();
+    useEffect(() => {
+      getRestaurateurByManagerId();
+      getClients();
+      // getRestaurateurs();
+      getLivreurs();
   }, []);
+
+  useEffect(() => {
+      if (restaurantmanager?._id) {
+          getCommandesByRestaurateur();
+      }
+  }, [restaurantmanager]);
 
   const filteredCommandes = commandes.filter(commande => {
     const createdAt = new Date(commande.createdAt);
@@ -204,9 +216,8 @@ const HistoriqueCommande = () => {
           <tr className="bg-gray-200">
             <th className="border border-gray-300 px-4 py-2">id commande</th>
             <th className="border border-gray-300 px-4 py-2">Client</th>
-            <th className="border border-gray-300 px-4 py-2">Restaurant</th>
             <th className="border border-gray-300 px-4 py-2">Livreur</th>
-            <th className="border border-gray-300 px-4 py-2">Items</th>
+            {/* <th className="border border-gray-300 px-4 py-2">Items</th> */}
             <th className="border border-gray-300 px-4 py-2">Montant Total</th>
             <th className="border border-gray-300 px-4 py-2">Statut</th>
             <th className="border border-gray-300 px-4 py-2">créé le</th>
@@ -226,14 +237,11 @@ const HistoriqueCommande = () => {
                   <td className="border border-gray-300 px-4 py-2">
                     {clients.find(client => client._id === commande.client)?.name || "Inconnu"}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {/* {restaurateurs.find(restaurateur => restaurateur._id === commande.restaurant)?.restaurantName || "Inconnu"} */}
-                    {commande.restaurant}
-                  </td>
+                  
                   <td className="border border-gray-300 px-4 py-2">
                     {livreurs.find(livreur => livreur._id === commande.livreur)?.name || "N/A"}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2"> revoir le model commande </td>
+                  {/* <td className="border border-gray-300 px-4 py-2"> revoir le model commande </td> */}
                   <td className="border border-gray-300 px-4 py-2">{commande.totalAmount}€</td>
                   <td className="border border-gray-300 px-4 py-2">{commande.status}</td>
                   <td className="border border-gray-300 px-4 py-2">{new Date(commande.createdAt).toLocaleString()}</td>

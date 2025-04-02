@@ -178,6 +178,15 @@ const Account = () => {
         ) : restaurant ? (
           <div className="space-y-4">
             <div>
+              <strong>id restaurant :</strong> 
+              <input
+                type="text"
+                value={restaurant._id}
+                readOnly={true}
+                className="border p-2 rounded"
+              />
+            </div>
+            <div>
               <strong>Manager :</strong> 
               <input
                 type="text"
