@@ -82,3 +82,51 @@ export const pauseClient = async (c: Context) => {
         return handleError(error, c);
     }
 };
+
+export const getClientByZitadelId = async (c: Context) => {
+    try {
+        const zitadelId = c.req.param('zitadelId');
+        const client = await Client.findOne({ clientId_Zitadel: zitadelId });
+        if (!client) return c.json({ message: `Client with Zitadel ID ${zitadelId} not found` }, 404);
+        return c.json(client);
+    } catch (error) {
+        return handleError(error, c);
+    }
+};
+
+export const editClientByZitadelId = async (c: Context) => {
+    try {
+        const zitadelId = c.req.param('zitadelId');
+        const body = await c.req.json();
+        
+        const client = await Client.findOneAndUpdate(
+            { clientId_Zitadel: zitadelId }, 
+            body, 
+            { new: true, runValidators: true }
+        );
+        
+        if (!client) {
+            return c.json({ message: `Client avec Zitadel ID ${zitadelId} non trouvé` }, 404);
+        }
+        
+        return c.json(client);
+    } catch (error) {
+        return handleError(error, c);
+    }
+};
+
+export const deleteClientByZitadelId = async (c: Context) => {
+    try {
+        const zitadelId = c.req.param('zitadelId');
+        const client = await Client.findOneAndDelete({ clientId_Zitadel: zitadelId });
+        
+        if (!client) {
+            return c.json({ message: `Client with Zitadel ID ${zitadelId} not found` }, 404);
+        }
+        
+        return c.json({ message: `Client with Zitadel ID ${zitadelId} deleted successfully` });
+    } catch (error) {
+        return handleError(error, c);
+    }
+}
+

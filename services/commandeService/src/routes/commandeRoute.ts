@@ -4,13 +4,14 @@ import {getCommandes, getCommande, createCommande, editCommande, deleteCommande,
 
 const commandeRoute = new Hono();
 
+commandeRoute.get('/client/:clientId_Zitadel', getCommandesByClient )
+commandeRoute.get('/restaurateur/:idrestaurateur', getCommandesByRestorateur )
 commandeRoute.get('/', getCommandes);
 commandeRoute.get('/:id', getCommande);
 commandeRoute.post('/', createCommande);
 commandeRoute.put('/:id', editCommande);
 commandeRoute.delete('/:id', deleteCommande);
-commandeRoute.get('/client/:idclient', getCommandesByClient )
-commandeRoute.get('/restaurateur/:idrestaurateur', getCommandesByRestorateur )
+
 
 
 export default commandeRoute;

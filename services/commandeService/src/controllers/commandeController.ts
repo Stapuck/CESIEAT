@@ -101,8 +101,17 @@ export const getCommandesByRestorateur = async (c: Context) => {
 export const getCommandesByClient = async (c: Context) => {
     try {
         const clientId_Zitadel = c.req.param('clientId_Zitadel');
-        const commandes = await Commande.find({ clientId: clientId_Zitadel });
-        if (commandes.length === 0) return c.json({ message: 'No orders found for this client' }, 404);
+        
+        if (!clientId_Zitadel) {
+            return c.json({ message: "Client ID is required" }, 400);
+        }
+        
+        const commandes = await Commande.find({ clientId_Zitadel: clientId_Zitadel });
+        
+        if (commandes.length === 0) {
+            return c.json({ message: `No orders found for client ${clientId_Zitadel}` }, 404);
+        }
+        
         return c.json(commandes);
     } catch (error) {
         return handleError(error, c);

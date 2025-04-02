@@ -7,21 +7,22 @@ import ApplePay from '../../assets/shop/Apple_Pay_Mark_RGB_041619.svg';
 import GooglePay from '../../assets/shop/Google_Pay_Logo.svg';
 import PaypalPay from '../../assets/shop/logo_paypal_paiements_fr.png';
 import axios from 'axios';
+import { useAuth } from 'react-oidc-context';
 
 const Checkout: React.FC = () => {
     const { cartItems, clearCart, getTotalPrice } = useCart();
     const navigate = useNavigate();
     const [customerInfo, setCustomerInfo] = useState({
-        name: '',
-        email: '',
+        name: `${useAuth().user?.profile.family_name || ''} ${useAuth().user?.profile.given_name || ''}`.trim(),
+        email: useAuth().user?.profile.email || '',
         address: '',
+        clientId_Zitadel : useAuth().user?.profile.sub ,
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setCustomerInfo((prev) => ({ ...prev, [name]: value }));
     };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -54,27 +55,17 @@ const Checkout: React.FC = () => {
                 },
             });
 
-            const groupedByRestaurant = cartItems.reduce((acc, item) => {
-                if (!acc[item.restaurantId]) {
-                    acc[item.restaurantId] = [];
-                }
-                acc[item.restaurantId].push(item);
-                return acc;
-            }, {} as Record<string, typeof cartItems>);
-
-            for (const [restaurantId, items] of Object.entries(groupedByRestaurant)) {
-                const menu = items.map(item => item.id);
-
-                const totalAmount = items.reduce((total, item) => total + item.price * item.quantity, 0);
-
+            // Create a separate order for each menu item
+            for (const item of cartItems) {
                 const payload = {
-                    client: "67e3dbf470e981b549cd0fde",
-                    restaurant: restaurantId,
-                    livreur: null,
-                    menu,
-                    totalAmount,
+                    clientId_Zitadel: customerInfo.clientId_Zitadel,
+                    restaurantId: item.restaurantId,
+                    menuId: item.id,
+                    totalAmount: item.price * item.quantity,
                     status: "En attente",
                 };
+
+                console.log("Creating order:", payload);
 
                 await axios.post('http://localhost:8080/api/commandes', payload, {
                     headers: {
@@ -90,7 +81,7 @@ const Checkout: React.FC = () => {
             });
 
             clearCart();
-            navigate('/client/shop');
+            navigate('/client/');
         } catch (error) {
             Swal.fire({
                 icon: 'error',
