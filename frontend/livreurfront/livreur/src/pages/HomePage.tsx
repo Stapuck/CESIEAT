@@ -1,24 +1,63 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { FaWalking, FaTrash } from "react-icons/fa";
+import { useEffect, useState, useRef } from "react";
+import { FaWalking, FaTrash, FaRedoAlt, FaMapMarkerAlt, FaQrcode } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+// Importer leaflet-ant-path après Leaflet
+import "leaflet-ant-path";
 
-// const orders = [
-//   { restaurant: "Etna", customer: "Terence", distance: "3.5 km", price: "12€" },
-//   { restaurant: "KFC", customer: "Louis", distance: "5.5 km", price: "23€" },
-//   { restaurant: "Sozen", customer: "Jo", distance: "1.2 km", price: "6.5€" },
-//   { restaurant: "Sozen", customer: "Jo", distance: "1.2 km", price: "6.5€" },
-//   { restaurant: "Sozen", customer: "Jo", distance: "1.2 km", price: "6.5€" },
-// ];
+// Correction pour les icônes Leaflet
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
+import LocateIcon from "../assets/icons/mappin.and.ellipse.circle.fill.svg";
+import Refresh from "../assets/icons/arrow.trianglehead.2.clockwise.svg";
+import CompteLogo from "../assets/icons/person.crop.circle.svg";
+import CommandeItem from "../components/CommandeItem";
 
+// Configuration de l'icône par défaut pour Leaflet
+const DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
 
+// Créer des icônes personnalisées
+const RestaurantIcon = L.icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+const ClientIcon = L.icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+// Icône pour la position actuelle
+const CurrentLocationIcon = L.icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
 
 interface ICommande {
   _id: string;
   client: number;
   restaurant: number;
   livreur?: number;
-  menu: [];
+  menu: any[];
   totalAmount: number;
   status: string;
   createdAt: string;
@@ -33,8 +72,8 @@ interface IClient {
   address: string;
   phone: string;
   isPaused: boolean;
+  position?: [number, number]; // Ajout de la position
 }
-
 
 interface IRestaurateur {
   _id: number;
@@ -44,280 +83,387 @@ interface IRestaurateur {
   restaurantName: string;
   address: string;
   phone: string;
+  url: string; // Utilisé pour l'image du restaurant
+  ville: string; // Ajout de la propriété ville
+  position?: [number, number]; // Ajout de la position
 }
 
+interface IRestaurantLocation {
+  id: number;
+  name: string;
+  position: [number, number]; // [latitude, longitude]
+}
 
-  
+interface IRoute {
+  id: string;
+  from: [number, number];
+  to: [number, number];
+  commandeId: string;
+}
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [commandes, setCommandes] = useState<ICommande[]>([]);
   const [clients, setClients] = useState<IClient[]>([]);
   const [restaurateurs, setRestaurateur] = useState<IRestaurateur[]>([]);
+  const [restaurantLocations, setRestaurantLocations] = useState<
+    IRestaurantLocation[]
+  >([]);
+  const [routes, setRoutes] = useState<IRoute[]>([]);
+  const [selectedCommande, setSelectedCommande] = useState<string | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<
+    [number, number] | null
+  >(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [hiddenCommandes, setHiddenCommandes] = useState<string[]>([]);
 
+  // Référence pour le conteneur de la carte
+  const mapRef = useRef<HTMLDivElement>(null);
+  // Référence pour l'instance de la carte Leaflet
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  // Référence pour stocker les chemins animés
+  const antPathsRef = useRef<any[]>([]);
+  // Référence pour le marqueur de position actuelle
+  const currentLocationMarkerRef = useRef<L.Marker | null>(null);
 
-  const getCommandes = async () => {
+  // Charger toutes les données au chargement de la page
+  useEffect(() => {
+    loadAllData();
+    // Obtenir la géolocalisation de l'utilisateur
+    getCurrentLocation();
+  }, []);
+
+  // Fonction pour charger toutes les données
+  const loadAllData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:8080/api/commandes");
-      setCommandes(response.data);
+      await Promise.all([getCommandes(), getClients(), getRestaurateurs()]);
+
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error("Erreur lors du chargement des données:", error);
+      setIsLoading(false);
+    }
+  };
+
+  // Récupérer les commandes disponibles (seulement Préparation et Prêt)
+  const getCommandes = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/commandes");
+      // Filtrer pour n'inclure que les statuts "Préparation" et "Prêt"
+      const filteredCommandes = response.data.filter(
+        (cmd: ICommande) =>
+          cmd.status === "Préparation" || cmd.status === "Prêt"
+      );
+      setCommandes(filteredCommandes);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des commandes:", error);
     }
   };
 
   const getClients = async () => {
     try {
-      setIsLoading(true);
       const response = await axios.get("http://localhost:8080/api/clients");
-      setClients(response.data);
-      setIsLoading(false);
+      // Ajouter des positions simulées pour les clients (à remplacer par des données réelles)
+      const clientsWithPositions = response.data.map((client: any) => ({
+        ...client,
+        position: [
+          48.8566 + (Math.random() - 0.5) * 0.05,
+          2.3522 + (Math.random() - 0.5) * 0.05,
+        ] as [number, number],
+      }));
+
+      setClients(clientsWithPositions);
+
     } catch (error) {
-      console.log(error);
+      console.error("Erreur lors de la récupération des clients:", error);
     }
   };
 
   const getRestaurateurs = async () => {
     try {
-      setIsLoading(true);
-      const response = await axios.get("http://localhost:8080/api/restaurateurs");
-      setRestaurateur(response.data);
-      setIsLoading(false);
+      const response = await axios.get(
+        "http://localhost:8080/api/restaurateurs"
+      );
+      // Ajouter des positions simulées pour les restaurants (à remplacer par des données réelles)
+      const restaurateursWithPositions = response.data.map((resto: any) => ({
+        ...resto,
+        position: [
+          48.8566 + (Math.random() - 0.5) * 0.05,
+          2.3522 + (Math.random() - 0.5) * 0.05,
+        ] as [number, number],
+      }));
+
+      console.log(
+        "Restaurateurs avec positions:",
+        restaurateursWithPositions
+      );
+      setRestaurateur(restaurateursWithPositions);
+
     } catch (error) {
-      console.log(error);
+      console.error("Erreur lors de la récupération des restaurateurs:", error);
     }
   };
 
+  // Obtenir la géolocalisation de l'utilisateur
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation([
+            position.coords.latitude,
+            position.coords.longitude,
+          ]);
+          setLocationError(null);
+        },
+        (error) => {
+          console.error("Erreur de géolocalisation:", error);
+          setLocationError("Impossible d'obtenir votre position actuelle.");
+          // Position par défaut (Paris)
+          setCurrentLocation([48.8566, 2.3522]);
+        }
+      );
+    } else {
+      setLocationError(
+        "La géolocalisation n'est pas prise en charge par ce navigateur."
+      );
+      // Position par défaut (Paris)
+      setCurrentLocation([48.8566, 2.3522]);
+    }
+  };
 
+  // Générer les itinéraires entre restaurants et clients
   useEffect(() => {
-    getCommandes();
-    getClients();
-    getRestaurateurs();
+    if (
+      commandes.length > 0 &&
+      restaurateurs.length > 0 &&
+      clients.length > 0
+    ) {
+      const newRoutes: IRoute[] = [];
+
+      commandes.forEach((commande) => {
+        const restaurant = restaurateurs.find(
+          (r) => r._id === commande.restaurant
+        );
+        const client = clients.find((c) => c._id === commande.client);
+
+        if (restaurant?.position && client?.position) {
+          newRoutes.push({
+            id: `${commande._id}-route`,
+            from: restaurant.position,
+            to: client.position,
+            commandeId: commande._id,
+          });
+        }
+      });
+
+      setRoutes(newRoutes);
+    }
+  }, [commandes, restaurateurs, clients]);
+
+  // Initialiser la carte
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    if (!mapInstanceRef.current) {
+      // Centre de la carte (position actuelle ou Paris par défaut)
+      const defaultPosition: [number, number] = currentLocation || [
+        48.8566, 2.3522,
+      ];
+
+      // Créer la carte
+      mapInstanceRef.current = L.map(mapRef.current).setView(
+        defaultPosition,
+        13
+      );
+
+      // Ajouter le fond de carte
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(mapInstanceRef.current);
+    }
+
+    // Nettoyage lors du démontage du composant
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
   }, []);
 
-  // const [restaurateursMap, setRestaurateursMap] = useState<Map<number, string>>(new Map());
+  // Mettre à jour les marqueurs et routes lorsque les données changent
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
 
-  // useEffect(() => {
-  //   setRestaurateursMap(new Map(restaurateurs.map(r => [r._id, r.restaurantName])));
-  // }, [restaurateurs]);
+    const map = mapInstanceRef.current;
 
+    // Supprimer les anciens chemins animés
+    antPathsRef.current.forEach((path) => path.remove());
+    antPathsRef.current = [];
 
- 
+    // Nettoyer les couches existantes sauf le fond de carte
+    map.eachLayer((layer) => {
+      if (layer instanceof L.TileLayer) return;
+      map.removeLayer(layer);
+    });
+
+    // Ajouter le marqueur de position actuelle
+    if (currentLocation) {
+      if (currentLocationMarkerRef.current) {
+        currentLocationMarkerRef.current.remove();
+      }
+
+      currentLocationMarkerRef.current = L.marker(currentLocation, {
+        icon: CurrentLocationIcon,
+      })
+        .addTo(map)
+        .bindPopup("Votre position actuelle");
+    }
+
+    // Ajouter les marqueurs des restaurants
+    restaurateurs
+      .filter((resto) => commandes.some((cmd) => cmd.restaurant === resto._id))
+      .forEach((resto) => {
+        if (resto.position) {
+          L.marker(resto.position, { icon: RestaurantIcon })
+            .addTo(map)
+            .bindPopup(`<b>${resto.restaurantName}</b><br>${resto.address}`);
+        }
+      });
+
+    // Ajouter les marqueurs des clients
+    clients
+      .filter((client) => commandes.some((cmd) => cmd.client === client._id))
+      .forEach((client) => {
+        if (client.position) {
+          L.marker(client.position, { icon: ClientIcon })
+            .addTo(map)
+            .bindPopup(`<b>${client.name}</b><br>${client.address}`);
+        }
+      });
+
+    
+
+  }, [restaurateurs, clients, routes, selectedCommande, currentLocation]);
+
+  // Fonction pour gérer la sélection d'une commande
+  const handleSelectCommande = (commandeId: string) => {
+    if (selectedCommande === commandeId) {
+      setSelectedCommande(null);
+    } else {
+      setSelectedCommande(commandeId);
+
+      // Trouver la route correspondante et centrer la carte
+      const route = routes.find((r) => r.commandeId === commandeId);
+      if (route && mapInstanceRef.current) {
+        const bounds = L.latLngBounds([route.from, route.to]);
+        mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }
+  };
+
+  // Masquer une commande
+  const hideCommande = (commandeId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setHiddenCommandes((prev) => [...prev, commandeId]);
+  };
+
+  // Rafraîchir la position actuelle
+  const refreshCurrentLocation = () => {
+    getCurrentLocation();
+  };
+
+  // Filtrer les commandes masquées
+  const visibleCommandes = commandes.filter(
+    (cmd) => !hiddenCommandes.includes(cmd._id)
+  );
+
   return (
-    <div className="bg-gray-800 min-h-screen flex flex-col items-center p-4">
-      <div className="bg-purple-300 w-full max-w-md p-4 flex justify-end items-center rounded-t-xl">
-        <Link to={'/account'}>
-          <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white">👤</div>
-        </Link> 
-        {/* todo mettre l'account dans le header */}
-      </div>
-      <div className="bg-white w-full max-w-md p-4 rounded-b-xl">
-        <h2 className="text-lg font-semibold mb-2">Commande à proximité</h2>
-        <div className="flex border-2 w-full h-70 justify-center items-center mb-4">
-          map
+    <div className="flex flex-col items-center p-4">
+      <div className="bg-secondary flex justify-between w-full p-4 my-3 items-center rounded-xl">
+        <h1 className="text-xl font-bold">Livraisons disponibles</h1>
+        <div className="flex items-center">
+          <Link to="/livreur/scan" className="mr-4">
+            <div className="flex items-center bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600">
+              <FaQrcode className="text-lg mr-2" />
+              <span>Scanner</span>
+            </div>
+          </Link>
+          <Link to="/livreur/account">
+            <img src={LocateIcon} className="w-10" alt="Position" />
+          </Link>
         </div>
-        {/* <img src="/map-placeholder.png" alt="Carte" className="w-full rounded-lg mb-4" /> */}
-        <div className="space-y-2">
-          {isLoading ? ('Loading') : (
+      </div>
+
+      <div className="  w-full pt-4 rounded-b-xl ">
+        {/* Carte interactive */}
+        <div className="relative mb-4 flex flex-col items-center ">
+          <div
+            ref={mapRef}
+            className="w-full h-64 rounded-lg shadow-inner border border-gray-200"
+            style={{ height: "300px" }}
+          ></div>
+
+          {/* Bouton pour rafraîchir la position */}
+          <button
+            onClick={refreshCurrentLocation}
+            className="  flex items-center justify-between right-2 bg-white mt-2 p-2 px-4 rounded-2xl shadow-md hover:bg-gray-100"
+            title="Actualiser ma position"
+          >
+            Actualiser ma position
+            <img src={Refresh} alt="Refresh" className=" ml-3 w-5 h-5" />
+          </button>
+
+          {/* Message d'erreur de localisation */}
+          {locationError && (
+            <div className="mt-2 p-2 bg-red-100 text-red-700 rounded-md text-sm">
+              {locationError}
+            </div>
+          )}
+        </div>
+
+        {/* Liste des commandes disponibles */}
+        <h2 className="text-lg font-semibold mb-2">
+          Commandes disponibles ({visibleCommandes.length})
+        </h2>
+
+        <div className="space-y-3">
+          {isLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : (
             <>
-              {commandes.map((commande, index) => (
-                // faire un composant pour une meilleur gestion. 
-              <div key={index} className="bg-purple-200 flex justify-between items-center p-3 rounded-lg shadow">
-                <div className="flex-1">
-                <p className="font-semibold">
-                  {restaurateurs.find(r => r._id === commande.restaurant)?.restaurantName || "Restaurant inconnu"} 
-                  → {clients.find(c => c._id === commande.client)?.name || "Client inconnu"} 
-                </p>
-
-                {/* <p className="font-semibold">
-                  {restaurateursMap.get(commande.restaurant) || "Restaurant inconnu"} → {commande.client}
-                </p> */}
-
-                <p className="font-semibold text-xs">
-                  {restaurateurs.find(r => r._id === commande.restaurant)?.address || "Restaurant address inconnu"} 
-                  → {clients.find(c => c._id === commande.client)?.address || "Client address inconnu"} 
-                </p>
-                  <p className="text-sm">distance (todo) - {commande.totalAmount}</p>
-                  {/* comment calculer la distance ?  */}
+              {visibleCommandes.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  Aucune commande disponible pour le moment.
                 </div>
-                <Link to={`/livraison/${commande._id}`}>
-                  <FaWalking className="text-lg mr-2" />
-                </Link>
-                <FaTrash className="text-lg text-gray-600 cursor-pointer" /> 
-                {/*
-                  poubelle cacher à l'utilisateur la commande 
-                  marche accepter la commande et donc mettre une map avec la position de la personne vers la destination
-                  + changer le status de la commande à en attente de récupération. 
-                */}
-              </div>
-            ))}
-          </>)}
+              ) : (
+                visibleCommandes.map((commande) => {
+                  const restaurant = restaurateurs.find(
+                    (r) => r._id === commande.restaurant
+                  );
+                  const client = clients.find((c) => c._id === commande.client);
+
+                  return (
+                    <CommandeItem
+                      key={commande._id}
+                      commande={commande}
+                      restaurant={restaurant}
+                      client={client}
+                      isSelected={selectedCommande === commande._id}
+                      onSelect={handleSelectCommande}
+                      onHide={hideCommande}
+                    />
+                  );
+                })
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
   );
 }
-
-
-// test calcul de distance avec api google 
-
-// import axios from "axios";
-// import { useEffect, useState } from "react";
-// import { FaWalking, FaTrash } from "react-icons/fa";
-// import { Link } from "react-router-dom";
-
-// const API_KEY = ""; // Mets ta clé Google Maps ici
-
-// interface ICommande {
-//   _id: string;
-//   client: number;
-//   restaurant: number;
-//   livreur?: number;
-//   menu: [];
-//   totalAmount: number;
-//   status: string;
-//   createdAt: string;
-//   updatedAt: string;
-// }
-
-// interface IClient {
-//   _id: number;
-//   name: string;
-//   email: string;
-//   password: string;
-//   address: string;
-//   phone: string;
-//   isPaused: boolean;
-// }
-
-// interface IRestaurateur {
-//   _id: number;
-//   managerName: string;
-//   email: string;
-//   password: string;
-//   restaurantName: string;
-//   address: string;
-//   phone: string;
-// }
-
-// export default function HomePage() {
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [commandes, setCommandes] = useState<ICommande[]>([]);
-//   const [clients, setClients] = useState<IClient[]>([]);
-//   const [restaurateurs, setRestaurateurs] = useState<IRestaurateur[]>([]);
-//   const [distances, setDistances] = useState<{ [key: string]: string }>({}); // Stocke les distances
-
-//   const getCommandes = async () => {
-//     try {
-//       setIsLoading(true);
-//       const response = await axios.get("http://localhost:3003/api/commandes");
-//       setCommandes(response.data);
-//       setIsLoading(false);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   const getClients = async () => {
-//     try {
-//       setIsLoading(true);
-//       const response = await axios.get("http://localhost:3000/api/clients");
-//       setClients(response.data);
-//       setIsLoading(false);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   const getRestaurateurs = async () => {
-//     try {
-//       setIsLoading(true);
-//       const response = await axios.get("http://localhost:3001/api/restaurateurs");
-//       setRestaurateurs(response.data);
-//       setIsLoading(false);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   // 🔹 Fonction pour récupérer la distance entre 2 adresses avec Google Maps
-//   const getDistance = async (restaurantAddress: string, clientAddress: string, orderId: string) => {
-//     try {
-//       const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(restaurantAddress)}&destinations=${encodeURIComponent(clientAddress)}&key=${API_KEY}`;
-      
-//       const response = await axios.get(url);
-//       const distance = response.data.rows[0].elements[0].distance.text; // Distance en km/m
-
-//       setDistances((prev) => ({ ...prev, [orderId]: distance })); // Stocker la distance
-//     } catch (error) {
-//       console.error("Erreur lors du calcul de la distance", error);
-//       setDistances((prev) => ({ ...prev, [orderId]: "Distance inconnue" }));
-//     }
-//   };
-
-//   // 🔹 UseEffect pour récupérer les commandes, clients, et restaurateurs
-//   useEffect(() => {
-//     getCommandes();
-//     getClients();
-//     getRestaurateurs();
-//   }, []);
-
-//   // 🔹 UseEffect pour calculer la distance une fois les commandes, clients et restaurateurs chargés
-//   useEffect(() => {
-//     if (commandes.length > 0 && clients.length > 0 && restaurateurs.length > 0) {
-//       commandes.forEach((commande) => {
-//         const restaurant = restaurateurs.find((r) => r._id === commande.restaurant);
-//         const client = clients.find((c) => c._id === commande.client);
-
-//         if (restaurant && client) {
-//           getDistance(restaurant.address, client.address, commande._id);
-          
-//           console.log(getDistance(restaurant.address, client.address, commande._id));
-//         }
-//       });
-//     }
-//   }, [commandes, clients, restaurateurs]); // Dépendances corrigées
-
-//   return (
-//     <div className="bg-gray-800 min-h-screen flex flex-col items-center p-4">
-//       <div className="bg-purple-300 w-full max-w-md p-4 flex justify-end items-center rounded-t-xl">
-//         <Link to={'/account'}>
-//           <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white">👤</div>
-//         </Link> 
-//       </div>
-//       <div className="bg-white w-full max-w-md p-4 rounded-b-xl">
-//         <h2 className="text-lg font-semibold mb-2">Commande à proximité</h2>
-//         <div className="flex border-2 w-full h-70 justify-center items-center mb-4">
-//           map
-//         </div>
-//         <div className="space-y-2">
-//           {isLoading ? ('Loading') : (
-//             <>
-//               {commandes.map((commande) => (
-//                 <div key={commande._id} className="bg-purple-200 flex justify-between items-center p-3 rounded-lg shadow">
-//                   <div className="flex-1">
-//                     <p className="font-semibold">
-//                       {restaurateurs.find(r => r._id === commande.restaurant)?.restaurantName || "Restaurant inconnu"} 
-//                       → {clients.find(c => c._id === commande.client)?.name || "Client inconnu"} 
-//                     </p>
-
-//                     <p className="font-semibold text-xs">
-//                       {restaurateurs.find(r => r._id === commande.restaurant)?.address || "Restaurant address inconnu"} 
-//                       → {clients.find(c => c._id === commande.client)?.address || "Client address inconnu"} 
-//                     </p>
-
-//                     <p className="text-sm">Distance : {distances[commande._id] || "Calcul en cours..."}</p>
-//                     <p className="text-sm">Total : {commande.totalAmount}€</p>
-//                   </div>
-//                   <FaWalking className="text-lg mr-2" />
-//                   <FaTrash className="text-lg text-gray-600 cursor-pointer" /> 
-//                 </div>
-//               ))}
-//             </>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
