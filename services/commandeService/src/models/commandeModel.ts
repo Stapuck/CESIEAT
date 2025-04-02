@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 interface ICommande extends Document {
     client: mongoose.Types.ObjectId;
-    restaurant: string;
+    restaurant: mongoose.Types.ObjectId;
     livreur?: mongoose.Types.ObjectId;
     menu: mongoose.Types.ObjectId;
     totalAmount: number;
@@ -13,7 +13,7 @@ interface ICommande extends Document {
 const commandeSchema = new Schema(
     {
         client: { type: Schema.Types.ObjectId, ref: 'Client', required: true },
-        restaurant: { type: String, required: true },
+        restaurant: { type: Schema.Types.ObjectId, ref: 'Restaurateur', required: true },
         livreur: { type: Schema.Types.ObjectId, ref: 'Livreur', default: null},
         menu: {type: Schema.Types.ObjectId, ref: 'Menu', required: true },
         totalAmount: { type: Number, required: true },

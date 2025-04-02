@@ -13,6 +13,7 @@ import ArticlePage from "./pages/Article/ArticlePage";
 import HistoriqueCommande from "./pages/Commande/HistoriqueCommande";
 import CommandePage from "./pages/Commande/CommandePage";
 import Protected from "./pages/Protected";
+import CreateRestaurant from "./pages/CreateRestaurant";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ function App() {
             <Route path="restaurateur/menu" element={<MenuPage />} />
             <Route path="restaurateur/article" element={<ArticlePage />} />
             <Route path="restaurateur/commande" element={<CommandePage />} />
+            <Route path="restaurateur/create-restaurant" element={<CreateRestaurant />} />
             <Route
               path="restaurateur/historique"
               element={<HistoriqueCommande />}

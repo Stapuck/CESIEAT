@@ -4,6 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "react-oidc-context";
 
+interface IRestaurateur {
+    _id: string;
+    managerName: string;
+    email: string;
+    restaurantName: string;
+    address: string;
+    phone: string;
+    name: string;
+    position: [number, number];
+    url: string;
+    managerId: string;
+  }
 
 const CreateMenu = () => {
     const auth = useAuth();
@@ -11,12 +23,32 @@ const CreateMenu = () => {
     const [price, setPrice] = useState<number>();
     const [articles, setArticles] = useState<any[]>([]);
     const [selectedArticles, setSelectedArticles] = useState<any[]>([]);
+    const [restaurant, setRestaurant] = useState<IRestaurateur>();
+
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
+
+    const getRestaurateurByManagerId = async () => {
+        try {
+            setIsLoading(true);
+            const response = await axios.get(
+                `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
+            );
+            if (response.data.length > 0) {
+                setRestaurant(response.data[0]);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+     
     const getArticlesByRestaurant = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/articles/restaurateur/${auth.user?.profile.sub}`);
+            const response = await axios.get(`http://localhost:8080/api/articles/restaurateur/${restaurant?._id}`);
             setArticles(response.data);
         } catch (error) {
             console.log(error);
@@ -24,8 +56,14 @@ const CreateMenu = () => {
     };
 
     useEffect(() => {
-        getArticlesByRestaurant();
+        getRestaurateurByManagerId();
     }, []);
+    
+    useEffect(() => {
+        if (restaurant?._id) {
+            getArticlesByRestaurant();
+        }
+    }, [restaurant]); 
 
     const handleAddArticle = () => {
         setSelectedArticles([...selectedArticles, ""]);
@@ -59,7 +97,7 @@ const CreateMenu = () => {
                 name,
                 price,
                 articles: selectedArticles,
-                restaurateur: auth.user?.profile.sub
+                restaurateur: restaurant?._id
             });
 
             toast.success("Menu créé avec succès");
@@ -92,9 +130,9 @@ const CreateMenu = () => {
                         <label>Prix</label>
                         <input type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} className="w-full block border p-3 rounded" placeholder="Prix" />
                     </div>
-                    <div>
+                    <div className="">
                         <label>Restaurateur (temporaire )</label>
-                        <input type="string" value={auth.user?.profile.sub} className="w-full block border p-3 rounded" placeholder="id" />
+                        <input type="string" value={restaurant?._id} className="w-full block border p-3 rounded" placeholder="id" />
                     </div>
                     
                     <div>
