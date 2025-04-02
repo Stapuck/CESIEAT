@@ -103,3 +103,60 @@ BACKEND
 - http://localhost:8080/api/clients
 - http://localhost:8080/api/commandes
 - http://localhost:8080/api/livreurs
+
+
+# Models backend Data
+
+## Restaurateur
+- id 
+- postion [lat,long]
+- managerName String
+- email String
+- restaurantName String
+- address String
+- phone String
+- url(image) String
+- managerId(Zitadel) String
+
+## Livreur
+- id 
+- name String
+- email String
+- phone String
+- vehiculeType String
+- codeLivreur String
+- id(Zitadel)
+
+## Client
+- id 
+- name String
+- email String
+- phone String
+- address String
+- isPaused boolean
+  
+## Menu
+- id 
+- name String
+- price float
+- articles Array[]
+- restaurateurId id
+- image String
+
+## Commandes
+- id 
+- clientId
+- restaurantId
+- livreurId
+- menuId
+- totalAmount int
+- status String
+
+## articles
+- id 
+- name String
+- price float
+- reference String
+- type String
+- url(image) String
+- restaurantId 
