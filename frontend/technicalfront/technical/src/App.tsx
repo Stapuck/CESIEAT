@@ -13,7 +13,6 @@ import MyDownloadsPage from "./pages/MyDownloadsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
-import DockerContainersPage from "./pages/DockerContainersPage";
 
 function App() {
   return (
@@ -63,10 +62,8 @@ function App() {
 
             {/* Routes de gestion des containers */}
 
-            <Route
-              path="/technical/docker/containers"
-              element={<DockerContainersPage />}
-            ></Route>
+
+            
           </Routes>
         </div>
         <Footer />

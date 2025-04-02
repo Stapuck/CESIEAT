@@ -118,22 +118,10 @@ const HomePage = () => {
             </h3>
             <div className="flex flex-col gap-2">
               <Link
-                to="/technical/docker/containers"
+                to="http://localhost:8081"
                 className="text-blue-600 hover:underline"
               >
                 État des containers
-              </Link>
-              <Link
-                to="/technical/docker/resources"
-                className="text-blue-600 hover:underline"
-              >
-                Utilisation des ressources
-              </Link>
-              <Link
-                to="/technical/docker/logs"
-                className="text-blue-600 hover:underline"
-              >
-                Logs des containers
               </Link>
             </div>
           </div>
