@@ -16,38 +16,6 @@ interface RestaurantProps {
     onDelete?: () => void; // Pour rafraîchir la liste après suppression
 }
 
-/**
- * A React functional component that represents a restaurant card.
- * It displays the restaurant's image, name, address, and provides options
- * to navigate to the restaurant's menus, edit the restaurant, or delete it.
- *
- * @component
- * @param {RestaurantProps} props - The properties passed to the component.
- * @param {string} props.id - The unique identifier of the restaurant.
- * @param {string} props.name - The name of the restaurant.
- * @param {string} props.address - The address of the restaurant.
- * @param {string} props.url - The URL of the restaurant's image.
- * @param {() => void} [props.onDelete] - Optional callback function to refresh the restaurant list after deletion.
- *
- * @returns {JSX.Element} A styled card component for a restaurant.
- *
- * @remarks
- * - Clicking on the card navigates to the restaurant's menu page.
- * - The delete button prompts a confirmation dialog using SweetAlert before deleting the restaurant.
- * - The edit button navigates to the restaurant editing page.
- * - The "Voir les menus" button explicitly navigates to the restaurant's menu page.
- *
- * @example
- * ```tsx
- * <Restaurant
- *   id="1234567890abcdef12345678"
- *   name="Chez Gourmet"
- *   address="123 Rue de Paris, France"
- *   url="https://example.com/image.jpg"
- *   onDelete={() => console.log('Restaurant deleted')}
- * />
- * ```
- */
 const Restaurant: React.FC<RestaurantProps> = ({ id, name, address, url, onDelete , }) => {
     const navigate = useNavigate();
 
