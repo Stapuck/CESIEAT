@@ -2,6 +2,15 @@ import { useAuth } from "react-oidc-context";
 
 const RestaurateurPage = () => {
   const auth = useAuth();
+  console.log("=====================")
+  console.log(import.meta.env.MODE)
+  console.log(import.meta.env.MODE)
+  console.log(import.meta.env.MODE)
+  console.log(import.meta.env.MODE)
+  console.log(import.meta.env.MODE)
+  console.log("=====================")
+  console.log(import.meta.env.NODE_ENV)
+  console.log(import.meta.env.VITE_REDIRECT_URI_RESTAURATEUR)
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
