@@ -22,6 +22,7 @@ function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="restaurateur/" element={<HomePage />} />
+
           <Route element={<Protected />}>
             <Route path="restaurateur/account" element={<Account />} />
             <Route path="restaurateur/menu" element={<MenuPage />} />
@@ -41,8 +42,8 @@ function App() {
             />
             <Route path="restaurateur/create-menu" element={<CreateMenu />} />
             <Route path="restaurateur/edit-menu/:id" element={<EditMenu />} />
-            
           </Route>
+
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

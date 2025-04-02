@@ -1,9 +1,11 @@
 // src/App.tsx
-import { Link, Route, Routes } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import ClientAccountsPage from "./pages/ClientAccountsPage";
-import OrderManagementPage from "./pages/OrderManagementPage";
-import { ToastContainer } from "react-toastify";
+import { Link, Route, Routes } from "react-router-dom"
+import HomePage from "./pages/HomePage"
+import ClientAccountsPage from "./pages/ClientAccountsPage"
+import OrderManagementPage from "./pages/OrderManagementPage"
+import { ToastContainer } from "react-toastify"
+import Protected from "./pages/Protected"
+import LoginButton from "./components/LoginButton"
 
 function App() {
   return (
@@ -27,16 +29,19 @@ function App() {
       {/* Right Side Content */}
       <div className="w-3/4 p-6">
         <Routes>
-          <Route index element={<HomePage />} />
-          <Route path="/commercial" element={<HomePage />} />
-          <Route path="/commercial/clientAccountsPage" element={<ClientAccountsPage />} />
-          <Route path="/commercial/orderManagementPage" element={<OrderManagementPage />} />
+          <Route path="/commercial/tmplogin" element={<LoginButton />} />
+          <Route element={<Protected />}>
+            <Route index element={<HomePage />} />
+            <Route path="/commercial" element={<HomePage />} />
+            <Route path="/commercial/clientAccountsPage" element={<ClientAccountsPage />} />
+            <Route path="/commercial/orderManagementPage" element={<OrderManagementPage />} />
+          </Route>
         </Routes>
       </div>
 
       <ToastContainer />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

@@ -26,7 +26,7 @@ function Protected() {
 
     console.log("🤡 NOT AUTH");
 
-    return <Navigate to="/restaurateur/" />;
+    return <Navigate to="/technical/tmplogin/" />;
 }
 
 export default Protected;
