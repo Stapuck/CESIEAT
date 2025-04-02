@@ -21,7 +21,7 @@ function App() {
       <Navbar />
       <div className="container mx-auto mt-30 h-full">
         <Routes>
-          <Route path="/tmplogin" element={<LoginButton />} />
+          <Route path="/livreur/tmplogin" element={<LoginButton />} />
           <Route element={<Protected />}>
             <Route index element={<HomePage />}></Route>
             <Route path='/livreur/' element={<HomePage />}></Route>
