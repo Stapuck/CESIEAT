@@ -10,6 +10,7 @@ import Account from "./pages/Account"
 import Livraison from "./pages/Livraison"
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
+import ScanPage from "./pages/ScanPage"
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route path='/edit-product/:id' element={<EditPage/>}></Route>
         <Route path='/account' element={<Account/>}></Route>
         <Route path='/livraison/:id' element={<Livraison/>}></Route>
+        <Route path="/livreur/scan" element={<ScanPage/>} />
 
 
 

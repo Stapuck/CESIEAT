@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import { FaWalking, FaTrash, FaRedoAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { FaWalking, FaTrash, FaRedoAlt, FaMapMarkerAlt, FaQrcode } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -13,6 +13,7 @@ import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import LocateIcon from "../assets/icons/mappin.and.ellipse.circle.fill.svg";
 import Refresh from "../assets/icons/arrow.trianglehead.2.clockwise.svg";
 import CompteLogo from "../assets/icons/person.crop.circle.svg";
+import CommandeItem from "../components/CommandeItem";
 
 // Configuration de l'icône par défaut pour Leaflet
 const DefaultIcon = L.icon({
@@ -340,36 +341,8 @@ export default function HomePage() {
         }
       });
 
-    // Créer les chemins animés pour les itinéraires
-    routes.forEach((route) => {
-      const isSelected = selectedCommande === route.commandeId;
+    
 
-      try {
-        // @ts-ignore
-        const antPath = L.polyline
-          .antPath([route.from, route.to], {
-            delay: 800,
-            dashArray: [10, 20],
-            weight: isSelected ? 5 : 3,
-            color: isSelected ? "#FF0000" : "#0000FF",
-            pulseColor: "#FFFFFF",
-            paused: false,
-            reverse: false,
-            hardwareAccelerated: true,
-          })
-          .addTo(map);
-
-        antPathsRef.current.push(antPath);
-
-        // Si c'est la route sélectionnée, zoomer dessus
-        if (isSelected) {
-          const bounds = L.latLngBounds([route.from, route.to]);
-          map.fitBounds(bounds, { padding: [50, 50] });
-        }
-      } catch (error) {
-        console.error("Erreur lors de la création du chemin animé:", error);
-      }
-    });
   }, [restaurateurs, clients, routes, selectedCommande, currentLocation]);
 
   // Fonction pour gérer la sélection d'une commande
@@ -406,11 +379,19 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <div className=" bg-secondary flex  justify-between w-full p-4 my-3 items-center rounded-xl">
+      <div className="bg-secondary flex justify-between w-full p-4 my-3 items-center rounded-xl">
         <h1 className="text-xl font-bold">Livraisons disponibles</h1>
-        <Link to={"/livreur/account"}>
-          <img src={LocateIcon} className="w-10 ml-10" alt="Position" />
-        </Link>
+        <div className="flex items-center">
+          <Link to="/livreur/scan" className="mr-4">
+            <div className="flex items-center bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600">
+              <FaQrcode className="text-lg mr-2" />
+              <span>Scanner</span>
+            </div>
+          </Link>
+          <Link to="/livreur/account">
+            <img src={LocateIcon} className="w-10" alt="Position" />
+          </Link>
+        </div>
       </div>
 
       <div className="  w-full pt-4 rounded-b-xl ">
@@ -463,82 +444,16 @@ export default function HomePage() {
                   );
                   const client = clients.find((c) => c._id === commande.client);
 
-                  const statusColor =
-                    commande.status === "Préparation"
-                      ? "bg-yellow-200"
-                      : commande.status === "Prêt"
-                      ? "bg-green-200"
-                      : "bg-gray-200";
-
                   return (
-                    <div
+                    <CommandeItem
                       key={commande._id}
-                      className={`${
-                        selectedCommande === commande._id
-                          ? "border-2 border-purple-500"
-                          : ""
-                      } ${statusColor} rounded-lg shadow p-3 cursor-pointer transition-all hover:shadow-md`}
-                      onClick={() => handleSelectCommande(commande._id)}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-opacity-80 text-gray-800">
-                              {commande.status}
-                            </span>
-                            <span className="text-sm font-bold">
-                              {commande.totalAmount}€
-                            </span>
-                          </div>
-
-                          <img
-                            src={restaurant?.url} // Utiliser url au lieu de image
-                            alt="Logo"
-                            className="w-full h-32 object-cover"
-                          />
-                          <h3 className="font-semibold">
-                            {restaurant?.restaurantName || "Restaurant inconnu"}
-                          </h3>
-                          <p className="text-sm text-gray-600 truncate">
-                            {restaurant?.address || "Adresse inconnue"}
-                          </p>
-
-                          <div className=" items-center mt-2">
-                            <div className="border-l-2 border-gray-300 pl-2 my-2 ml-2">
-                              <img
-                                src={CompteLogo}
-                                alt="Logo"
-                                className="w-6 h-6 m-2"
-                              />
-                              <h3 className="font-semibold">
-                                {client?.name || "Client inconnu"}
-                              </h3>
-                              <p className="text-sm text-gray-600 truncate">
-                                {client?.address || "Adresse inconnue"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col space-y-2 ml-2">
-                          <Link
-                            to={`/livreur/livraison/${commande._id}`}
-                            className="bg-green-500 text-white p-2 rounded-full hover:bg-green-600 transition-colors"
-                            title="Accepter la livraison"
-                          >
-                            <FaWalking className="text-lg" />
-                          </Link>
-
-                          <button
-                            onClick={(e) => hideCommande(commande._id, e)}
-                            className="bg-gray-200 text-gray-600 p-2 rounded-full hover:bg-gray-300 transition-colors"
-                            title="Masquer cette commande"
-                          >
-                            <FaTrash className="text-lg" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                      commande={commande}
+                      restaurant={restaurant}
+                      client={client}
+                      isSelected={selectedCommande === commande._id}
+                      onSelect={handleSelectCommande}
+                      onHide={hideCommande}
+                    />
                   );
                 })
               )}

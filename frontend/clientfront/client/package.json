@@ -17,6 +17,7 @@
     "leaflet": "^1.9.4",
     "motion": "^12.6.2",
     "phosphor-react": "^1.4.1",
+    "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
