@@ -1,52 +1,49 @@
-// import mongoose, { Schema, Document } from 'mongoose';
 
-// interface ILivreur extends Document {
-//     name: string;
-//     email: string;
-//     password: string;
-//     phone: string;
-//     vehicleType: string;
-//     isAvailable: boolean;
-//     codeLivreur : number;
-// }
-
-// const livreurSchema = new Schema(
-//     {
-//         name: { type: String, required: true },
-//         email: { type: String, required: true, unique: true },
-//         password: { type: String, required: true },
-//         phone: { type: String, required: true },
-//         vehicleType: { type: String, required: true },
-//         isAvailable: { type: Boolean, default: true },
-//         codeLivreur: {type: Number, unique: true, required : true}
-//     },
-//     { timestamps: true }
-// );
-
-// const Livreur = mongoose.model<ILivreur>('Livreur', livreurSchema);
-// export default Livreur;
 
 import mongoose, { Schema, Document } from 'mongoose';
 
 interface ILivreur extends Document {
-    name: string;
-    email: string;
-    password: string;
-    phone: string;
-    vehicleType: string;
-    isAvailable: boolean;
-    codeLivreur: string;  
+    name: String;
+    email: String;
+    phone: String;
+    vehicleType: "Voiture" | "Moto" | "Vélo" | "Pieton" | "Autre";
+    codeLivreur: String;
+    livreurId_Zitadel: String;
+    isAvailable: Boolean;
 }
 
 const livreurSchema = new Schema(
     {
-        name: { type: String, required: true },
-        email: { type: String, required: true, unique: true },
-        password: { type: String, required: true },
-        phone: { type: String, required: true },
-        vehicleType: { type: String, required: true },
-        isAvailable: { type: Boolean, default: true },
-        codeLivreur: { type: String, unique: true} 
+        name: {
+            type: String,
+            required: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        phone: {
+            type: String,
+            required: true,
+        },
+        vehicleType: {
+            type: String,
+            enum: ["Voiture", "Moto", "Vélo", "Pieton", "Autre"],
+            required: true,
+        },
+        codeLivreur: {
+            type: String,
+            unique: true,
+        },
+        livreurId_Zitadel: {
+            type: String,
+            required: true,
+        },
+        isAvailable: {
+            type: Boolean,
+            default: true,
+        },
     },
     { timestamps: true }
 );

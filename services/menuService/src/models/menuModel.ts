@@ -1,18 +1,20 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 interface IMenu extends Document {
-    name: string;
-    price: number;
+    name: String;
+    price: Number;
     articles: mongoose.Types.ObjectId[];
-    restaurateur: mongoose.Types.ObjectId; 
+    restaurateurId: String;
+    url_image: String;
 }
 
 const menuSchema = new Schema(
     {
         name: { type: String, required: true },
         price: { type: Number, required: true },
-        articles: [{ type: Schema.Types.ObjectId, ref: 'Article', required: true }],
-        restaurateur: [{ type: Schema.Types.ObjectId, ref: 'Restaurateur', required: true }]
+        articles: [{ type: mongoose.Types.ObjectId, ref: 'Article' }],
+        restaurateurId: { type: String, required: true },
+        url_image: { type: String, required: true }
     },
     { timestamps: true }
 );

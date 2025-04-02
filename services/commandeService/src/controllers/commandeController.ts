@@ -83,7 +83,7 @@ export const getCommandesByRestorateur = async (c: Context) => {
         }
 
         // Recherche des commandes associées au restaurateur (restaurant)
-        const commandes = await Commande.find({ restaurant: restaurateurId });
+        const commandes = await Commande.find({ restaurateurId: restaurateurId });
 
         // Si aucune commande n'est trouvée pour ce restaurateur
         if (commandes.length === 0) {
@@ -100,8 +100,8 @@ export const getCommandesByRestorateur = async (c: Context) => {
 
 export const getCommandesByClient = async (c: Context) => {
     try {
-        const clientId = c.req.param('clientId');
-        const commandes = await Commande.find({ clientId });
+        const clientId_Zitadel = c.req.param('clientId_Zitadel');
+        const commandes = await Commande.find({ clientId: clientId_Zitadel });
         if (commandes.length === 0) return c.json({ message: 'No orders found for this client' }, 404);
         return c.json(commandes);
     } catch (error) {
