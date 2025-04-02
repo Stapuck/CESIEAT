@@ -102,7 +102,10 @@ services:
     volumes:
       - ./frontend/commercialfront/commercial:/app # Sync local code with container
       - /app/node_modules # Isolate node_modules from local setup
+    networks:
+      - app-network
     restart: unless-stopped
+    
 
 
   developer-frontend:
