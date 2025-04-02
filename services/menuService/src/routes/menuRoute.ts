@@ -1,14 +1,15 @@
 import { Hono } from 'hono';
-import {getMenus, getMenu, createMenu, editMenu, deleteMenu, getMenuByRestaurantBody} from '../controllers/menuController.js';
+import {getMenus, getMenu, createMenu, editMenu, deleteMenu, getMenuByRestaurantBody, getMenusByRestorateur} from '../controllers/menuController.js';
 
-const clientRoute = new Hono();
+const menuRoute = new Hono();
 
-clientRoute.get('/', getMenus);
-clientRoute.get('/:id', getMenu);
-clientRoute.post('/', createMenu);
-clientRoute.put('/:id', editMenu);
-clientRoute.delete('/:id', deleteMenu);
-clientRoute.get('/restaurant/:id');
-clientRoute.post('/restaurant', getMenuByRestaurantBody);
+menuRoute.get('/', getMenus);
+menuRoute.get('/:id', getMenu);
+menuRoute.post('/', createMenu);
+menuRoute.put('/:id', editMenu);
+menuRoute.delete('/:id', deleteMenu);
+menuRoute.get('/restaurant/:id');
+menuRoute.post('/restaurant', getMenuByRestaurantBody);
+menuRoute.get('/restaurateur/:restaurateurid', getMenusByRestorateur);
 
-export default clientRoute;
+export default menuRoute;

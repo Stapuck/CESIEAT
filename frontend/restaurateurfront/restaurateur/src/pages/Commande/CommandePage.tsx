@@ -5,6 +5,8 @@ import CommandeCard from "./CommandeCard";
 import {
   useQuery,
 } from "@tanstack/react-query";
+import { useAuth } from "react-oidc-context";
+
 
 interface ICommande {
   _id: string;
@@ -29,14 +31,15 @@ interface ILivreur {
 }
 
 const CommandesPage = () => {
+  const auth = useAuth();
   
   const [intervalMs, setIntervalMs] = useState(3000);
 
   const { status, data, error, isFetching } = useQuery({
     queryKey: ["todos"],
     queryFn: async (): Promise<Array<ICommande>> => {
-      // const response = await fetch("http://localhost:3003/api/commandes");
-      const response = await fetch("http://localhost:8080/api/commandes");
+      // const response = await fetch("http://localhost:8080/api/commandes");
+      const response = await fetch(`http://localhost:8080/api/commandes/restaurateur/${auth.user?.profile.sub}`);
       return await response.json();
     },
     // Refetch the data every second
@@ -144,10 +147,6 @@ const CommandesPage = () => {
           Historique des commandes
         </Link>
       </div>
-
-      <Link to='/restaurateur/create-commande' className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          Create (provisoir)
-        </Link>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 gap-6">
         {/* Nouvelle Commande */}

@@ -1,13 +1,14 @@
 import { Hono } from 'hono';
-import {getArticles, getArticle, createArticle, editArticle, deleteArticle} from '../controllers/articleController.js'
+import {getArticles, getArticle, createArticle, editArticle, deleteArticle, getArticlesByRestorateur} from '../controllers/articleController.js'
 
 
-const clientRoute = new Hono();
+const articleRoute = new Hono();
 
-clientRoute.get('/', getArticles);
-clientRoute.get('/:id', getArticle);
-clientRoute.post('/', createArticle);
-clientRoute.put('/:id', editArticle);
-clientRoute.delete('/:id', deleteArticle);
+articleRoute.get('/', getArticles);
+articleRoute.get('/:id', getArticle);
+articleRoute.post('/', createArticle);
+articleRoute.put('/:id', editArticle);
+articleRoute.delete('/:id', deleteArticle);
+articleRoute.get('/restaurateur/:restaurateurid', getArticlesByRestorateur);
 
-export default clientRoute;
+export default articleRoute;

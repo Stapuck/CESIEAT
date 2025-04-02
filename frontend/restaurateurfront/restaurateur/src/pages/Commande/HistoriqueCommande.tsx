@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useAuth } from "react-oidc-context";
+
 
 interface ICommande {
   _id: string;
@@ -44,6 +46,8 @@ interface IRestaurateur {
 }
 
 const HistoriqueCommande = () => {
+  const auth = useAuth();
+
   const [commandes, setCommandes] = useState<ICommande[]>([]);
   const [clients, setClients] = useState<IClient[]>([]);
   const [livreurs, setLivreur] = useState<ILivreur[]>([]);
@@ -57,10 +61,12 @@ const HistoriqueCommande = () => {
   const [filterByAll, setFilterByAll] = useState<boolean>(true); 
   const [filterByToday, setFilterByToday] = useState<boolean>(false); 
 
-  const getCommandes = async () => {
+
+
+  const getCommandesByRestaurateur = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:8080/api/commandes");
+      const response = await axios.get(`http://localhost:8080/api/commandes/restaurateur/${auth.user?.profile.sub}`);
       setCommandes(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -102,7 +108,8 @@ const HistoriqueCommande = () => {
   };
 
   useEffect(() => {
-    getCommandes();
+    // getCommandes();
+    getCommandesByRestaurateur();
     getClients();
     getRestaurateurs();
     getLivreurs();
@@ -219,7 +226,8 @@ const HistoriqueCommande = () => {
                     {clients.find(client => client._id === commande.client)?.name || "Inconnu"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {restaurateurs.find(restaurateur => restaurateur._id === commande.restaurant)?.restaurantName || "Inconnu"}
+                    {/* {restaurateurs.find(restaurateur => restaurateur._id === commande.restaurant)?.restaurantName || "Inconnu"} */}
+                    {commande.restaurant}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {livreurs.find(livreur => livreur._id === commande.livreur)?.name || "N/A"}

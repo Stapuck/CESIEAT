@@ -10,6 +10,10 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+RUN npm install leaflet leaflet-ant-path @types/leaflet 
+
+RUN npm install html5-qrcode
+
 # Copy the rest of the application code
 COPY . .
 

@@ -12,7 +12,6 @@ import MenuPage from "./pages/Menu/MenuPage";
 import ArticlePage from "./pages/Article/ArticlePage";
 import HistoriqueCommande from "./pages/Commande/HistoriqueCommande";
 import CommandePage from "./pages/Commande/CommandePage";
-import CreateCommande from "./pages/Commande/CreateCommande";
 import Protected from "./pages/Protected";
 
 const queryClient = new QueryClient();
@@ -42,10 +41,7 @@ function App() {
             />
             <Route path="restaurateur/create-menu" element={<CreateMenu />} />
             <Route path="restaurateur/edit-menu/:id" element={<EditMenu />} />
-            <Route
-              path="restaurateur/create-commande"
-              element={<CreateCommande />}
-            />
+            
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>

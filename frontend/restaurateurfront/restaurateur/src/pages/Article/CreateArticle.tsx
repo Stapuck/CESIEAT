@@ -2,22 +2,24 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "react-oidc-context";
+
 
 const CreateArticle = () => {
+    const auth = useAuth();
     const [name, setName] = useState("");
     const [reference, setReference] = useState("");
     const [type, setType] = useState("");
     const [price, setPrice] = useState<number>();
     const [isInStock, setIsInStock] = useState(true);
     const [image, setImage] = useState("");
-    const [restaurantid, setRestaurantId] = useState<string>("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const saveArticle = async (e: any) => {
         e.preventDefault();
 
-        if (!name || !reference || !type || !price || !image || !restaurantid) {
+        if (!name || !reference || !type || !price || !image) {
             alert("Veuillez remplir tous les champs");
             return;
         }
@@ -31,7 +33,7 @@ const CreateArticle = () => {
                 price,
                 isInStock,
                 image,
-                restaurantid
+                restaurantid : auth.user?.profile.sub
             });
 
             toast.success("Article créé avec succès");
@@ -78,9 +80,9 @@ const CreateArticle = () => {
                         <label>Image URL</label>
                         <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="w-full block border p-3 rounded" placeholder="URL de l'image" />
                     </div>
-                    <div>
+                    <div className="hidden">
                         <label>ID du restaurant</label>
-                        <input type="text" value={restaurantid} onChange={(e) => setRestaurantId(e.target.value)} className="w-full block border p-3 rounded" placeholder="ID du restaurant" />
+                        <input type="text" value={auth.user?.profile.sub} className="w-full block border p-3 rounded" placeholder="ID du restaurant" />
                     </div>
                     <div>
                         {!isLoading && (
@@ -94,7 +96,6 @@ const CreateArticle = () => {
                             Retour
                             </button>
                             </div>
-                            
                         )}
                     </div>
                 </div>

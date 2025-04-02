@@ -2,8 +2,11 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "react-oidc-context";
+
 
 const EditMenu = () => {
+    const auth = useAuth();
     const { id } = useParams<{ id: string }>();  // Récupération de l'ID du menu via l'URL
     const [name, setName] = useState("");
     const [price, setPrice] = useState<number>();
@@ -12,31 +15,33 @@ const EditMenu = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
+
+
+    const getArticlesByRestaurant = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/articles/restaurateur/${auth.user?.profile.sub}`);
+            setArticles(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchMenu = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/menus/${id}`);
+            const menu = response.data;
+            setName(menu.name);
+            setPrice(menu.price);
+            setSelectedArticles(menu.articles);
+
+            
+        } catch (error) {
+            console.error("Erreur lors de la récupération du menu", error);
+        }
+    };
+
     useEffect(() => {
-        const fetchArticles = async () => {
-            try {
-                const response = await axios.get("http://localhost:8080/api/articles");
-                setArticles(response.data);
-            } catch (error) {
-                console.error("Erreur lors de la récupération des articles", error);
-            }
-        };
-
-        const fetchMenu = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8080/api/menus/${id}`);
-                const menu = response.data;
-                setName(menu.name);
-                setPrice(menu.price);
-                setSelectedArticles(menu.articles);
-
-                
-            } catch (error) {
-                console.error("Erreur lors de la récupération du menu", error);
-            }
-        };
-
-        fetchArticles();
+        getArticlesByRestaurant();
         fetchMenu();
     }, [id]);
 
@@ -72,7 +77,7 @@ const EditMenu = () => {
 
             toast.success("Menu mis à jour avec succès");
             setIsLoading(false);
-            navigate("/menu");
+            navigate("/restaurateur/menu");
         } catch (error: any) {
             toast.error(error.message);
             setIsLoading(false);

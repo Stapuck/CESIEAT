@@ -22,11 +22,12 @@ import SigninPage from "./pages/SigninPage";
 import ShowRestaurantMenu from "./pages/restaurantsPages/ShowRestaurantMenu";
 import Cart from "./pages/cart/cart";
 import Checkout from "./pages/checkout/checkout";
+import AccountPage from './pages/AccountPage';
 
 function App() {
   return (
     <CartProvider>
-      <ErrorBoundary fallback={<Navigate to="/client/404" />}>
+      <ErrorBoundary fallback={<Navigate to="/client/" />}>
         <div className="bg-primary pt-30 h-full">
           <Navbar />
           <Routes>
@@ -42,6 +43,8 @@ function App() {
             <Route path='/client/test' element={<TestPage />} />
             <Route path="/client/404" element={<NotFoundPage />} />
             <Route path="*" element={<NotFoundPage />} />
+
+            <Route path="/client/account" element={<AccountPage />} />
 
             {/* Routes liées au panier */}
             <Route path="/client/cart" element={<Cart />} />
