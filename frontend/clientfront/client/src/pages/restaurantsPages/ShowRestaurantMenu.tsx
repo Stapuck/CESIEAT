@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation as useRestaurant, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation as useRestaurant, useNavigate, useParams, useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import useCart from '../../hooks/useCart';
 import { motion } from "motion/react";
-
+import { useAuth } from 'react-oidc-context';
 
 interface Menu {
     _id: string;
@@ -32,7 +32,32 @@ interface Article {
     isInStock?: boolean;
 }
 
-const ShowRestaurantMenu: React.FC = () => {
+interface ShowRestaurantMenuProps {
+    login?: boolean;
+}
+
+interface OutletContextType {
+    login: boolean;
+}
+
+const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
+    // Récupérer l'état de connexion de multiples sources
+    const outletContext = useOutletContext<OutletContextType | null>();
+    const auth = useAuth(); // Récupération directe de l'état d'authentification
+    
+    // Utiliser auth.isAuthenticated comme source primaire, puis les props, puis le contexte outlet
+    const login = auth.isAuthenticated || props.login || outletContext?.login || false;
+    
+    // Log pour débogage
+    useEffect(() => {
+        console.log("État de connexion:", { 
+            authIsAuthenticated: auth.isAuthenticated,
+            propsLogin: props.login,
+            outletContextLogin: outletContext?.login,
+            finalLogin: login 
+        });
+    }, [auth.isAuthenticated, props.login, outletContext, login]);
+
     const restaurant = useRestaurant();
     const navigate = useNavigate();
     const { slug } = useParams<{ slug: string }>();
@@ -276,12 +301,15 @@ const ShowRestaurantMenu: React.FC = () => {
                                         <div>
                                             <p className="text-lg font-bold text-amber-600">{menu.price.toFixed(2)} €</p>
                                         </div>
-                                        <button
-                                            onClick={() => handleAddToCart(menu)}
-                                            className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition-colors"
-                                        >
-                                            Ajouter au panier
-                                        </button>
+                                        {/* Modifier la condition pour afficher le bouton */}
+                                        {(login === true || auth.isAuthenticated === true) && (
+                                            <button
+                                                onClick={() => handleAddToCart(menu)}
+                                                className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition-colors"
+                                            >
+                                                Ajouter au panier
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </div>

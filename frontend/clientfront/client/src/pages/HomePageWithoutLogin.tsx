@@ -2,17 +2,17 @@ import GalleryRestaurants from "../components/restaurantsComponents/GalleryResta
 import Hero from "../components/Hero";
 
 
-const HomePage = () => {
+const HomePageWithoutLogin = () => {
 
   return (
     <div className=" z-10">
       <Hero/>
 
       <div>
-        <GalleryRestaurants login={true}/>
+        <GalleryRestaurants login={false} />
       </div>
     </div>
   )
 }
 
-export default HomePage
+export default HomePageWithoutLogin
