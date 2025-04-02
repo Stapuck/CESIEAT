@@ -1,74 +1,3 @@
-// import { useState } from "react";
-// import axios from "axios";
-
-// const CreateRestaurant = () => {
-//   const [formData, setFormData] = useState({
-//     restaurantName: "",
-//     address: "",
-//     phone: "",
-//     url: "",
-//     position: "",
-//     managerName: "",
-//     email: "",
-//     managerId: "",
-//   });
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [message, setMessage] = useState("");
-
-
-//   const handleChange = (e : any) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSubmit = async (e : any) => {
-//     e.preventDefault();
-//     setIsLoading(true);
-//     setMessage("");
-//     try {
-//       const response = await axios.post("http://localhost:3001/api/restaurateurs", formData);
-//       setMessage("Restaurant créé avec succès !");
-//       setFormData({
-//         restaurantName: "",
-//         address: "",
-//         phone: "",
-//         url: "",
-//         position: "",
-//         managerName: "",
-//         email: "",
-//         managerId: "",
-//       });
-//     } catch (error) {
-//       console.error(error);
-//       setMessage("Erreur lors de la création du restaurant.");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg">
-//       <h2 className="text-2xl font-bold mb-4">Créer un restaurant</h2>
-//       {message && <p className="mb-4 text-center text-green-500">{message}</p>}
-//       <form onSubmit={handleSubmit} className="space-y-4">
-//         <input type="text" name="restaurantName" placeholder="Nom du restaurant" className="w-full p-2 border rounded" onChange={handleChange} value={formData.restaurantName} required />
-//         <input type="text" name="address" placeholder="Adresse" className="w-full p-2 border rounded" onChange={handleChange} value={formData.address} required />
-//         <input type="tel" name="phone" placeholder="Téléphone" className="w-full p-2 border rounded" onChange={handleChange} value={formData.phone} required />
-//         <input type="url" name="url" placeholder="Image URL" className="w-full p-2 border rounded" onChange={handleChange} value={formData.url} required />
-//         <input type="text" name="position" placeholder="Position (lat, lng)" className="w-full p-2 border rounded" onChange={handleChange} value={formData.position} required />
-//         <input type="text" name="managerName" placeholder="Nom du manager" className="w-full p-2 border rounded" onChange={handleChange} value={formData.managerName} required />
-//         <input type="email" name="email" placeholder="Email du manager" className="w-full p-2 border rounded" onChange={handleChange} value={formData.email} required />
-//         <input type="text" name="managerId" placeholder="ID du manager" className="w-full p-2 border rounded" onChange={handleChange} value={formData.managerId} required />
-//         <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
-//           {isLoading ? "Création..." : "Créer le restaurant"}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default CreateRestaurant;
-
-
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -110,7 +39,7 @@ const CreateRestaurant = () => {
 
         try {
             setIsLoading(true);
-            await axios.post("http://localhost:3001/api/restaurateurs", {
+            await axios.post("http://localhost:8080/api/restaurateurs", {
                 restaurantName,
                 address,
                 phone,

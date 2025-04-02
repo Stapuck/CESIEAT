@@ -34,7 +34,7 @@ const CreateArticle = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:3001/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
       setRestaurant(response.data.length > 0 ? response.data[0] : null);
     } catch (error) {
@@ -54,8 +54,7 @@ const CreateArticle = () => {
 
     try {
       setIsLoading(true);
-      await axios.post("http://localhost:3005/api/articles", {
-        // await axios.post("http://localhost:8080/api/articles", {
+        await axios.post("http://localhost:8080/api/articles", {
         name,
         reference,
         type,

@@ -33,7 +33,7 @@ const CreateMenu = () => {
         try {
             setIsLoading(true);
             const response = await axios.get(
-                `http://localhost:3001/api/restaurateurs/manager/${auth.user?.profile.sub}`
+                `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
             );
             if (response.data.length > 0) {
                 setRestaurant(response.data[0]);
@@ -48,7 +48,7 @@ const CreateMenu = () => {
      
     const getArticlesByRestaurant = async () => {
         try {
-            const response = await axios.get(`http://localhost:3005/api/articles/restaurateur/${restaurant?._id}`);
+            const response = await axios.get(`http://localhost:8080/api/articles/restaurateur/${restaurant?._id}`);
             setArticles(response.data);
         } catch (error) {
             console.log(error);
@@ -93,7 +93,7 @@ const CreateMenu = () => {
 
         try {
             setIsLoading(true);
-            await axios.post("http://localhost:3006/api/menus", {
+            await axios.post("http://localhost:8080/api/menus", {
                 name,
                 price,
                 articles: selectedArticles,

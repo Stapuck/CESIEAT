@@ -65,7 +65,7 @@ const HistoriqueCommande = () => {
     try {
         setIsLoading(true);
         const response = await axios.get(
-            `http://localhost:3001/api/restaurateurs/manager/${auth.user?.profile.sub}`
+            `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
         );
 
         if (Array.isArray(response.data) && response.data.length > 0) {
@@ -85,7 +85,7 @@ const HistoriqueCommande = () => {
   const getCommandesByRestaurateur = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`http://localhost:3003/api/commandes/restaurateur/${restaurantmanager?._id}`);
+      const response = await axios.get(`http://localhost:8080/api/commandes/restaurateur/${restaurantmanager?._id}`);
       setCommandes(response.data);
       setIsLoading(false);
     } catch (error) {

@@ -19,7 +19,7 @@ const EditArticle = () => {
     useEffect(() => {
         const fetchArticle = async () => {
             try {
-                const response = await axios.get(`http://localhost:3005/api/articles/${id}`);
+                const response = await axios.get(`http://localhost:8080/api/articles/${id}`);
                 const article = response.data;
                 setName(article.name);
                 setReference(article.reference);
@@ -47,7 +47,7 @@ const EditArticle = () => {
 
         try {
             setIsLoading(true);
-            await axios.put(`http://localhost:3005/api/articles/${id}`, {
+            await axios.put(`http://localhost:8080/api/articles/${id}`, {
                 name,
                 reference,
                 type,

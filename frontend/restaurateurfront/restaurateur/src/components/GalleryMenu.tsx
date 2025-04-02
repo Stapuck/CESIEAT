@@ -27,7 +27,7 @@ function GalleryMenu() {
         try {
             setIsLoading(true);
             const response = await axios.get(
-                `http://localhost:3001/api/restaurateurs/manager/${auth.user?.profile.sub}`
+                `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
             );
             if (response.data.length > 0) {
                 setRestaurant(response.data[0]);
@@ -43,7 +43,7 @@ function GalleryMenu() {
     const getMenusByRestaurateur = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`http://localhost:3006/api/menus/restaurateur/${restaurant?._id}`);
+            const response = await axios.get(`http://localhost:8080/api/menus/restaurateur/${restaurant?._id}`);
             setMenus(response.data);
             setIsLoading(false);
         } catch (error) {

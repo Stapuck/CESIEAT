@@ -42,7 +42,7 @@ function TableauArticle() {
         try {
             setIsLoading(true);
             const response = await axios.get(
-                `http://localhost:3001/api/restaurateurs/manager/${auth.user?.profile.sub}`
+                `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
             );
             if (response.data.length > 0) {
                 setRestaurant(response.data[0]);
@@ -62,7 +62,7 @@ function TableauArticle() {
 
             
             
-            const response = await axios.get(`http://localhost:3005/api/articles/restaurateur/${restaurant?._id}`);
+            const response = await axios.get(`http://localhost:8080/api/articles/restaurateur/${restaurant?._id}`);
             setArticles(response.data);
             setIsLoading(false);
 
