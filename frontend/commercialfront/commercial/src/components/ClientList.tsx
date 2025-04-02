@@ -13,8 +13,7 @@ interface Client {
 
 const ClientList: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [editClientData, setEditClientData] = useState<Client | null>(null);
+  const [showSuspended, setShowSuspended] = useState(false);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -22,11 +21,12 @@ const ClientList: React.FC = () => {
         const response = await fetch('http://localhost:8080/api/clients');
         if (!response.ok) throw new Error('Failed to fetch clients');
         const data = await response.json();
-        setClients(data);
+        setClients(data); // Fetch all clients
       } catch {
         Swal.fire('Erreur', 'Impossible de charger les clients.', 'error');
       }
     };
+
     fetchClients();
   }, []);
 
@@ -39,18 +39,17 @@ const ClientList: React.FC = () => {
       });
       if (!response.ok) throw new Error('Failed to update client');
       const client = await response.json();
-      Swal.fire('Succès', 'Client modifié avec succès.', 'success');
+      Swal.fire('Succès', 'Compte modifié avec succès.', 'success');
       setClients(prev => prev.map(c => (c._id === client._id ? client : c)));
-      setEditClientData(null);
     } catch {
-      Swal.fire('Erreur', 'Impossible de modifier le client.', 'error');
+      Swal.fire('Erreur', 'Impossible de modifier le compte.', 'error');
     }
   };
 
   const handleSuspend = async (client: Client) => {
     const result = await Swal.fire({
       title: 'Êtes-vous sûr de vouloir suspendre cet utilisateur ?',
-      text: 'Cette action est irréversible.',
+      text: 'Cette action suspendra l\'utilisateur.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -61,6 +60,23 @@ const ClientList: React.FC = () => {
 
     if (result.isConfirmed) {
       await handleEditSubmit({ ...client, isPaused: true });
+    }
+  };
+
+  const handleUnsuspend = async (client: Client) => {
+    const result = await Swal.fire({
+      title: 'Êtes-vous sûr de vouloir réactiver cet utilisateur ?',
+      text: 'Cette action réactivera l’utilisateur.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Confirmer',
+      cancelButtonText: 'Annuler',
+    });
+
+    if (result.isConfirmed) {
+      await handleEditSubmit({ ...client, isPaused: false });
     }
   };
 
@@ -82,34 +98,123 @@ const ClientList: React.FC = () => {
           method: 'DELETE',
         });
         if (!response.ok) throw new Error('Failed to delete client');
-        Swal.fire('Succès', 'Client supprimé avec succès.', 'success');
+        Swal.fire('Succès', 'Compte supprimé avec succès.', 'success');
         setClients(prev => prev.filter(client => client._id !== clientId));
       } catch {
-        Swal.fire('Erreur', 'Impossible de supprimer le client.', 'error');
+        Swal.fire('Erreur', 'Impossible de supprimer le compte.', 'error');
       }
     }
   };
 
-  const closePopup = () => {
-    setSelectedClient(null);
-    setEditClientData(null);
+  const handleViewDetails = (client: Client) => {
+    Swal.fire({
+      title: 'Détails du Client',
+      html: `
+        <div style="text-align: left; margin: 0 auto; width: fit-content;">
+          <p><strong>Nom :</strong> ${client.name}</p>
+          <p><strong>Email :</strong> ${client.email}</p>
+          <p><strong>Adresse :</strong> ${client.address}</p>
+          <p><strong>Téléphone :</strong> ${client.phone}</p>
+          <p><strong>Status :</strong> ${client.isPaused ? 'Suspendu' : 'Actif'}</p>
+        </div>
+      `,
+      confirmButtonText: 'Fermer',
+    });
+  };
+
+  const handleEditClient = (client: Client) => {
+    Swal.fire({
+      title: 'Modifier le Client',
+      html: `
+        <div class="space-y-4" style="text-align: left;">
+          <div>
+            <label class="block text-sm font-medium">Nom</label>
+            <input id="edit-name" type="text" value="${client.name}" class="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Email</label>
+            <input id="edit-email" type="email" value="${client.email}" class="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Adresse</label>
+            <input id="edit-address" type="text" value="${client.address}" class="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Téléphone</label>
+            <input id="edit-phone" type="text" value="${client.phone}" class="w-full border rounded px-3 py-2" />
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Sauvegarder',
+      cancelButtonText: 'Annuler',
+      preConfirm: () => {
+        const name = (document.getElementById('edit-name') as HTMLInputElement).value;
+        const email = (document.getElementById('edit-email') as HTMLInputElement).value;
+        const address = (document.getElementById('edit-address') as HTMLInputElement).value;
+        const phone = (document.getElementById('edit-phone') as HTMLInputElement).value;
+        return { ...client, name, email, address, phone };
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleEditSubmit(result.value as Client);
+      }
+    });
+  };
+
+  const renderSuspendedClients = () => {
+    const suspendedClients = clients.filter(client => client.isPaused);
+
+    return (
+      <div className="mb-8">
+        <button
+          onClick={() => setShowSuspended(!showSuspended)}
+          className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+        >
+          {showSuspended ? 'Masquer les comptes suspendus' : 'Afficher les comptes suspendus'}
+        </button>
+        {showSuspended && (
+          <div>
+            <h2 className="text-lg font-bold mb-4">Comptes Suspendus</h2>
+            <ul className="space-y-2">
+              {suspendedClients.length > 0 ? (
+                suspendedClients.map(client => (
+                  <li key={client._id} className="flex justify-between items-center">
+                    <span className="text-gray-700">{client.name}</span>
+                    <button
+                      className="bg-green-500 text-white px-2 py-1 rounded hover:cursor-pointer"
+                      onClick={() => handleUnsuspend(client)}
+                    >
+                      Réactiver
+                    </button>
+                  </li>
+                ))
+              ) : (
+                <li className="text-gray-500">Aucun compte suspendu.</li>
+              )}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
     <div>
+      <h2 className="text-lg font-bold mb-4">Comptes Actifs</h2>
       <ul className="space-y-2">
-        {clients.map(client => (
+        {clients.filter(client => !client.isPaused).map(client => (
           <li key={client._id} className="flex justify-between items-center">
             <span
               className="cursor-pointer text-blue-500"
-              onClick={() => setSelectedClient(client)}
+              onClick={() => handleViewDetails(client)}
             >
               {client.name}
             </span>
             <div className="flex space-x-2">
               <button
                 className="bg-blue-500 text-white px-2 py-1 rounded hover:cursor-pointer"
-                onClick={() => setEditClientData(client)}
+                onClick={() => handleEditClient(client)}
               >
                 Modifier
               </button>
@@ -130,86 +235,7 @@ const ClientList: React.FC = () => {
         ))}
       </ul>
 
-      {selectedClient && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h4 className="text-lg font-semibold mb-4">Détails des Clients</h4>
-            <p><strong>Nom :</strong> {selectedClient.name}</p>
-            <p><strong>Email :</strong> {selectedClient.email}</p>
-            <p><strong>Addresse :</strong> {selectedClient.address}</p>
-            <p><strong>Téléphone :</strong> {selectedClient.phone}</p>
-            <p>
-              <strong>Status :</strong> {selectedClient.isPaused ? 'Paused' : 'Active'}
-            </p>
-            <button
-              className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:cursor-pointer"
-              onClick={closePopup}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {editClientData && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h4 className="text-lg font-semibold mb-4">Modifier le Client</h4>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium">Nom</label>
-                <input
-                  type="text"
-                  value={editClientData.name}
-                  onChange={e => setEditClientData({ ...editClientData, name: e.target.value })}
-                  className="w-full border rounded px-3 py-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Email</label>
-                <input
-                  type="email"
-                  value={editClientData.email}
-                  onChange={e => setEditClientData({ ...editClientData, email: e.target.value })}
-                  className="w-full border rounded px-3 py-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Addresse</label>
-                <input
-                  type="text"
-                  value={editClientData.address}
-                  onChange={e => setEditClientData({ ...editClientData, address: e.target.value })}
-                  className="w-full border rounded px-3 py-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Téléphone</label>
-                <input
-                  type="text"
-                  value={editClientData.phone}
-                  onChange={e => setEditClientData({ ...editClientData, phone: e.target.value })}
-                  className="w-full border rounded px-3 py-2"
-                />
-              </div>
-            </div>
-            <div className="mt-4 flex justify-end space-x-2">
-              <button
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:cursor-pointer"
-                onClick={closePopup}
-              >
-                Annuler
-              </button>
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:cursor-pointer"
-                onClick={() => handleEditSubmit(editClientData)}
-              >
-                Sauvegarder
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {renderSuspendedClients()}
     </div>
   );
 };

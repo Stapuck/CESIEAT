@@ -12,8 +12,8 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
 
   // Calculations
   const totalClients = clients.length;
-  const activeClients = clients.filter(client => client.status === 'active').length;
-  const suspendedClients = clients.filter(client => client.status === 'suspended').length;
+  const activeClients = clients.filter(client => !client.isPaused).length;
+  const suspendedClients = clients.filter(client => client.isPaused).length;
 
   const totalLivreurs = livreurs.length;
   const totalAccounts = totalClients + totalLivreurs;
@@ -28,8 +28,7 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
 
   // Placeholder for real-time transactional revenue logic
   const transactionalRevenue = orders
-    // Replace this filter with real-time logic in the future
-    .filter(order => order.status === 'en ce moment') // Example placeholder
+    .filter(order => ['Préparation', 'Prêt', 'En attente', 'En livraison'].includes(order.status))
     .reduce((acc, order) => acc + order.totalAmount, 0);
 
   const filteredOrders = orders.filter(order => {
@@ -40,15 +39,16 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
         return now.getTime() - orderDate.getTime() <= 3600000; // Last hour
       case 'day':
         return now.toDateString() === orderDate.toDateString(); // Same day
-      case 'week':
+      case 'week': {
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay());
         startOfWeek.setHours(0, 0, 0, 0);
         return orderDate >= startOfWeek;
+      }
       case 'month': {
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-        return orderDate >= startOfMonth && orderDate <= endOfMonth; // Entire month
+        const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59, 999);
+        return orderDate >= startOfMonth && orderDate <= endOfMonth;
       }
       case 'year':
         return now.getFullYear() === orderDate.getFullYear(); // Same year
@@ -68,7 +68,7 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
 
       {/* Transactional Revenue Section */}
       <div className="p-4 border rounded">
-        <h2>Chiffre d'Affaires en Cours</h2>
+        <h2>Chiffre d'Affaires Transactionnel Global en Cours</h2>
         <p>{transactionalRevenue.toFixed(2)} €</p>
         {/* Replace the above calculation with real-time logic */}
       </div>
