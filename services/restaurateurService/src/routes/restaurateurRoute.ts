@@ -4,12 +4,13 @@ import {getRestaurateurs, getRestaurateur, createRestaurant, editRestaurant, del
 
 const restaurantRoute = new Hono();
 
+restaurantRoute.get('/manager/:managerId_Zitadel', getRestaurateurByManagerId);
+
 restaurantRoute.get('/', getRestaurateurs);
 restaurantRoute.get('/:id', getRestaurateur);
 restaurantRoute.post('/', createRestaurant);
 restaurantRoute.put('/:id', editRestaurant);
 restaurantRoute.delete('/:id', deleteRestaurant);
-restaurantRoute.get('/manager/:managerid', getRestaurateurByManagerId);
 
 
 

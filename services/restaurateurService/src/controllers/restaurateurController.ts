@@ -63,8 +63,8 @@ export const deleteRestaurant = async (c: Context) => {
 
 export const getRestaurateurByManagerId = async (c: Context) => {
     try {
-        const managerid = c.req.param('managerid');
-        const restaurant = await Restaurateur.find({ managerId_Zitadel : managerid });
+        const managerId_Zitadel = c.req.param('managerId_Zitadel');
+        const restaurant = await Restaurateur.find({ managerId_Zitadel : managerId_Zitadel });
         if (restaurant.length === 0) return c.json({ message: 'No restaurant found for this manager' }, 404);
         return c.json(restaurant);
     } catch (error) {
