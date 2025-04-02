@@ -162,7 +162,27 @@ export const getMenusByRestaurateurQuery = async (c: Context) => {
 };
 
 
+export const getMenusByRestorateur = async (c: Context) => {
+    try {
+        const restaurateurid = c.req.param('restaurateurid');
 
+        // Vérification si le restaurateurid est valide (en tant que chaîne de caractères)
+        if (!restaurateurid) {
+            return c.json({ message: "Restaurateur ID is required" }, 400);
+        }
+
+        // Recherche des menus associés au restaurateurid (en tant que String)
+        const menus = await Menu.find({ restaurateur: restaurateurid });
+
+        if (menus.length === 0) {
+            return c.json({ message: `No menus found for restaurateur ${restaurateurid}` }, 404);
+        }
+
+        return c.json(menus);
+    } catch (error) {
+        return handleError(error, c);
+    }
+};
 
 
 

@@ -64,26 +64,14 @@ export const deleteArticle = async (c: Context) => {
     }
 };
 
+export const getArticlesByRestorateur = async (c: Context) => {
+    try {
+        const restaurateurid = c.req.param('restaurateurid');
+        const articles = await Article.find({restaurantid : restaurateurid});
 
-// const fetchGenericArticles = async () => {
-//     try {
-//         const response = await axios.get("http://localhost:8080/api/articles", {
-//             params: { type: ["boisson", "sauce"] }
-//         });
-//         setGenericArticles(response.data);
-//     } catch (error) {
-//         console.error("Erreur lors de la récupération des articles génériques", error);
-//     }
-// };
-
-
-// const fetchRestaurantArticles = async (restaurantId) => {
-//     try {
-//         const response = await axios.get("http://localhost:8080/api/articles", {
-//             params: { restaurantId }
-//         });
-//         setRestaurantArticles(response.data);
-//     } catch (error) {
-//         console.error("Erreur lors de la récupération des articles du restaurant", error);
-//     }
-// };
+        if (articles.length === 0) return c.json({ message: `No articles found for this restaurateur ${restaurateurid}` }, 404);
+        return c.json(articles);
+    } catch (error) {
+        return handleError(error, c);
+    }
+};

@@ -14,19 +14,17 @@ const CreateMenu = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
+    const getArticlesByRestaurant = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/articles/restaurateur/${auth.user?.profile.sub}`);
+            setArticles(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     useEffect(() => {
-        const fetchArticles = async () => {
-            try {
-                const response = await axios.get("http://localhost:3005/api/articles");
-                setArticles(response.data);
-            } catch (error) {
-                console.error("Erreur lors de la récupération des articles", error);
-            }
-        };
-
-        
-
-        fetchArticles();
+        getArticlesByRestaurant();
     }, []);
 
     const handleAddArticle = () => {

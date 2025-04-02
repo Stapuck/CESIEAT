@@ -138,6 +138,7 @@ export default function HomePage() {
     try {
       setIsLoading(true);
       await Promise.all([getCommandes(), getClients(), getRestaurateurs()]);
+
       setIsLoading(false);
     } catch (error) {
       console.error("Erreur lors du chargement des données:", error);
@@ -173,6 +174,7 @@ export default function HomePage() {
       }));
 
       setClients(clientsWithPositions);
+
     } catch (error) {
       console.error("Erreur lors de la récupération des clients:", error);
     }
@@ -197,6 +199,7 @@ export default function HomePage() {
         restaurateursWithPositions
       );
       setRestaurateur(restaurateursWithPositions);
+
     } catch (error) {
       console.error("Erreur lors de la récupération des restaurateurs:", error);
     }
