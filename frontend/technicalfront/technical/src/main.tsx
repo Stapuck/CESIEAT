@@ -9,7 +9,7 @@ import { AuthProvider } from "react-oidc-context"
 const oidcConfig = {
   authority: "https://instance1-el5q1i.zitadel.cloud/",
   client_id: "312751992336403117",
-  redirect_uri: "http://localhost:5174/restaurateur/",
+  redirect_uri: "http://localhost:5178/technical/",
   userStore: new WebStorageStateStore({ store: window.localStorage }),
   scope: "openid profile email", // Ensure needed scopes are requested
   response_type: "code",
