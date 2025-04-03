@@ -60,8 +60,6 @@ function TableauArticle() {
         try {
             setIsLoading(true);
 
-            
-            
             const response = await axios.get(`http://localhost:8080/api/articles/restaurateur/${restaurant?._id}`);
             setArticles(response.data);
             setIsLoading(false);
@@ -116,8 +114,6 @@ function TableauArticle() {
                                     <th className="border px-4 py-2">Référence</th>
                                     <th className="border px-4 py-2">Type</th>
                                     <th className="border px-4 py-2">Prix</th>
-                                    <th className="border px-4 py-2">Stock</th>
-                                    <th className="border px-4 py-2">Restaurant</th>
                                     <th className="border px-4 py-2">Actions</th>
                                 </tr>
                             </thead>
@@ -129,9 +125,7 @@ function TableauArticle() {
                                         <td className="border px-4 py-2">{article.reference}</td>
                                         <td className="border px-4 py-2">{article.type}</td>
                                         <td className="border px-4 py-2">{article.price}€</td>
-                                        <td className="border px-4 py-2">{article.isInStock ? "En stock" : "Rupture de stock"}</td>
-                                        <td className="border px-4 py-2">{article.restaurantid}</td>
-                                        <td className="border px-4 py-2 flex gap-2">
+                                        <td className="px-4 py-2 flex gap-2">
                                         <Link to={`/restaurateur/edit-article/${article._id}`} className="inline-block w-full text-center shadow-md text-sm bg-gray-700 text-white rounded-sm px-4 py-1 font-bold hover:bg-gray-600 hover:cursor-pointer">
                                           Modifier
                                         </Link>

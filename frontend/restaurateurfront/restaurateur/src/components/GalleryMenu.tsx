@@ -22,6 +22,7 @@ function GalleryMenu() {
     const auth = useAuth();
     const [restaurant, setRestaurant] = useState<IRestaurateur>();
 
+    
 
     const getRestaurateurByManagerId = async () => {
         try {
