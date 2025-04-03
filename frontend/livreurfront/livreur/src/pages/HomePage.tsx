@@ -558,6 +558,107 @@ export default function HomePage() {
     }
   };
 
+  // Ajoutez cette fonction dans votre composant HomePage
+
+  // Fonction pour créer/mettre à jour un livreur dans la base de données
+  const createOrUpdateLivreur = async () => {
+    try {
+      if (
+        !auth.user?.profile.given_name ||
+        !auth.user?.profile.family_name ||
+        !auth.user?.profile.email ||
+        !auth.user?.profile.sub
+      ) {
+        console.error("Données utilisateur manquantes");
+        return;
+      }
+
+      const zitadelId = auth.user.profile.sub;
+      
+      // Données du livreur à créer/mettre à jour
+      const livreurData = {
+        name: auth.user.profile.given_name + " " + auth.user.profile.family_name,
+        email: auth.user.profile.email,
+        phone: "À renseigner", // Valeur par défaut
+        address: "À renseigner", // Valeur par défaut
+        vehicleType: "Vélo", // Valeur par défaut (corrigé: vehicleType au lieu de vehiculeType)
+        livreurId_Zitadel: zitadelId,
+        isAvailable: true
+      };
+
+      // Vérifier d'abord si le livreur existe
+      try {
+        const checkResponse = await axios.get(
+          `http://localhost:8080/api/livreurs/byZitadelId/${zitadelId}`,
+          {
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        );
+        
+        // Le livreur existe, on récupère ses données actuelles
+        
+        // Mettre à jour le livreur (en conservant certaines données existantes)
+        const updatedData = {
+          ...livreurData,
+          phone: checkResponse.data.phone || livreurData.phone,
+          address: checkResponse.data.address || livreurData.address,
+          vehicleType: checkResponse.data.vehicleType || livreurData.vehicleType, // Corriger ici aussi
+
+          isAvailable: checkResponse.data.isAvailable !== undefined ? checkResponse.data.isAvailable : livreurData.isAvailable
+        };
+        
+        const updateResponse = await axios.put(
+          `http://localhost:8080/api/livreurs/byZitadelId/${zitadelId}`,
+          updatedData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          }
+        );
+        
+      } catch (checkError: any) {
+        // Si le livreur n'existe pas (erreur 404), on le crée
+        if (checkError.response && checkError.response.status === 404) {
+          console.log("Livreur non trouvé, création d'un nouveau livreur:", livreurData);
+          const createResponse = await axios.post(
+            `http://localhost:8080/api/livreurs`,
+            livreurData,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+            }
+          );
+        } else {
+          // Une autre erreur s'est produite lors de la vérification
+          throw checkError;
+        }
+      }
+    } catch (error: any) {
+      console.error(
+        "Erreur lors de la gestion du livreur:",
+        error.response?.data || error.message || error
+      );
+    }
+  };
+
+  // Fonction pour générer un code livreur unique
+  const generateCodeLivreur = () => {
+    return 'L' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  };
+
+  // Ajoutez cet useEffect pour appeler la fonction au chargement
+  useEffect(() => {
+    if (auth.isAuthenticated && auth.user) {
+      createOrUpdateLivreur();
+    }
+  }, [auth.isAuthenticated, auth.user]);
+
   return (
     <div className="flex flex-col items-center p-4">
       <div className="bg-secondary flex justify-between w-full p-4 my-3 items-center rounded-xl">
