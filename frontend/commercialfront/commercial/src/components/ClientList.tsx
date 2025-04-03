@@ -9,11 +9,14 @@ interface Client {
   address: string;
   phone: string;
   isPaused: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const ClientList: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [showSuspended, setShowSuspended] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>(''); // Add searchTerm state
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -107,6 +110,17 @@ const ClientList: React.FC = () => {
   };
 
   const handleViewDetails = (client: Client) => {
+    const formatDate = (dateString: string) => {
+      const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      };
+      return new Date(dateString).toLocaleDateString('fr-FR', options);
+    };
+
     Swal.fire({
       title: 'Détails du Client',
       html: `
@@ -115,6 +129,8 @@ const ClientList: React.FC = () => {
           <p><strong>Email :</strong> ${client.email}</p>
           <p><strong>Adresse :</strong> ${client.address}</p>
           <p><strong>Téléphone :</strong> ${client.phone}</p>
+          <p><strong>Création du compte :</strong> ${formatDate(client.createdAt)}</p>
+          <p><strong>Dernière connexion :</strong> ${formatDate(client.updatedAt)}</p>
           <p><strong>Status :</strong> ${client.isPaused ? 'Suspendu' : 'Actif'}</p>
         </div>
       `,
@@ -124,23 +140,23 @@ const ClientList: React.FC = () => {
 
   const handleEditClient = (client: Client) => {
     Swal.fire({
-      title: 'Modifier le Client',
+      title: 'Modifier les informations :',
       html: `
         <div class="space-y-4" style="text-align: left;">
           <div>
-            <label class="block text-sm font-medium">Nom</label>
+            <label class="block text-sm font-medium">Nom et prénom :</label>
             <input id="edit-name" type="text" value="${client.name}" class="w-full border rounded px-3 py-2" />
           </div>
           <div>
-            <label class="block text-sm font-medium">Email</label>
+            <label class="block text-sm font-medium">Email :</label>
             <input id="edit-email" type="email" value="${client.email}" class="w-full border rounded px-3 py-2" />
           </div>
           <div>
-            <label class="block text-sm font-medium">Adresse</label>
+            <label class="block text-sm font-medium">Adresse :</label>
             <input id="edit-address" type="text" value="${client.address}" class="w-full border rounded px-3 py-2" />
           </div>
           <div>
-            <label class="block text-sm font-medium">Téléphone</label>
+            <label class="block text-sm font-medium">Téléphone :</label>
             <input id="edit-phone" type="text" value="${client.phone}" class="w-full border rounded px-3 py-2" />
           </div>
         </div>
@@ -201,38 +217,51 @@ const ClientList: React.FC = () => {
 
   return (
     <div>
+      <input
+        type="text"
+        placeholder="Rechercher un utilisateur"
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)} // Update searchTerm on change
+        className="mb-4 p-2 border rounded w-full"
+      />
       <h2 className="text-lg font-bold mb-4">Comptes Actifs</h2>
       <ul className="space-y-2">
-        {clients.filter(client => !client.isPaused).map(client => (
-          <li key={client._id} className="flex justify-between items-center">
-            <span
-              className="cursor-pointer text-blue-500"
-              onClick={() => handleViewDetails(client)}
-            >
-              {client.name}
-            </span>
-            <div className="flex space-x-2">
-              <button
-                className="bg-blue-500 text-white px-2 py-1 rounded hover:cursor-pointer"
-                onClick={() => handleEditClient(client)}
+        {clients
+          .filter(client => 
+            client.name.toLowerCase().includes(searchTerm.toLowerCase()) || // Filter by name
+            client.email.toLowerCase().includes(searchTerm.toLowerCase())   // Filter by email
+          )
+          .filter(client => !client.isPaused)
+          .map(client => (
+            <li key={client._id} className="flex justify-between items-center">
+              <span
+                className="cursor-pointer text-blue-500"
+                onClick={() => handleViewDetails(client)}
               >
-                Modifier
-              </button>
-              <button
-                className="bg-yellow-500 text-white px-2 py-1 rounded hover:cursor-pointer"
-                onClick={() => handleSuspend(client)}
-              >
-                Suspendre
-              </button>
-              <button
-                className="bg-red-500 text-white px-2 py-1 rounded hover:cursor-pointer"
-                onClick={() => handleDelete(client._id)}
-              >
-                Supprimer
-              </button>
-            </div>
-          </li>
-        ))}
+                {client.name}
+              </span>
+              <div className="flex space-x-2">
+                <button
+                  className="bg-blue-500 text-white px-2 py-1 rounded hover:cursor-pointer"
+                  onClick={() => handleEditClient(client)}
+                >
+                  Modifier
+                </button>
+                <button
+                  className="bg-yellow-500 text-white px-2 py-1 rounded hover:cursor-pointer"
+                  onClick={() => handleSuspend(client)}
+                >
+                  Suspendre
+                </button>
+                <button
+                  className="bg-red-500 text-white px-2 py-1 rounded hover:cursor-pointer"
+                  onClick={() => handleDelete(client._id)}
+                >
+                  Supprimer
+                </button>
+              </div>
+            </li>
+          ))}
       </ul>
 
       {renderSuspendedClients()}
