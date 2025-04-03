@@ -1,4 +1,16 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { type } from 'arktype'
+
+export const articleArkType = type({
+    name: 'string',
+    reference: 'string',
+    type: "'plat' | 'boisson' | 'sauce' | 'accompagnement'",
+    price: 'number',
+    isInStock: 'boolean',
+    image: 'string?',
+    // restaurantid: mongoose.Types.ObjectId,
+})
+
 
 interface IArticle extends Document {
     name: string;
@@ -8,7 +20,6 @@ interface IArticle extends Document {
     isInStock: boolean;
     image?: string;
     restaurantid: mongoose.Types.ObjectId; 
-
 }
 
 const articleSchema = new Schema(
