@@ -2,15 +2,18 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-interface ICommande {
-  _id: string;
-  client: string;
-  restaurant: string;
-  livreur?: string;
-  menu: [];
+
+
+interface ICommande  {
+  _id : string;
+  clientId_Zitadel: string;
+  restaurantId: string;
+  livreurId_Zitadel?: string;
+  menuId: string;
   totalAmount: number;
   status: string;
-  createdAt: string;
+  createdAt : string;
+  updatedAt : string;
 }
 
 interface IArticle {
@@ -24,15 +27,16 @@ interface IArticle {
   restaurantid: string;
 }
 
+
 interface ILivreur {
-  _id: string;
+  _id : string;
   name: string;
   email: string;
-  password: string;
   phone: string;
   vehicleType: string;
-  isAvailable: boolean;
   codeLivreur: string;
+  livreurId_Zitadel: string;
+  isAvailable: boolean;
 }
 
 interface CommandeCardProps {
@@ -75,7 +79,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetClientById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/clients/${commande.client}`
+        `http://localhost:8080/api/clients/${commande.clientId_Zitadel}`
       );
       setClient(response.data);
     } catch (error) {
@@ -86,7 +90,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetLivreurById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/livreurs/${commande.livreur}`
+        `http://localhost:8080/api/livreurs/${commande.livreurId_Zitadel}`
       );
       setLivreur(response.data);
     } catch (error) {
@@ -97,7 +101,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetMenuById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/menus/${commande.menu}`
+        `http://localhost:8080/api/menus/${commande.menuId}`
       );
       setMenu(response.data);
 
@@ -124,7 +128,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   useEffect(() => {
     GetClientById();
     GetMenuById();
-    if (commande.livreur != null) {
+    if (commande.livreurId_Zitadel != null) {
       GetLivreurById();
     }
   }, []);

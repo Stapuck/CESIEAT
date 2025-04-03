@@ -4,23 +4,34 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "react-oidc-context";
 
+// interface IRestaurateur {
+//   _id: string;
+//   managerName: string;
+//   email: string;
+//   restaurantName: string;
+//   address: string;
+//   phone: string;
+//   name: string;
+//   position: [number, number];
+//   url: string;
+//   managerId: string;
+// }
+
 interface IRestaurateur {
-  _id: string;
+  _id : string;
+  position: [number, number];
   managerName: string;
   email: string;
   restaurantName: string;
   address: string;
   phone: string;
-  name: string;
-  position: [number, number];
-  url: string;
-  managerId: string;
+  url_image: string;
+  managerId_Zitadel: string;
 }
 
 const CreateArticle = () => {
   const auth = useAuth();
   const [name, setName] = useState("");
-  const [reference, setReference] = useState("");
   const [type, setType] = useState("");
   const [price, setPrice] = useState<number>();
   const [isInStock, setIsInStock] = useState(true);
@@ -47,7 +58,7 @@ const CreateArticle = () => {
   const saveArticle = async (e: any) => {
     e.preventDefault();
 
-    if (!name || !reference || !type || !price || !image) {
+    if (!name  || !type || !price || !image) {
       alert("Veuillez remplir tous les champs");
       return;
     }
@@ -56,7 +67,6 @@ const CreateArticle = () => {
       setIsLoading(true);
         await axios.post("http://localhost:8080/api/articles", {
         name,
-        reference,
         type,
         price,
         isInStock,
@@ -92,16 +102,6 @@ const CreateArticle = () => {
               onChange={(e) => setName(e.target.value)}
               className="w-full block border p-3 rounded"
               placeholder="Nom"
-            />
-          </div>
-          <div>
-            <label>Référence</label>
-            <input
-              type="text"
-              value={reference}
-              onChange={(e) => setReference(e.target.value)}
-              className="w-full block border p-3 rounded"
-              placeholder="Référence"
             />
           </div>
           <div>

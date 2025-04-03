@@ -2,16 +2,28 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 
-interface ICommande {
-  _id: string;
-  client: number;
-  restaurant: number;
-  livreur?: number;
-  menu: string;
+// interface ICommande {
+//   _id: string;
+//   client: number;
+//   restaurant: number;
+//   livreur?: number;
+//   menu: string;
+//   totalAmount: number;
+//   status: string;
+//   createdAt: string;
+//   updatedAt: string;
+// }
+
+interface ICommande  {
+  _id : string;
+  clientId_Zitadel: number;
+  restaurantId: number;
+  livreurId_Zitadel?: number;
+  menuId: string;
   totalAmount: number;
   status: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt : string;
+  updatedAt : string;
 }
 
 interface IClient {
@@ -198,10 +210,10 @@ const HistoriqueCommande = () => {
   const countMenuOrders = () => {
     const menuCount: { [key: string]: number } = {};
     commandes.forEach((commande) => {
-      if (menuCount[commande.menu]) {
-        menuCount[commande.menu]++;
+      if (menuCount[commande.menuId]) {
+        menuCount[commande.menuId]++;
       } else {
-        menuCount[commande.menu] = 1;
+        menuCount[commande.menuId] = 1;
       }
     });
     return menuCount;
@@ -316,18 +328,18 @@ const HistoriqueCommande = () => {
                     #{commande._id.slice(-6)}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {clients.find((client) => client._id === commande.client)
+                    {clients.find((client) => client._id === commande.clientId_Zitadel)
                       ?.name || "Inconnu"}
                   </td>
 
                   <td className="border border-gray-300 px-4 py-2">
                     {livreurs.find(
-                      (livreur) => livreur._id === commande.livreur
+                      (livreur) => livreur._id === commande.livreurId_Zitadel
                     )?.name || "N/A"}
                   </td>
                   {/* <td className="border border-gray-300 px-4 py-2"> revoir le model commande </td> */}
                   <td className="border border-gray-300 px-4 py-2">
-                    {menus.find((menu) => menu._id === commande.menu)?.name ||
+                    {menus.find((menu) => menu._id === commande.menuId)?.name ||
                       "Inconnu"}
                   </td>
                   {/* <td className="border border-gray-300 px-4 py-2">{commande.menu}</td> */}

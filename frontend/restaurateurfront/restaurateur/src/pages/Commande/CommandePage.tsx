@@ -6,15 +6,27 @@ import { useAuth } from "react-oidc-context";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-interface ICommande {
-  _id: string;
-  client: string;
-  restaurant: string;
-  livreur?: string;
-  menu: [];
+// interface ICommande {
+//   _id: string;
+//   client: string;
+//   restaurant: string;
+//   livreur?: string;
+//   menu: [];
+//   totalAmount: number;
+//   status: string;
+//   createdAt: string;
+// }
+
+interface ICommande  {
+  _id : string;
+  clientId_Zitadel: string;
+  restaurantId: string;
+  livreurId_Zitadel?: string;
+  menuId: string;
   totalAmount: number;
   status: string;
-  createdAt: string;
+  createdAt : string;
+  updatedAt : string;
 }
 
 interface ILivreur {

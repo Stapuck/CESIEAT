@@ -17,17 +17,16 @@ interface IArticle {
     restaurantid?: string;
 }
 
-interface IRestaurateur {
-    _id: string;
+  interface IRestaurateur {
+    _id : string;
+    position: [number, number];
     managerName: string;
     email: string;
     restaurantName: string;
     address: string;
     phone: string;
-    name: string;
-    position: [number, number];
-    url: string;
-    managerId: string;
+    url_image: string;
+    managerId_Zitadel: string;
   }
 
 function TableauArticle() {
