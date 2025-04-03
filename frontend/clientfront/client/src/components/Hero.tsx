@@ -35,12 +35,24 @@ const Hero = () => {
       }
 
       const zitadelId = auth.user.profile.sub;
+
+      const response = await axios.get(
+        `http://localhost:8080/api/clients/byZitadelId/${zitadelId}`,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+
+      console.log("Client trouvé:", response.data);
+
       const clientData = {
         name:
           auth.user.profile.given_name + " " + auth.user.profile.family_name,
         email: auth.user.profile.email,
-        phone: "Empty",
-        address: "Empty",
+        phone: response.data.phone || "Empty",
+        address: response.data.address || "Empty",
         isPaused: false,
         clientId_Zitadel: zitadelId,
       };
