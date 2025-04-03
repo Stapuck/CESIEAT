@@ -19,7 +19,8 @@ export const getArticles = async (c: Context) => {
 export const getArticle = async (c: Context) => {
     try {
         const id = c.req.param('id');
-        const article = await Article.findById(id);
+        // const article = await Article.findById(id);
+        const article = "okok"
         if (!article) return c.json({ message: `Article with ID ${id} not found` }, 404);
         return c.json(article);
     } catch (error) {

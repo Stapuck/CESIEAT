@@ -5,7 +5,7 @@ import mongoose from 'mongoose'
 import articleRoute from './routes/articleRoute.js';
 
 const app = new Hono()
-app.use('/doc', cors())
+app.use('*', cors())
 
 const PORT = Number(process.env.PORT) || 3005;
 
