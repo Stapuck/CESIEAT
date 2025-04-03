@@ -7,7 +7,7 @@ function LoginButton() {
         <div className="mt-auto pt-4 border-t border-gray-700">
             {!auth.isAuthenticated && (
               <button
-                onClick={() => void auth.removeUser()}
+                onClick={() => void auth.signinRedirect()}
                 className="flex items-center space-x-2 py-3 px-4 w-full hover:bg-gray-700 rounded text-white font-semibold"
                   >
                     <FaUser /> <span>Se connecter</span>
@@ -15,7 +15,7 @@ function LoginButton() {
                 )}
                 {auth.isAuthenticated && (
                   <button
-                    onClick={() => void auth.signinRedirect()}
+                    onClick={() => void auth.removeUser()}
                     className="flex items-center space-x-2 py-3 px-4 w-full hover:bg-gray-700 rounded text-white font-semibold"
                   >
                     <FaUser /> <span>Se déconnecter</span>

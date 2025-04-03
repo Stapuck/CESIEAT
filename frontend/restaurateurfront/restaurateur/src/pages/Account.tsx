@@ -125,32 +125,37 @@ const Account = () => {
           <h1 className="text-3xl font-semibold text-center">
             Votre Restaurant
           </h1>
-          <div className="space-x-4">
-            {isEditing ? <>
-              <button
-              onClick={handleSave}
-            >
-              <FaSave className="inline mr-2 text-black" />
-            </button>
-            </> : <>
-            <button
-              onClick={handleEdit}
-            >
-              <FaPen className="inline mr-2 text-black" />
-            </button>
-            
-            
-            </>}
-            
-            <button
-              onClick={handlesuppression}
-            >
-              <FaTrash className="inline mr-2 text-black" />
-              
-            </button>
-          </div>
+          {isLoading ? (
+            <></>
+          ) : (
+            <>
+              {restaurant ? (
+                <>
+                  <div className="space-x-4">
+                    {isEditing ? (
+                      <>
+                        <button onClick={handleSave}>
+                          <FaSave className="inline mr-2 text-black" />
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button onClick={handleEdit}>
+                          <FaPen className="inline mr-2 text-black" />
+                        </button>
+                      </>
+                    )}
+                    <button onClick={handlesuppression}>
+                      <FaTrash className="inline mr-2 text-black" />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
+            </>
+          )}
         </div>
-      
         {isLoading ? (
           <p className="text-gray-500 text-center">Chargement...</p>
         ) : restaurant ? (

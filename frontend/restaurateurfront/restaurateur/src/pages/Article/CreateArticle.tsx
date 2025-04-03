@@ -147,13 +147,14 @@ const CreateArticle = () => {
               placeholder="URL de l'image"
             />
           </div>
-          <div className="">
+          <div className="hidden">
             <label>ID du restaurant</label>
             <input
               type="text"
               value={restaurant?._id}
               className="w-full block border p-3 rounded"
               placeholder="ID du restaurant"
+              readOnly
             />
           </div>
           <div>
