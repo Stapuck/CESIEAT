@@ -26,19 +26,18 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
 
   const totalRevenue = orders.reduce((acc, order) => acc + order.totalAmount, 0);
 
-  // Placeholder for real-time transactional revenue logic
   const transactionalRevenue = orders
     .filter(order => ['Préparation', 'Prêt', 'En attente', 'En livraison'].includes(order.status))
     .reduce((acc, order) => acc + order.totalAmount, 0);
 
   const filteredOrders = orders.filter(order => {
     const now = new Date();
-    const orderDate = new Date(order.createdAt); // Assuming `createdAt` exists
+    const orderDate = new Date(order.createdAt);
     switch (duration) {
       case 'hour':
-        return now.getTime() - orderDate.getTime() <= 3600000; // Last hour
+        return now.getTime() - orderDate.getTime() <= 3600000;
       case 'day':
-        return now.toDateString() === orderDate.toDateString(); // Same day
+        return now.toDateString() === orderDate.toDateString();
       case 'week': {
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay());
@@ -46,72 +45,89 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
         return orderDate >= startOfWeek;
       }
       case 'month': {
-        const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-        const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59, 999);
-        return orderDate >= startOfMonth && orderDate <= endOfMonth;
+        const startOfMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
+        const endOfMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth() + 1, 1));
+        return orderDate >= startOfMonth && orderDate < endOfMonth;
       }
       case 'year':
-        return now.getFullYear() === orderDate.getFullYear(); // Same year
+        return now.getFullYear() === orderDate.getFullYear();
       default:
-        return false; // No duration selected
+        return false;
     }
   });
   const filteredRevenue = filteredOrders.reduce((acc, order) => acc + order.totalAmount, 0);
 
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="grid grid-cols-1 gap-6 p-6 bg-gray-100 rounded-lg">
       {/* Revenue Section */}
-      <div className="p-4 border rounded">
-        <h2>Chiffre d'Affaires Total</h2>
-        <p>{totalRevenue.toFixed(2)} €</p>
+      <div className="p-6 bg-white shadow rounded-lg">
+        <h2 className="text-lg font-semibold">Chiffre d'affaires total</h2>
+        <p className="text-sm italic text-gray-500 mt-2">
+          Le montant total du chiffre d'affaires comprenant l'ensemble des commandes en ne faisant aucune différence de status.
+        </p>
+        <p className="text-2xl font-bold mt-4">{totalRevenue.toFixed(2)} €</p>
       </div>
 
       {/* Transactional Revenue Section */}
-      <div className="p-4 border rounded">
-        <h2>Chiffre d'Affaires Transactionnel Global en Cours</h2>
-        <p>{transactionalRevenue.toFixed(2)} €</p>
-        {/* Replace the above calculation with real-time logic */}
-      </div>
-
-      {/* Filtered Revenue Section */}
-      <div className="p-4 border rounded">
-        <h2>Chiffre d'Affaires par Durée</h2>
+      <div className="p-6 bg-white shadow rounded-lg">
+        <h2 className="text-lg font-semibold">Chiffre d'affaires transactionnel global en cours</h2>
+        <p className="text-sm italic text-gray-500 mt-2">
+          Le montant du chiffre d'affaires transactionnel global en cours en fonction des commandes par période.
+        </p>
         <select
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
-          className="mt-2 block w-full border border-gray-300 rounded py-2 px-3"
+          className="mt-4 block w-full border border-gray-300 rounded py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="" disabled>
             Sélectionnez une durée
           </option>
-          <option value="hour">Dernière Heure</option>
+          <option value="hour">Dernière heure</option>
           <option value="day">Aujourd'hui</option>
-          <option value="week">Cette Semaine</option>
-          <option value="month">Ce Mois</option>
-          <option value="year">Cette Année</option>
+          <option value="week">Cette semaine</option>
+          <option value="month">Ce mois</option>
+          <option value="year">Cette année</option>
         </select>
-        <p className="mt-4">{filteredRevenue.toFixed(2)} €</p>
+        <p className="text-2xl font-bold mt-4">{filteredRevenue.toFixed(2)} €</p>
       </div>
 
       {/* Accounts Section */}
-      <div className="p-4 border rounded">
-        <h2>
-          Comptes <span>({totalAccounts})</span>
+      <div className="p-6 bg-white shadow rounded-lg">
+        <h2 className="text-lg font-semibold">
+          Comptes <span className="text-gray-500">({totalAccounts})</span>
         </h2>
-        <p>Clients Actifs : {activeClients}</p>
-        <p>Clients Suspendus : {suspendedClients}</p>
-        <p>Livreurs : {totalLivreurs}</p>
+        <p className="text-sm italic text-gray-500 mt-2">
+          Détails des comptes clients actifs, suspendus et livreurs.
+        </p>
+        <ul className="mt-2 space-y-2">
+          <li className="flex justify-between">
+            <span className="font-medium">Clients actifs :</span>
+            <span className="text-gray-600">{activeClients}</span>
+          </li>
+          <li className="flex justify-between">
+            <span className="font-medium">Clients suspendus :</span>
+            <span className="text-gray-600">{suspendedClients}</span>
+          </li>
+          <li className="flex justify-between">
+            <span className="font-medium">Livreurs :</span>
+            <span className="text-gray-600">{totalLivreurs}</span>
+          </li>
+        </ul>
       </div>
 
       {/* Orders Section */}
-      <div className="p-4 border rounded">
-        <h2>
-          Commandes <span>({totalOrders})</span>
+      <div className="p-6 bg-white shadow rounded-lg">
+        <h2 className="text-lg font-semibold">
+          Commandes <span className="text-gray-500">({totalOrders})</span>
         </h2>
-        <ul>
+        <p className="text-sm italic text-gray-500 mt-2">
+          Répartition des commandes par statut.
+        </p>
+        <ul className="mt-2 space-y-2">
           {Object.entries(ordersByStatus).map(([status, count]) => (
-            <li key={status}>
-              {status} : {count}
+            <li key={status} className="flex justify-between">
+              <span className="font-medium">{status} :</span>
+              <span className="text-gray-600">{count}</span>
             </li>
           ))}
         </ul>
