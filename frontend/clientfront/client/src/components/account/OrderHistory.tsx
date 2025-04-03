@@ -130,7 +130,7 @@ const OrderHistory = () => {
           _id: order._id,
           client: order.clientId_Zitadel,
           restaurant: order.restaurantId,
-          livreur: order.livreurId || null,
+          livreur: order.livreurId_Zitadel || null,
           menu: order.menuId,
           status: order.status,
           montant: order.totalAmount,
@@ -142,7 +142,8 @@ const OrderHistory = () => {
         
         // Récupérer les détails des restaurants et des livreurs
         const uniqueRestaurantIds = [...new Set(mappedOrders.map((order : Order) => order.restaurant))];
-        const uniqueLivreurIds = [...new Set(mappedOrders.map((order : Order) => order.livreur).filter(Boolean))];
+        const uniqueLivreurIds = [...new Set(mappedOrders.map((order : Order) => order.livreur))];
+
 
         
         // Récupérer les détails pour chaque restaurant et livreur unique

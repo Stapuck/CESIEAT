@@ -5,7 +5,6 @@ import {
   MediaPermissionsErrorType,
   requestMediaPermissions
 } from 'mic-check';
-import { Navigate, useNavigate } from 'react-router-dom';
 
 interface QRScannerProps {
   onScan: (data: string) => void;
@@ -211,6 +210,8 @@ const QRScanner: React.FC<QRScannerProps> = ({ onScan, onClose, onError }) => {
       if (onClose) onClose();
     });
   };
+
+
 
   // Interface utilisateur améliorée pour la gestion des permissions
   return (

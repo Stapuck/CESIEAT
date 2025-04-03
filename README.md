@@ -109,7 +109,7 @@ BACKEND
 
 ## Restaurateur
 - id 
-- postion [lat,long]
+- position [lat,long]
 - managerName String
 - email String
 - restaurantName String

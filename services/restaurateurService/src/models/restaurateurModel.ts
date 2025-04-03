@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 interface IRestaurateur extends Document {
-    postion: [number, number];
+    position: [number, number];
     managerName: string;
     email: string;
     restaurantName: string;
@@ -13,7 +13,7 @@ interface IRestaurateur extends Document {
 
 const restaurateurSchema = new Schema(
     {
-        postion: {
+        position: {
             type: [Number, Number],
             required: true,
         },
