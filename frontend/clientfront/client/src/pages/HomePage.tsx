@@ -4,15 +4,15 @@ import Hero from "../components/Hero";
 
 const HomePage = () => {
 
-  return (
-    <div className=" z-10">
-      <Hero/>
 
+  return (
+    <div className="z-10">
+      <Hero />
       <div>
-        <GalleryRestaurants login={true}/>
+        <GalleryRestaurants login={true} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

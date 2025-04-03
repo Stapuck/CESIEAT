@@ -17,8 +17,7 @@ import CreateRestaurant from "./pages/restaurantsPages/CreateRestaurant"
 import EditRestaurant from "./pages/restaurantsPages/EditRestaurant"
 import CreateMenu from "./pages/menuPages/CreateMenu"
 import EditMenu from "./pages/menuPages/EditMenu"
-import LoginPage from "./pages/LoginPage"
-import SigninPage from "./pages/SigninPage"
+
 import ShowRestaurantMenu from "./pages/restaurantsPages/ShowRestaurantMenu"
 import Cart from "./pages/cart/cart"
 import Checkout from "./pages/checkout/checkout"
@@ -56,9 +55,6 @@ function App() {
               <Route path="/client/cart" element={<Cart />} />
               <Route path="/client/checkout" element={<Checkout />} />
 
-              {/* Routes d'authentification */}
-              <Route path='/client/login' element={<LoginPage />} />
-              <Route path='/client/signin' element={<SigninPage />} />
             </Route>
           </Routes>
           <Footer />

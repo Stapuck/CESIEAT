@@ -1,30 +1,51 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 interface IRestaurateur extends Document {
+    position: [number, number];
     managerName: string;
     email: string;
-    password: string;
     restaurantName: string;
     address: string;
     phone: string;
-    name: string;
-    position: [number, number];
-    url: string;
-    managerId: string;
+    url_image: string;
+    managerId_Zitadel: string;
 }
 
 const restaurateurSchema = new Schema(
     {
-        name: { type: String, required: true },
-        position :{ type: [Number, Number], required: true },
-        managerName: { type: String, required: true },
-        email: { type: String, required: true, unique: true },
-        password: { type: String, required: true },
-        restaurantName: { type: String, required: true },
-        address: { type: String, required: true },
-        phone: { type: String, required: true },
-        url: { type: String, required: true },
-        managerId: { type: String, required: true },
+        position: {
+            type: [Number, Number],
+            required: true,
+        },
+        managerName: {
+            type: String,
+            required: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        restaurantName: {
+            type: String,
+            required: true,
+        },
+        address: {
+            type: String,
+            required: true,
+        },
+        phone: {
+            type: String,
+            required: true,
+        },
+        url_image: {
+            type: String,
+            required: true,
+        },
+        managerId_Zitadel: {
+            type: String,
+            required: true,
+        },
     },
     { timestamps: true }
 );

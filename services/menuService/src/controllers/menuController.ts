@@ -90,13 +90,11 @@ export const getMenuByRestaurantBody = async (c: Context) => {
         // Données de test pour vérifier si le problème vient de MongoDB
         const testData = [
             {
-                _id: "test123",
                 name: "Menu Test",
-                price: 15,
+                price: 10.99,
                 articles: [],
-                restaurateur: restaurateurId,
-                createdAt: new Date(),
-                updatedAt: new Date()
+                restaurateurId: restaurateurId,
+                url_image: "http://example.com/image.jpg"
             }
         ];
         
@@ -164,18 +162,18 @@ export const getMenusByRestaurateurQuery = async (c: Context) => {
 
 export const getMenusByRestorateur = async (c: Context) => {
     try {
-        const restaurateurid = c.req.param('restaurateurid');
+        const restaurateurId = c.req.param('restaurateurid');
 
         // Vérification si le restaurateurid est valide (en tant que chaîne de caractères)
-        if (!restaurateurid) {
+        if (!restaurateurId) {
             return c.json({ message: "Restaurateur ID is required" }, 400);
         }
 
         // Recherche des menus associés au restaurateurid (en tant que String)
-        const menus = await Menu.find({ restaurateur: restaurateurid });
+        const menus = await Menu.find({ restaurateurId: restaurateurId });
 
         if (menus.length === 0) {
-            return c.json({ message: `No menus found for restaurateur ${restaurateurid}` }, 404);
+            return c.json({ message: `No menus found for restaurateur ${restaurateurId}` }, 404);
         }
 
         return c.json(menus);

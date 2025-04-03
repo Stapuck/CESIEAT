@@ -25,8 +25,10 @@ function Protected() {
     }
 
     console.log("🤡 NOT AUTH");
+    auth.signinRedirect();
 
-    return <Navigate to="/livreur/tmplogin" />;
+    // Retourner null ou un composant de chargement au lieu de Navigate
+    return <div>Redirection vers la page de connexion...</div>;
 }
 
 export default Protected;

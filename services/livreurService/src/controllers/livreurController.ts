@@ -84,7 +84,41 @@ export const getAvailableLivreurs = async (c: Context) => {
     }
 };
 
+export const getLivreurByZitadelId = async (c: Context) => {
+    try {
+        const zitadelId = c.req.param('zitadelId');
+        const livreur = await Livreur.findOne({ livreurId_Zitadel: zitadelId });
+        
+        if (!livreur) {
+            return c.json({ message: `Livreur avec l'ID Zitadel ${zitadelId} non trouvé` }, 404);
+        }
+        
+        return c.json(livreur);
+    } catch (error) {
+        return handleError(error, c);
+    }
+};
 
+export const updateLivreurByZitadelId = async (c: Context) => {
+    try {
+        const zitadelId = c.req.param('zitadelId');
+        const body = await c.req.json();
+        
+        const livreur = await Livreur.findOneAndUpdate(
+            { livreurId_Zitadel: zitadelId },
+            body,
+            { new: true, runValidators: true }
+        );
+        
+        if (!livreur) {
+            return c.json({ message: `Livreur avec l'ID Zitadel ${zitadelId} non trouvé` }, 404);
+        }
+        
+        return c.json(livreur);
+    } catch (error) {
+        return handleError(error, c);
+    }
+};
 
 // test 
 // export const getLivreursByAvailability = async (c: Context) => {
