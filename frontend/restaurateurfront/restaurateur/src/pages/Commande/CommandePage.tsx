@@ -227,229 +227,239 @@ const CommandesPage = () => {
         </h1>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 gap-6">
-        {/* Nouvelle Commande */}
-        <div className="bg-white p-4 rounded shadow-lg">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Nouvelles Commandes ({nouvellesCommandes.length})
-            </h2>
-            <button
-              className="text-sm text-blue-500"
-              onClick={() => setShowNouvellesCommandes(!showNouvellesCommandes)}
-            >
-              {showNouvellesCommandes ? "Masquer" : "Afficher"}
-            </button>
-          </div>
-          {showNouvellesCommandes && (
-            <div className="bg-gray-200 p-4 rounded mb-4">
-              {isLoading ? (
-                "Loading"
-              ) : nouvellesCommandes.length === 0 ? (
-                <p className="text-gray-600">
-                  Pas de nouvelles commandes pour le moment.
-                </p>
-              ) : (
-                nouvellesCommandes.map((commande) => (
-                  <CommandeCard
-                    key={commande._id}
-                    commande={commande}
-                    onValidate={handleValidation}
-                    onPrepare={handlePreparation}
-                    onDeliver={handleLivraison}
-                    onCancel={handleAnnulation}
-                  />
-                ))
+      {commandes ? (
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 gap-6">
+            {/* Nouvelle Commande */}
+            <div className="bg-white p-4 rounded shadow-lg">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                  Nouvelles Commandes ({nouvellesCommandes.length})
+                </h2>
+                <button
+                  className="text-sm text-blue-500"
+                  onClick={() =>
+                    setShowNouvellesCommandes(!showNouvellesCommandes)
+                  }
+                >
+                  {showNouvellesCommandes ? "Masquer" : "Afficher"}
+                </button>
+              </div>
+              {showNouvellesCommandes && (
+                <div className="bg-gray-200 p-4 rounded mb-4">
+                  {isLoading ? (
+                    "Loading"
+                  ) : nouvellesCommandes.length === 0 ? (
+                    <p className="text-gray-600">
+                      Pas de nouvelles commandes pour le moment.
+                    </p>
+                  ) : (
+                    nouvellesCommandes.map((commande) => (
+                      <CommandeCard
+                        key={commande._id}
+                        commande={commande}
+                        onValidate={handleValidation}
+                        onPrepare={handlePreparation}
+                        onDeliver={handleLivraison}
+                        onCancel={handleAnnulation}
+                      />
+                    ))
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-        {/* Commande en préparation */}
-        <div className="bg-white p-4 rounded shadow-lg">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Commandes en Préparation ({enPreparationCommandes.length})
-            </h2>
-            <button
-              className="text-sm text-blue-500"
-              onClick={() =>
-                setShowEnPreparationCommandes(!showEnPreparationCommandes)
-              }
-            >
-              {showEnPreparationCommandes ? "Masquer" : "Afficher"}
-            </button>
-          </div>
-          {showEnPreparationCommandes && (
-            <div className="bg-gray-200 p-4 rounded mb-4">
-              {isLoading ? (
-                "Loading"
-              ) : enPreparationCommandes.length === 0 ? (
-                <p className="text-gray-600">
-                  Aucune commande en préparation pour l'instant.
-                </p>
-              ) : (
-                enPreparationCommandes.map((commande) => (
-                  <CommandeCard
-                    key={commande._id}
-                    commande={commande}
-                    onValidate={handleValidation}
-                    onPrepare={handlePreparation}
-                    onDeliver={handleLivraison}
-                    onCancel={handleAnnulation}
-                  />
-                ))
+            {/* Commande en préparation */}
+            <div className="bg-white p-4 rounded shadow-lg">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                  Commandes en Préparation ({enPreparationCommandes.length})
+                </h2>
+                <button
+                  className="text-sm text-blue-500"
+                  onClick={() =>
+                    setShowEnPreparationCommandes(!showEnPreparationCommandes)
+                  }
+                >
+                  {showEnPreparationCommandes ? "Masquer" : "Afficher"}
+                </button>
+              </div>
+              {showEnPreparationCommandes && (
+                <div className="bg-gray-200 p-4 rounded mb-4">
+                  {isLoading ? (
+                    "Loading"
+                  ) : enPreparationCommandes.length === 0 ? (
+                    <p className="text-gray-600">
+                      Aucune commande en préparation pour l'instant.
+                    </p>
+                  ) : (
+                    enPreparationCommandes.map((commande) => (
+                      <CommandeCard
+                        key={commande._id}
+                        commande={commande}
+                        onValidate={handleValidation}
+                        onPrepare={handlePreparation}
+                        onDeliver={handleLivraison}
+                        onCancel={handleAnnulation}
+                      />
+                    ))
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-        {/* Commande en attente de récupération */}
-        <div className="bg-white p-4 rounded shadow-lg">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Commandes en Attente de Récupération (
-              {enAttenteDeRecupCommandes.length})
-            </h2>
-            <button
-              className="text-sm text-blue-500"
-              onClick={() =>
-                setShowEnAttenteDeRecupCommandes(!showEnAttenteDeRecupCommandes)
-              }
-            >
-              {showEnAttenteDeRecupCommandes ? "Masquer" : "Afficher"}
-            </button>
-          </div>
-          {showEnAttenteDeRecupCommandes && (
-            <div className="bg-gray-200 p-4 rounded mb-4">
-              {isLoading ? (
-                "Loading"
-              ) : enAttenteDeRecupCommandes.length === 0 ? (
-                <p className="text-gray-600">
-                  Aucune commande prête pour le moment.
-                </p>
-              ) : (
-                enAttenteDeRecupCommandes.map((commande) => (
-                  <CommandeCard
-                    key={commande._id}
-                    commande={commande}
-                    onValidate={handleValidation}
-                    onPrepare={handlePreparation}
-                    onDeliver={handleLivraison}
-                    onCancel={handleAnnulation}
-                  />
-                ))
+            {/* Commande en attente de récupération */}
+            <div className="bg-white p-4 rounded shadow-lg">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                  Commandes en Attente de Récupération (
+                  {enAttenteDeRecupCommandes.length})
+                </h2>
+                <button
+                  className="text-sm text-blue-500"
+                  onClick={() =>
+                    setShowEnAttenteDeRecupCommandes(
+                      !showEnAttenteDeRecupCommandes
+                    )
+                  }
+                >
+                  {showEnAttenteDeRecupCommandes ? "Masquer" : "Afficher"}
+                </button>
+              </div>
+              {showEnAttenteDeRecupCommandes && (
+                <div className="bg-gray-200 p-4 rounded mb-4">
+                  {isLoading ? (
+                    "Loading"
+                  ) : enAttenteDeRecupCommandes.length === 0 ? (
+                    <p className="text-gray-600">
+                      Aucune commande prête pour le moment.
+                    </p>
+                  ) : (
+                    enAttenteDeRecupCommandes.map((commande) => (
+                      <CommandeCard
+                        key={commande._id}
+                        commande={commande}
+                        onValidate={handleValidation}
+                        onPrepare={handlePreparation}
+                        onDeliver={handleLivraison}
+                        onCancel={handleAnnulation}
+                      />
+                    ))
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-        {/* Commande en Livraison */}
-        <div className="bg-white p-4 rounded shadow-lg">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              En livraison ({enLivraisonCommandes.length})
-            </h2>
-            <button
-              className="text-sm text-blue-500"
-              onClick={() =>
-                setShowEnLivraisonCommandes(!showEnLivraisonCommandes)
-              }
-            >
-              {showEnLivraisonCommandes ? "Masquer" : "Afficher"}
-            </button>
-          </div>
-          {showEnLivraisonCommandes && (
-            <div className="bg-gray-200 p-4 rounded mb-4">
-              {isLoading ? (
-                "Loading"
-              ) : enLivraisonCommandes.length === 0 ? (
-                <p className="text-gray-600">
-                  Pas de commandes en livraison pour le moment.
-                </p>
-              ) : (
-                enLivraisonCommandes.map((commande) => (
-                  <CommandeCard
-                    key={commande._id}
-                    commande={commande}
-                    onValidate={handleValidation}
-                    onPrepare={handlePreparation}
-                    onDeliver={handleLivraison}
-                    onCancel={handleAnnulation}
-                  />
-                ))
+            {/* Commande en Livraison */}
+            <div className="bg-white p-4 rounded shadow-lg">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                  En livraison ({enLivraisonCommandes.length})
+                </h2>
+                <button
+                  className="text-sm text-blue-500"
+                  onClick={() =>
+                    setShowEnLivraisonCommandes(!showEnLivraisonCommandes)
+                  }
+                >
+                  {showEnLivraisonCommandes ? "Masquer" : "Afficher"}
+                </button>
+              </div>
+              {showEnLivraisonCommandes && (
+                <div className="bg-gray-200 p-4 rounded mb-4">
+                  {isLoading ? (
+                    "Loading"
+                  ) : enLivraisonCommandes.length === 0 ? (
+                    <p className="text-gray-600">
+                      Pas de commandes en livraison pour le moment.
+                    </p>
+                  ) : (
+                    enLivraisonCommandes.map((commande) => (
+                      <CommandeCard
+                        key={commande._id}
+                        commande={commande}
+                        onValidate={handleValidation}
+                        onPrepare={handlePreparation}
+                        onDeliver={handleLivraison}
+                        onCancel={handleAnnulation}
+                      />
+                    ))
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-        {/* Commande livrée */}
-        <div className="bg-white p-4 rounded shadow-lg">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Livrée ({LivreeCommande.length})
-            </h2>
-            <button
-              className="text-sm text-blue-500"
-              onClick={() => setShowLivreeCommande(!showLivreeCommande)}
-            >
-              {showLivreeCommande ? "Masquer" : "Afficher"}
-            </button>
-          </div>
-          {showLivreeCommande && (
-            <div className="bg-gray-200 p-4 rounded mb-4">
-              {isLoading ? (
-                "Loading"
-              ) : LivreeCommande.length === 0 ? (
-                <p className="text-gray-600">
-                  Pas de commandes livrées pour le moment.
-                </p>
-              ) : (
-                LivreeCommande.map((commande) => (
-                  <CommandeCard
-                    key={commande._id}
-                    commande={commande}
-                    onValidate={handleValidation}
-                    onPrepare={handlePreparation}
-                    onDeliver={handleLivraison}
-                    onCancel={handleAnnulation}
-                  />
-                ))
+            {/* Commande livrée */}
+            <div className="bg-white p-4 rounded shadow-lg">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                  Livrée ({LivreeCommande.length})
+                </h2>
+                <button
+                  className="text-sm text-blue-500"
+                  onClick={() => setShowLivreeCommande(!showLivreeCommande)}
+                >
+                  {showLivreeCommande ? "Masquer" : "Afficher"}
+                </button>
+              </div>
+              {showLivreeCommande && (
+                <div className="bg-gray-200 p-4 rounded mb-4">
+                  {isLoading ? (
+                    "Loading"
+                  ) : LivreeCommande.length === 0 ? (
+                    <p className="text-gray-600">
+                      Pas de commandes livrées pour le moment.
+                    </p>
+                  ) : (
+                    LivreeCommande.map((commande) => (
+                      <CommandeCard
+                        key={commande._id}
+                        commande={commande}
+                        onValidate={handleValidation}
+                        onPrepare={handlePreparation}
+                        onDeliver={handleLivraison}
+                        onCancel={handleAnnulation}
+                      />
+                    ))
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-        {/* Commande Annulée */}
-        <div className="bg-white p-4 rounded shadow-lg">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Annulée ({AnnuleeCommande.length})
-            </h2>
-            <button
-              className="text-sm text-blue-500"
-              onClick={() => setShowAnnuleeCommande(!showAnnuleeCommande)}
-            >
-              {showLivreeCommande ? "Masquer" : "Afficher"}
-            </button>
-          </div>
-          {showLivreeCommande && (
-            <div className="bg-gray-200 p-4 rounded mb-4">
-              {isLoading ? (
-                "Loading"
-              ) : AnnuleeCommande.length === 0 ? (
-                <p className="text-gray-600">Pas de commandes anulées.</p>
-              ) : (
-                AnnuleeCommande.map((commande) => (
-                  <CommandeCard
-                    key={commande._id}
-                    commande={commande}
-                    onValidate={handleValidation}
-                    onPrepare={handlePreparation}
-                    onDeliver={handleLivraison}
-                    onCancel={handleAnnulation}
-                  />
-                ))
+            {/* Commande Annulée */}
+            <div className="bg-white p-4 rounded shadow-lg">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                  Annulée ({AnnuleeCommande.length})
+                </h2>
+                <button
+                  className="text-sm text-blue-500"
+                  onClick={() => setShowAnnuleeCommande(!showAnnuleeCommande)}
+                >
+                  {showLivreeCommande ? "Masquer" : "Afficher"}
+                </button>
+              </div>
+              {showLivreeCommande && (
+                <div className="bg-gray-200 p-4 rounded mb-4">
+                  {isLoading ? (
+                    "Loading"
+                  ) : AnnuleeCommande.length === 0 ? (
+                    <p className="text-gray-600">Pas de commandes anulées.</p>
+                  ) : (
+                    AnnuleeCommande.map((commande) => (
+                      <CommandeCard
+                        key={commande._id}
+                        commande={commande}
+                        onValidate={handleValidation}
+                        onPrepare={handlePreparation}
+                        onDeliver={handleLivraison}
+                        onCancel={handleAnnulation}
+                      />
+                    ))
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        </>
+      ) : (
+        <> pas de commande</>
+      )}
     </div>
   );
 };

@@ -66,6 +66,7 @@ function TableauArticle() {
 
             
         } catch (error) {
+            setIsLoading(false);
             console.log(error);
         }
     };

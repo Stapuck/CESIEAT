@@ -48,6 +48,7 @@ function GalleryMenu() {
             setMenus(response.data);
             setIsLoading(false);
         } catch (error) {
+            setIsLoading(false);
             console.log(error);
         }
     };
