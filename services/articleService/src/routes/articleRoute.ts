@@ -3,9 +3,7 @@ import { getArticles, getArticle, createArticle, editArticle, deleteArticle, get
 import { describeRoute, openAPISpecs } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/arktype'
 import { apiReference } from '@scalar/hono-api-reference'
-import { articleArkType } from '../models/articleModel.js'
 import { type } from 'arktype'
-import { arktypeValidator } from '@hono/arktype-validator'
 
 const baseUrl = "/api/articles"
 const articleRoute = new Hono().basePath(baseUrl)
@@ -19,6 +17,7 @@ const schema = type({
 articleRoute.get(
     '/',
     describeRoute({
+        tags: ['articles'],
         description: 'Get all articles',
         responses: {
             200: {
@@ -33,6 +32,7 @@ articleRoute.get(
 articleRoute.get(
     '/:id',
     describeRoute({
+        tags: ['articles'],
         description: 'Get all articles',
         responses: {
             200: {
@@ -40,14 +40,14 @@ articleRoute.get(
             },
         },
     }),
-    // validator('query', type("string")),
-    // validator('query', type({id : mongoose.Types.ObjectId.toString()})),
+    validator('param', type({ id: "string" })),
     getArticle
 )
 
 articleRoute.put(
     '/:id',
     describeRoute({
+        tags: ['articles'],
         description: 'Get article',
         responses: {
             200: {
@@ -55,14 +55,14 @@ articleRoute.put(
             },
         },
     }),
-    // validator('query', type("string")),
-    // validator('query', type({id : mongoose.Types.ObjectId.toString()})),
+    validator('param', type({ id: "string" })),
     editArticle
 )
 
 articleRoute.post(
     '/:id',
     describeRoute({
+        tags: ['articles'],
         description: 'create article',
         responses: {
             200: {
@@ -70,9 +70,38 @@ articleRoute.post(
             },
         },
     }),
-    // validator('query', type("string")),
-    // validator('query', type({id : mongoose.Types.ObjectId.toString()})),
+    validator('param', type({ id: "string" })),
     createArticle
+)
+
+articleRoute.delete(
+    '/:id',
+    describeRoute({
+        tags: ['articles'],
+        description: 'create article',
+        responses: {
+            200: {
+                description: 'Successful response',
+            },
+        },
+    }),
+    validator('param', type({ id: "string" })),
+    deleteArticle
+)
+
+articleRoute.get(
+    '/restaurateur/:restaurateurid',
+    describeRoute({
+        tags: ['articles'],
+        description: 'create article',
+        responses: {
+            200: {
+                description: 'Successful response',
+            },
+        },
+    }),
+    validator('param', type({ restaurateurid: "string" })),
+    getArticlesByRestorateur
 )
 
 
