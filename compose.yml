@@ -43,101 +43,73 @@ services:
     restart: unless-stopped
     networks:
       - app-network
-
-  # Restaurateur frontend (Vite project)
-  restaurateur-frontend:
+  
+  # Restaurant frontend (Production)
+  restaurant-frontend-prod:
     build:
       context: ./frontend/restaurateurfront/restaurateur
-      dockerfile: Dockerfile
-    container_name: restaurateurFrontend
+      dockerfile: Dockerfile.prod
+    container_name: restaurantFrontendProd
     ports:
-      - "5174:5174" # Expose Vite default port for restaurateur frontend
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/restaurateur/
+      - "3081:80"  # Exposez le port 80 de nginx sur le port 3081 de l'hôte
     restart: unless-stopped
-
-    volumes:
-      - ./frontend/restaurateurfront/restaurateur:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
     networks:
       - app-network
-    command: npm run dev # Run Vite in development mode
-
-  # Livreur frontend (Vite project)
-  livreur-frontend:
+  
+  # Livreur frontend (Production)
+  livreur-frontend-prod:
     build:
       context: ./frontend/livreurfront/livreur
-      dockerfile: Dockerfile
-    container_name: livreurFrontend
+      dockerfile: Dockerfile.prod
+    container_name: livreurFrontendProd
     ports:
-      - "5175:5175" # Expose Vite default port for livreur frontend
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/livreur/
-    volumes:
-      - ./frontend/livreurfront/livreur:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
+      - "3082:80"  # Exposez le port 80 de nginx sur le port 3082 de l'hôte
     restart: unless-stopped
-
     networks:
       - app-network
-    command: npm run dev # Run Vite in development mode
+    
 
-  # Commercial frontend (Vite project)
-  commercial-frontend:
+  # Commercial frontend (Production)
+  commercial-frontend-prod:
     build:
       context: ./frontend/commercialfront/commercial
-      dockerfile: Dockerfile
-    container_name: commercialFrontend
+      dockerfile: Dockerfile.prod
+    container_name: commercialFrontendProd
     ports:
-      - "5178:5178" # Expose Vite default port for commercial frontend
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/commercial/
-    volumes:
-      - ./frontend/commercialfront/commercial:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
+      - "3083:80"  # Exposez le port 80 de nginx sur le port 3083 de l'hôte
+    restart: unless-stopped
     networks:
       - app-network
-    restart: unless-stopped
-
-  developer-frontend:
+  
+# Developer frontend (Production)
+  developer-frontend-prod:
     build:
       context: ./frontend/developerfront/developer
-      dockerfile: Dockerfile
-    container_name: developerFrontend
+      dockerfile: Dockerfile.prod
+    container_name: developerFrontendProd
     ports:
-      - "5176:5176" # Expose Vite default port for developer frontend
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/developer/
-    volumes:
-      - ./frontend/developerfront/developer:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
+      - "3084:80"  # Exposez le port 80 de nginx sur le port 3084 de l'hôte
     restart: unless-stopped
-
     networks:
       - app-network
-    command: npm run dev # Run Vite in development mode
-
-  technical-frontend:
+  
+  # Technical frontend (Production)
+  technical-frontend-prod:
     build:
       context: ./frontend/technicalfront/technical
-      dockerfile: Dockerfile
-    container_name: technicalFrontend
+      dockerfile: Dockerfile.prod
+    container_name: technicalFrontendProd
     ports:
-      - "5177:5177" # Expose Vite default port for technical frontend
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/technical/
-    volumes:
-      - ./frontend/technicalfront/technical:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
+      - "3085:80"  # Exposez le port 80 de nginx sur le port 3085 de l'hôte
     restart: unless-stopped
     networks:
       - app-network
-    command: npm run dev # Run Vite in development mode
+
+
+  # Commercial frontend (Vite project)
+
+
+
 
   # Article Service
   article-service:

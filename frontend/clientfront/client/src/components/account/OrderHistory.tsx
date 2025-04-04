@@ -181,7 +181,7 @@ const OrderHistory = () => {
       } catch (err) {
         console.error("Erreur lors de la récupération des commandes:", err);
         setError(
-          "Impossible de charger les commandes. Veuillez réessayer plus tard."
+          "Aucunne commande trouvée."
         );
         setLoading(false);
       }
