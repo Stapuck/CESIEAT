@@ -9,6 +9,6 @@ articleRoute.get('/:id', getArticle);
 articleRoute.post('/', createArticle);
 articleRoute.put('/:id', editArticle);
 articleRoute.delete('/:id', deleteArticle);
-articleRoute.get('/restaurateur/:restaurateurid', getArticlesByRestorateur);
+articleRoute.get('/restaurateur/:restaurateurId', getArticlesByRestorateur);
 
 export default articleRoute;

@@ -9,15 +9,14 @@ import Swal from "sweetalert2";
 
 interface IRestaurateur {
   _id: string;
+  position: [number, number];
   managerName: string;
   email: string;
   restaurantName: string;
   address: string;
   phone: string;
-  name: string;
-  position: [number, number];
-  url: string;
-  managerId: string;
+  url_image: string;
+  managerId_Zitadel: string;
 }
 
 const Account = () => {
@@ -162,7 +161,7 @@ const Account = () => {
           <div className="space-y-6">
             <div className="flex flex-col items-center">
               <img
-                src={restaurant.url}
+                src={restaurant.url_image}
                 alt="Restaurant"
                 className="w-full h-64 object-cover rounded-lg shadow-md mb-4"
               />
@@ -174,10 +173,10 @@ const Account = () => {
                   </strong>
                   <input
                     type="text"
-                    value={restaurant.url}
+                    value={restaurant.url_image}
                     readOnly={!isEditing}
                     onChange={(e) =>
-                      setRestaurant({ ...restaurant, url: e.target.value })
+                      setRestaurant({ ...restaurant, url_image: e.target.value })
                     }
                     className="w-full p-3 border border-gray-300 rounded-lg shadow-sm"
                   />

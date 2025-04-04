@@ -482,6 +482,8 @@ export default function HomePage() {
     }
   };
 
+  useEffect (() => {loadMyOrders()}, [myCommandes]);
+
   // Rafraîchir la position actuelle
   const refreshCurrentLocation = () => {
     getCurrentLocation();

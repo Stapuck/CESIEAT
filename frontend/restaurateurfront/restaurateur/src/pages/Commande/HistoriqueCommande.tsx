@@ -16,9 +16,9 @@ import { useAuth } from "react-oidc-context";
 
 interface ICommande  {
   _id : string;
-  clientId_Zitadel: number;
-  restaurantId: number;
-  livreurId_Zitadel?: number;
+  clientId_Zitadel: string;
+  restaurantId: string;
+  livreurId_Zitadel?: string;
   menuId: string;
   totalAmount: number;
   status: string;
@@ -27,27 +27,29 @@ interface ICommande  {
 }
 
 interface IClient {
-  _id: number;
+  _id: string;
   name: string;
   email: string;
   password: string;
   address: string;
   phone: string;
   isPaused: boolean;
+  clientId_Zitadel: string;
 }
 
 interface ILivreur {
-  _id: number;
+  _id: string;
   name: string;
   email: string;
   password: string;
   phone: string;
   vehicleType: string;
   isAvailable: boolean;
+  livreurId_Zitadel: string;
 }
 
 interface IRestaurateur {
-  _id: number;
+  _id: string;
   managerName: string;
   email: string;
   password: string;
@@ -328,13 +330,13 @@ const HistoriqueCommande = () => {
                     #{commande._id.slice(-6)}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {clients.find((client) => client._id === commande.clientId_Zitadel)
+                    {clients.find((client) => client.clientId_Zitadel === commande.clientId_Zitadel)
                       ?.name || "Inconnu"}
                   </td>
 
                   <td className="border border-gray-300 px-4 py-2">
                     {livreurs.find(
-                      (livreur) => livreur._id === commande.livreurId_Zitadel
+                      (livreur) => livreur.livreurId_Zitadel === commande.livreurId_Zitadel
                     )?.name || "N/A"}
                   </td>
                   {/* <td className="border border-gray-300 px-4 py-2"> revoir le model commande </td> */}

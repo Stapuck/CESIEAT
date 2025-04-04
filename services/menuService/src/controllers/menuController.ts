@@ -162,7 +162,7 @@ export const getMenusByRestaurateurQuery = async (c: Context) => {
 
 export const getMenusByRestorateur = async (c: Context) => {
     try {
-        const restaurateurId = c.req.param('restaurateurid');
+        const restaurateurId = c.req.param('restaurateurId');
 
         // Vérification si le restaurateurid est valide (en tant que chaîne de caractères)
         if (!restaurateurId) {

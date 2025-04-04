@@ -12,7 +12,7 @@ interface IRestaurateur {
   address: string;
   phone: string;
   position: [number, number];
-  url: string;
+  url_image: string;
   managerId: string;
 }
 
@@ -22,6 +22,7 @@ const CreateMenu = () => {
   const [price, setPrice] = useState<number>();
   const [articles, setArticles] = useState<any[]>([]);
   const [selectedArticles, setSelectedArticles] = useState<any[]>([]);
+  const [urlImage, setUrlImage] = useState("");
   const [restaurant, setRestaurant] = useState<IRestaurateur>();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +86,7 @@ const CreateMenu = () => {
   const saveMenu = async (e: any) => {
     e.preventDefault();
 
-    if (!name || !price || selectedArticles.length === 0) {
+    if (!name || !price || !urlImage || selectedArticles.length === 0) {
       alert("Veuillez remplir tous les champs");
       return;
     }
@@ -96,7 +97,8 @@ const CreateMenu = () => {
         name,
         price,
         articles: selectedArticles,
-        restaurateur: restaurant?._id,
+        restaurateurId: restaurant?._id,
+        url_image: urlImage,
       });
 
       toast.success("Menu créé avec succès");
@@ -141,6 +143,24 @@ const CreateMenu = () => {
               placeholder="Prix"
             />
           </div>
+          <div>
+            <label>Image</label>
+            <input
+              type="text"
+              value={urlImage}
+              onChange={(e) => setUrlImage(e.target.value)}
+              className="w-full block border p-3 rounded"
+              placeholder="Url Image"
+            />
+          </div>
+          <div>
+            <img
+              src={urlImage}
+              alt="Image du menu"
+              className="w-full block border  rounded"
+            />
+          </div>
+
           <div className="hidden">
             <label>Restaurateur (temporaire )</label>
             <input

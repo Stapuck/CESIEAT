@@ -12,7 +12,7 @@ interface MenuItem {
 
 interface Restaurant {
   _id: string;
-  name: string;
+  restaurantName: string;
   // autres champs si nécessaire
 }
 
@@ -65,12 +65,13 @@ const OrderHistory = () => {
 
   // Fonction pour déterminer la classe CSS du statut
   const getStatusClass = (status?: string) => {
+    console.log("Statut de la commande:", status);
     switch (status) {
       case "Préparation":
         return "bg-yellow-100 text-yellow-800";
-      case "En Livraison":
+      case "En livraison":
         return "bg-blue-100 text-blue-800";
-      case "Livr2e":
+      case "Livrée":
         return "bg-green-100 text-green-800";
       case "Annulée":
         return "bg-red-100 text-red-800";
@@ -81,10 +82,11 @@ const OrderHistory = () => {
 
   // Fonction pour afficher le texte du statut
   const getStatusText = (status?: string) => {
+    console.log("Statut de la commande:", status);
     switch (status) {
       case "Préparation":
         return "En préparation";
-      case "En Livraison":
+      case "En livraison":
         return "En livraison";
       case "Livrée":
         return "Livrée";
@@ -115,7 +117,7 @@ const OrderHistory = () => {
     if (!livreurId) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/livreurs/${livreurId}`
+        `http://localhost:8080/api/livreurs/byZitadelId/${livreurId}`
       );
       setLivreurs((prev) => ({ ...prev, [livreurId]: response.data }));
     } catch (err) {
@@ -153,6 +155,8 @@ const OrderHistory = () => {
           date: order.createdAt,
           // Add other fields as needed
         }));
+
+        console.log("Commandes récupérées:", mappedOrders);
 
         setOrders(mappedOrders);
 
@@ -302,7 +306,7 @@ const OrderHistory = () => {
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>
                     Restaurant:{" "}
-                    {restaurants[order.restaurant]?.name || "Chargement..."}
+                    {restaurants[order.restaurant]?.restaurantName || "Chargement..."}
                   </span>
                   <span>
                     Livreur:{" "}

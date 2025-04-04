@@ -62,19 +62,19 @@ export const deleteCommande = async (c: Context) => {
 export const getCommandesByRestorateur = async (c: Context) => {
     try {
         // Utiliser "restaurateurId" pour récupérer le paramètre de la route
-        const restaurateurId = c.req.param('idrestaurateur');
+        const restaurantId = c.req.param('restaurantId');
 
         // Vérification si le restaurateurId est bien fourni
-        if (!restaurateurId) {
+        if (!restaurantId) {
             return c.json({ message: "Restaurateur ID is required" }, 400);
         }
 
         // Recherche des commandes associées au restaurateur (restaurant)
-        const commandes = await Commande.find({ restaurateurId: restaurateurId });
+        const commandes = await Commande.find({ restaurantId: restaurantId });
 
         // Si aucune commande n'est trouvée pour ce restaurateur
         if (commandes.length === 0) {
-            return c.json({ message: `No orders found for restaurateur ${restaurateurId}` }, 404);
+            return c.json({ message: `No orders found for restaurateur ${restaurantId}` }, 404);
         }
 
         // Si des commandes sont trouvées, les renvoyer

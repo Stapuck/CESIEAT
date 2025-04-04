@@ -14,7 +14,7 @@ interface IRestaurantData {
   address: string;
   phone: string;
   position: [number, number];
-  url: string;
+  url_image: string;
 }
 interface GalleryRestaurantsProps {
   login: boolean;
@@ -95,7 +95,7 @@ const GalleryRestaurants: React.FC<GalleryRestaurantsProps> = ({ login }) => {
                           restaurant.address.split(",").pop()?.trim() || ""
                         }
                         phone={restaurant.phone}
-                        url={restaurant.url}
+                        url={restaurant.url_image}
                         position={restaurant.position}
                         onDelete={getRestaurants} // Pour rafraîchir la liste après suppression
                       />
@@ -110,7 +110,7 @@ const GalleryRestaurants: React.FC<GalleryRestaurantsProps> = ({ login }) => {
                           restaurant.address.split(",").pop()?.trim() || ""
                         }
                         phone={restaurant.phone}
-                        url={restaurant.url}
+                        url={restaurant.url_image}
                         position={restaurant.position}
                         onDelete={getRestaurants} // Pour rafraîchir la liste après suppression
                       />

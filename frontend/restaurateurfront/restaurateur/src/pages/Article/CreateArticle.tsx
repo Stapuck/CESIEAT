@@ -4,18 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "react-oidc-context";
 
-// interface IRestaurateur {
-//   _id: string;
-//   managerName: string;
-//   email: string;
-//   restaurantName: string;
-//   address: string;
-//   phone: string;
-//   name: string;
-//   position: [number, number];
-//   url: string;
-//   managerId: string;
-// }
+
 
 interface IRestaurateur {
   _id : string;
@@ -34,6 +23,7 @@ const CreateArticle = () => {
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [price, setPrice] = useState<number>();
+  const [reference, setReference] = useState("");
   const [isInStock, setIsInStock] = useState(true);
   const [image, setImage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -70,8 +60,9 @@ const CreateArticle = () => {
         type,
         price,
         isInStock,
-        image,
-        restaurantid: restaurant?._id,
+        url_image :image,
+        restaurantId: restaurant?._id,
+        reference,
       });
 
       toast.success("Article créé avec succès");
@@ -126,6 +117,16 @@ const CreateArticle = () => {
               onChange={(e) => setPrice(Number(e.target.value))}
               className="w-full block border p-3 rounded"
               placeholder="Prix"
+            />
+          </div>
+          <div>
+            <label>Reference</label>
+            <input
+              type="text"
+              value={reference}
+              onChange={(e) => setReference((e.target.value))}
+              className="w-full block border p-3 rounded"
+              placeholder="Reference"
             />
           </div>
           <div>

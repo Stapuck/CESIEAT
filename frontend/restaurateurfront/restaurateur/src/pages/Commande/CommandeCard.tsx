@@ -79,7 +79,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetClientById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/clients/${commande.clientId_Zitadel}`
+        `http://localhost:8080/api/clients/byZitadelId/${commande.clientId_Zitadel}`
       );
       setClient(response.data);
     } catch (error) {
@@ -90,7 +90,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetLivreurById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/livreurs/${commande.livreurId_Zitadel}`
+        `http://localhost:8080/api/livreurs/byZitadelId/${commande.livreurId_Zitadel}`
       );
       setLivreur(response.data);
     } catch (error) {
@@ -134,6 +134,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   }, []);
 
   const handleLivraison = () => {
+
     if (!codeLivreur) {
       toast.error("Veuillez entrer un Code livreur Valide.");
       return;

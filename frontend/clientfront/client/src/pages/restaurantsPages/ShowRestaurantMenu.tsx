@@ -17,7 +17,7 @@ interface Menu {
   name: string;
   price: number;
   articles: any[];
-  restaurateur: string;
+  restaurateurId: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -120,13 +120,12 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
           // Filtrer les menus par restaurant
 
           const filteredMenus = response.data.filter((menu: Menu) => {
-            if (Array.isArray(menu.restaurateur)) {
-              return menu.restaurateur.includes(restaurantId);
+            if (Array.isArray(menu.restaurateurId)) {
+              return menu.restaurateurId.includes(restaurantId);
             } else {
-              return menu.restaurateur === restaurantId;
+              return menu.restaurateurId === restaurantId;
             }
           });
-
           if (filteredMenus.length > 0) {
             setMenus(filteredMenus);
           } else {
@@ -195,7 +194,7 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
   }, [menus]);
 
   const handleAddToCart = (menu: Menu) => {
-    if (!menu._id || !menu.restaurateur) {
+    if (!menu._id || !menu.restaurateurId) {
       toast.error(
         "Impossible d'ajouter ce menu au panier: informations manquantes"
       );
@@ -208,7 +207,7 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
         name: menu.name,
         price: menu.price,
         quantity: 1,
-        restaurantId: menu.restaurateur,
+        restaurantId: menu.restaurateurId,
         image: articles[menu.articles[0]]?.image || "",
       };
 

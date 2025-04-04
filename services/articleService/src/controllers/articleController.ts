@@ -66,8 +66,8 @@ export const deleteArticle = async (c: Context) => {
 
 export const getArticlesByRestorateur = async (c: Context) => {
     try {
-        const restaurateurid = c.req.param('restaurateurid');
-        const articles = await Article.find({restaurantid : restaurateurid});
+        const restaurateurid = c.req.param('restaurateurId');
+        const articles = await Article.find({restaurantId : restaurateurid});
 
         if (articles.length === 0) return c.json({ message: `No articles found for this restaurateur ${restaurateurid}` }, 404);
         return c.json(articles);

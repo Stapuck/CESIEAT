@@ -17,7 +17,7 @@ const commandeRoute = new Hono();
 
 // Routes existantes
 commandeRoute.get('/client/:clientId_Zitadel', getCommandesByClient);
-commandeRoute.get('/restaurateur/:idrestaurateur', getCommandesByRestorateur);
+commandeRoute.get('/restaurateur/:restaurantId', getCommandesByRestorateur);
 commandeRoute.get('/', getCommandes);
 commandeRoute.get('/:id', getCommande);
 commandeRoute.post('/', createCommande);

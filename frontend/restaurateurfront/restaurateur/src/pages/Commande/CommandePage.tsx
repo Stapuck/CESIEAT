@@ -48,7 +48,7 @@ interface IRestaurateur {
   address: string;
   phone: string;
   position: [number, number];
-  url: string;
+  url_image: string;
   managerId: string;
 }
 const CommandesPage = () => {
@@ -85,11 +85,13 @@ const CommandesPage = () => {
 
   const { status, data, error, isFetching } = useQuery({
     queryKey: ["todos", restaurantmanager?._id], // Ajout de l'ID comme dépendance
+    
     queryFn: async (): Promise<Array<ICommande>> => {
       if (!restaurantmanager?._id) return []; // Évite une requête invalide
       const response = await fetch(
         `http://localhost:8080/api/commandes/restaurateur/${restaurantmanager._id}`
       );
+      
       return await response.json();
     },
     enabled: !!restaurantmanager?._id, // Exécute la requête seulement si l'ID est défini
@@ -225,7 +227,7 @@ const CommandesPage = () => {
 
       axios
         .put(`http://localhost:8080/api/commandes/${commande._id}`, {
-          status: "Préparation",
+          status: "Annulée",
         })
         .catch((error) => console.log("Erreur de mise à jour:", error));
     }
