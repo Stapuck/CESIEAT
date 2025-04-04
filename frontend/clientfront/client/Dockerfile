@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the development server (Assuming you use Vite)
-CMD ["npm", "run", "preview"]
+CMD ["npm", "run", "dev"]
