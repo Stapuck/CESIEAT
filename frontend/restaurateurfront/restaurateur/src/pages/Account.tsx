@@ -258,10 +258,9 @@ const Account = () => {
           </div>
         ) : (
           <div className="text-center">
-            <p>Aucun restaurant associé.</p>
             <Link
               to="/restaurateur/create-restaurant"
-              className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg shadow hover:bg-blue-600 transition"
+              className="mt-4 bg-tertiary text-white py-2 px-6 rounded-lg shadow hover:bg-gray-100 hover:text-tertiary transform hover:scale-105 transition duration-300 "
             >
               Créer un restaurant
             </Link>

@@ -31,7 +31,7 @@ interface IRestaurant {
   name: string;
   position: [number, number];
   ville: string;
-  url: string;
+  url_image: string;
 }
 
 const Search = () => {
@@ -49,7 +49,7 @@ const Search = () => {
   const navigate = useNavigate();
 
   // Fonction pour naviguer vers la page des menus du restaurant
-  const goToRestaurantMenus = (id: string, name: string, url: string) => {
+  const goToRestaurantMenus = (id: string, name: string, url_image: string) => {
     if (id && /^[0-9a-fA-F]{24}$/.test(id)) {
       // Utiliser un slug dans l'URL basé sur le nom du restaurant pour SEO
       const restaurantSlug = name
@@ -60,7 +60,7 @@ const Search = () => {
         state: {
           restaurantId: id,
           restaurantName: name,
-          restaurantImage: url,
+          restaurantImage: url_image,
         },
       });
     } else {
@@ -97,7 +97,7 @@ const Search = () => {
           name: restaurant.restaurantName,
           position: restaurant.position as [number, number],
           ville: restaurant.address,
-          url: restaurant.url || "", // Ajouter une valeur par défaut pour url
+          url_image: restaurant.url_image || "", // Ajouter une valeur par défaut pour url
         }));
 
       setRestaurants(validRestaurants);
@@ -257,7 +257,7 @@ const Search = () => {
                 <Popup>
                   <div
                     className="flex flex-col items-center justify-center overflow-clip rounded-lg bg-cover bg-center h-32 w-78"
-                    style={{ backgroundImage: `url(${restaurant.url})` }}
+                    style={{ backgroundImage: `url(${restaurant.url_image})` }}
                   ></div>
                   <p className="my-0">{restaurant.name}</p>
 
@@ -269,7 +269,7 @@ const Search = () => {
                       goToRestaurantMenus(
                         restaurant._id,
                         restaurant.name,
-                        restaurant.url
+                        restaurant.url_image
                       );
                     }}
                   >

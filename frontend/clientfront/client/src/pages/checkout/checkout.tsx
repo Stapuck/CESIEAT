@@ -76,6 +76,8 @@ const Checkout: React.FC = () => {
         });
       }
 
+      //TODO : Préramplir l'adresse du client
+
       Swal.fire({
         title: "Paiement réussi !",
         icon: "success",

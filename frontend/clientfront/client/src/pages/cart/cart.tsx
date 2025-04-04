@@ -50,7 +50,7 @@ const ShoppingCart: React.FC = () => {
             const response = await axios.get(
               `http://localhost:8080/api/restaurateurs/${id}`
             );
-            names[id] = response.data.name || "Inconnu";
+            names[id] = response.data.restaurantName || "Inconnu";
           } catch (error) {
             console.error(
               `Erreur lors de la récupération du nom du restaurant ${id}:`,

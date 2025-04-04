@@ -105,6 +105,9 @@ const CreateArticle = () => {
               <option value="boisson">Boisson</option>
               <option value="sauce">Sauce</option>
               <option value="accompagnement">Accompagnement</option>
+              <option value="dessert">Dessert</option>
+              <option value="snack">Snack</option>
+              <option value="autre">Autre</option>
             </select>
           </div>
           <div>

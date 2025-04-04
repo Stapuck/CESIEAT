@@ -43,7 +43,7 @@ const EditArticle = () => {
     e.preventDefault();
 
     if (!name || !reference || !type || !price || !image || !restaurantid) {
-      alert("Veuillez remplir tous les champs");
+      toast.error("Veuillez remplir tous les champs");
       return;
     }
 
@@ -54,8 +54,7 @@ const EditArticle = () => {
         reference,
         type,
         price,
-        isInStock,
-        image,
+        url_image : image,
         restaurantid,
       });
 
@@ -100,11 +99,16 @@ const EditArticle = () => {
               onChange={(e) => setType(e.target.value)}
               className="w-full block border p-3 rounded"
             >
+
               <option value="">Sélectionnez un type</option>
               <option value="plat">Plat</option>
               <option value="boisson">Boisson</option>
               <option value="sauce">Sauce</option>
               <option value="accompagnement">Accompagnement</option>
+              <option value="dessert">Dessert</option>
+              <option value="snack">Snack</option>
+              <option value="autre">Autre</option>
+
             </select>
           </div>
           <div>
@@ -158,7 +162,7 @@ const EditArticle = () => {
                 <button
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="block w-full mt-4 bg-gray-500 text-white rounded text-center px-4 py-2 font-bold hover:bg-gray-600 text-center transform hover:scale-105 transition duration-300"
+                  className="block w-full mt-4 bg-gray-500 text-white rounded px-4 py-2 font-bold hover:bg-gray-600 text-center transform hover:scale-105 transition duration-300"
                 >
                   Retour
                 </button>
