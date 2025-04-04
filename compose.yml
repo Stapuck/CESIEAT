@@ -29,27 +29,20 @@ services:
       - app-network
     restart: unless-stopped
 
-  # Client frontend (Vite project)
-  client-frontend:
+
+
+
+  # Client frontend (Production)
+  client-frontend-prod:
     build:
       context: ./frontend/clientfront/client
-      dockerfile: Dockerfile
-    container_name: clientFrontend
+      dockerfile: Dockerfile.prod
+    container_name: clientFrontendProd
     ports:
-      - "5173:5173" # Expose Vite default port
+      - "3080:80"  # Exposez le port 80 de nginx sur le port 3080 de l'hôte
     restart: unless-stopped
-
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/client/
-    volumes:
-      - ./frontend/clientfront/client:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
     networks:
       - app-network
-    command: npm run dev # Run Vite in development mode
-    depends_on:
-      - nginx
 
   # Restaurateur frontend (Vite project)
   restaurateur-frontend:
