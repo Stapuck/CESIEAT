@@ -76,7 +76,7 @@ const Search = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:8080/api/restaurateurs"
+        "https://cesieat.com/api/restaurateurs"
       );
 
       // Filtrer pour n'inclure que les restaurants avec des positions valides

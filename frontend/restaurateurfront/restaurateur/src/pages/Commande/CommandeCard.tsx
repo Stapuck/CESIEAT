@@ -76,7 +76,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetClientById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/clients/byZitadelId/${commande.clientId_Zitadel}`
+        `https://cesieat.com/api/clients/byZitadelId/${commande.clientId_Zitadel}`
       );
       setClient(response.data);
     } catch (error) {
@@ -87,7 +87,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetLivreurById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/livreurs/byZitadelId/${commande.livreurId_Zitadel}`
+        `https://cesieat.com/api/livreurs/byZitadelId/${commande.livreurId_Zitadel}`
       );
       setLivreur(response.data);
     } catch (error) {
@@ -98,7 +98,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetMenuById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/menus/${commande.menuId}`
+        `https://cesieat.com/api/menus/${commande.menuId}`
       );
       setMenu(response.data);
 
@@ -107,7 +107,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
         const articlesDetails = await Promise.all(
           response.data.articles.map(async (articleId: string) => {
             const articleRes = await axios.get(
-              `http://localhost:8080/api/articles/${articleId}`
+              `https://cesieat.com/api/articles/${articleId}`
             );
             return articleRes.data; // Retourne l'objet article
           })

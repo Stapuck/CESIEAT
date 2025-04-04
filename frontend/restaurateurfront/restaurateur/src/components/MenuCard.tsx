@@ -31,7 +31,7 @@ const MenuCard = ({
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:8080/api/menus/${id}`);
+        await axios.delete(`https://cesieat.com/api/menus/${id}`);
         toast.success("Menu supprimé avec succès");
         getMenus();
       } catch (error: any) {

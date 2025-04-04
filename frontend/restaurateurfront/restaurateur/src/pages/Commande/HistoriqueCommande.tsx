@@ -77,7 +77,7 @@ const HistoriqueCommande = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://cesieat.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
 
       if (Array.isArray(response.data) && response.data.length > 0) {
@@ -97,7 +97,7 @@ const HistoriqueCommande = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:8080/api/commandes/restaurateur/${restaurantmanager?._id}`
+        `https://cesieat.com/api/commandes/restaurateur/${restaurantmanager?._id}`
       );
       setCommandes(response.data);
       setIsLoading(false);
@@ -109,7 +109,7 @@ const HistoriqueCommande = () => {
   const getClients = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:8080/api/clients");
+      const response = await axios.get("https://cesieat.com/api/clients");
       setClients(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -120,7 +120,7 @@ const HistoriqueCommande = () => {
   const getLivreurs = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:8080/api/livreurs");
+      const response = await axios.get("https://cesieat.com/api/livreurs");
       setLivreur(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -132,7 +132,7 @@ const HistoriqueCommande = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:8080/api/menus/restaurateur/${restaurantmanager?._id}`
+        `https://cesieat.com/api/menus/restaurateur/${restaurantmanager?._id}`
       );
       setMenus(response.data);
       setIsLoading(false);

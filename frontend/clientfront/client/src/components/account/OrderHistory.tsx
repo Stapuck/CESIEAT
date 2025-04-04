@@ -101,7 +101,7 @@ const OrderHistory = () => {
   const fetchRestaurantDetails = async (restaurantId: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/restaurateurs/${restaurantId}`
+        `https://cesieat.com/api/restaurateurs/${restaurantId}`
       );
       setRestaurants((prev) => ({ ...prev, [restaurantId]: response.data }));
     } catch (err) {
@@ -117,7 +117,7 @@ const OrderHistory = () => {
     if (!livreurId) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/livreurs/byZitadelId/${livreurId}`
+        `https://cesieat.com/api/livreurs/byZitadelId/${livreurId}`
       );
       setLivreurs((prev) => ({ ...prev, [livreurId]: response.data }));
     } catch (err) {
@@ -139,7 +139,7 @@ const OrderHistory = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/commandes/client/${clientId_Zitadel}`
+          `https://cesieat.com/api/commandes/client/${clientId_Zitadel}`
         );
         const ordersData = response.data;
 
@@ -211,7 +211,7 @@ const OrderHistory = () => {
     setCancelError(null);
 
     try {
-      await axios.delete(`http://localhost:8080/api/commandes/${orderId}`);
+      await axios.delete(`https://cesieat.com/api/commandes/${orderId}`);
 
       // Mettre à jour la commande localement
       setOrders((prevOrders) =>

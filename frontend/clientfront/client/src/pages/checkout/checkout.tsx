@@ -69,7 +69,7 @@ const Checkout: React.FC = () => {
 
         console.log("Creating order:", payload);
 
-        await axios.post("http://localhost:8080/api/commandes", payload, {
+        await axios.post("https://cesieat.com/api/commandes", payload, {
           headers: {
             "Content-Type": "application/json",
           },

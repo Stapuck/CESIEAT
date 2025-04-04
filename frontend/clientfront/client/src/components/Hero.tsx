@@ -46,7 +46,7 @@ const Hero = () => {
       try {
         // Try to fetch existing client data
         const response = await axios.get(
-          `http://localhost:8080/api/clients/byZitadelId/${zitadelId}`,
+          `https://cesieat.com/api/clients/byZitadelId/${zitadelId}`,
           { headers: { Accept: "application/json" } }
         );
 
@@ -57,7 +57,7 @@ const Hero = () => {
 
         // Update the existing client
         await axios.put(
-          `http://localhost:8080/api/clients/byZitadelId/${zitadelId}`,
+          `https://cesieat.com/api/clients/byZitadelId/${zitadelId}`,
           clientData,
           { headers: { "Content-Type": "application/json", Accept: "application/json" } }
         );
@@ -67,7 +67,7 @@ const Hero = () => {
         // Check if error is due to client not existing (404)
         if (error.response?.status === 404) {
           // Create new client
-          await axios.post("http://localhost:8080/api/clients", clientData, {
+          await axios.post("https://cesieat.com/api/clients", clientData, {
             headers: { "Content-Type": "application/json", Accept: "application/json" }
           });
           console.log("New client created successfully");
@@ -215,7 +215,7 @@ const Hero = () => {
                   <>
                     <svg
                       className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                     >

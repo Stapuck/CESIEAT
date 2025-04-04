@@ -39,7 +39,7 @@ function TableauArticle() {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://cesieat.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
       if (response.data.length > 0) {
         setRestaurant(response.data[0]);
@@ -56,7 +56,7 @@ function TableauArticle() {
       setIsLoading(true);
 
       const response = await axios.get(
-        `http://localhost:8080/api/articles/restaurateur/${restaurant?._id}`
+        `https://cesieat.com/api/articles/restaurateur/${restaurant?._id}`
       );
       setArticles(response.data);
       setIsLoading(false);
@@ -87,7 +87,7 @@ function TableauArticle() {
     });
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:8080/api/articles/${id}`);
+        await axios.delete(`https://cesieat.com/api/articles/${id}`);
         toast.success("Article supprimé avec succès");
         getArticlesByRestaurant();
       } catch (error: any) {
