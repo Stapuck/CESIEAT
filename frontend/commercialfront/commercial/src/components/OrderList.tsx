@@ -1,6 +1,6 @@
 // src/components/OrderList.tsx
 import React, { useState, useEffect } from 'react';
-import OrderTable from './OrderTable';
+import ActiveOrders from './ActiveOrders';
 import ArchivedOrders from './ArchivedOrders';
 import Swal from 'sweetalert2';
 
@@ -61,8 +61,8 @@ const OrderList: React.FC = () => {
     }
   };
 
-  const statuses = ['En attente', 'Préparation', 'Prêt', 'En livraison']; // Exclude "Livrée" and "Annulée"
-  const hiddenStatuses = ['Annulée', 'Livrée']; // Move "Annulée" and include "Livrée" here
+  const statuses = ['En attente', 'Préparation', 'Prêt', 'En livraison'];
+  const hiddenStatuses = ['Annulée', 'Livrée'];
 
   const filteredOrders = orders.filter(order => {
     const searchLower = searchTerm.toLowerCase();
@@ -80,6 +80,16 @@ const OrderList: React.FC = () => {
 
   const filteredStatusOrders = (status: string) =>
     sortedOrders.filter(order => order.status === status);
+
+  const activeOrdersProps = statuses.map(status => ({
+    status,
+    orders: filteredStatusOrders(status),
+    getName,
+    clients,
+    restaurants,
+    livreurs,
+    handleViewLivreurDetails,
+  }));
 
   return (
     <div>
@@ -107,23 +117,16 @@ const OrderList: React.FC = () => {
           </button>
         </div>
       </div>
-      {statuses.map(status => {
-        const ordersForStatus = filteredStatusOrders(status);
-        if (ordersForStatus.length === 0) return null; // Hide empty tables
-        return (
-          <OrderTable
+      {activeOrdersProps.map(({ status, orders, ...props }) => (
+        orders.length > 0 && (
+          <ActiveOrders
             key={status}
             status={status}
-            orders={ordersForStatus}
-            getName={getName}
-            clients={clients}
-            restaurants={restaurants}
-            livreurs={livreurs}
-            handleViewLivreurDetails={handleViewLivreurDetails}
-            statuses={statuses}
+            orders={orders}
+            {...props}
           />
-        );
-      })}
+        )
+      ))}
       {statuses.every(status => filteredStatusOrders(status).length === 0) && (
         <p className="text-gray-500 text-center">Aucune commande en cours.</p>
       )}
@@ -135,8 +138,6 @@ const OrderList: React.FC = () => {
         clients={clients}
         restaurants={restaurants}
         livreurs={livreurs}
-        handleViewLivreurDetails={handleViewLivreurDetails}
-        hiddenStatuses={hiddenStatuses} // Pass hidden statuses to ArchivedOrders
       />
     </div>
   );

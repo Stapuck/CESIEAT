@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { Order, Client, Livreur } from './OrderList';
+import { Client, Livreur } from './OrderList';
+
+interface Order {
+  _id: string;
+  clientId_Zitadel: string;
+  livreurId_Zitadel: string;
+  restaurantId: string;
+  menuId: string;
+  totalAmount: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface DashboardProps {
   orders: Order[];
