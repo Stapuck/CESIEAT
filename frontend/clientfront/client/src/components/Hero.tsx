@@ -18,89 +18,72 @@ const Hero = () => {
   const [postContent, setPostContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fonction pour créer un client dans la base de données
   const createClient = async () => {
     try {
-      // Vérifier si les données sont disponibles
-      if (
-        !auth.user?.profile.given_name ||
-        !auth.user?.profile.family_name ||
-        !auth.user?.profile.email ||
-        !auth.user?.profile.sub
-      ) {
-        console.error("Données utilisateur manquantes");
-
+      // Verify user profile exists
+      if (!auth.user?.profile) {
+        console.error("User profile not available");
         return;
       }
 
-      const zitadelId = auth.user.profile.sub;
+      const { given_name, family_name, email, sub: zitadelId } = auth.user.profile;
+      
+      if (!given_name || !family_name || !email || !zitadelId) {
+        console.error("Required user profile data missing", { given_name, family_name, email, zitadelId });
+        return;
+      }
 
-      const response = await axios.get(
-        `http://localhost:8080/api/clients/byZitadelId/${zitadelId}`,
-        {
-          headers: {
-            Accept: "application/json",
-          },
-        }
-      );
-
-      console.log("Client trouvé:", response.data);
-
+      // Prepare client data
       const clientData = {
-        name:
-          auth.user.profile.given_name + " " + auth.user.profile.family_name,
-        email: auth.user.profile.email,
-        phone: response.data.phone || "Empty",
-        address: response.data.address || "Empty",
+        name: `${given_name} ${family_name}`,
+        email,
+        phone: "Empty", // Default value
+        address: "Empty", // Default value
         isPaused: false,
         clientId_Zitadel: zitadelId,
       };
 
-      // Vérifier d'abord si le client existe
       try {
-        await axios.get(
+        // Try to fetch existing client data
+        const response = await axios.get(
           `http://localhost:8080/api/clients/byZitadelId/${zitadelId}`,
-          {
-            headers: {
-              Accept: "application/json",
-            },
-          }
+          { headers: { Accept: "application/json" } }
         );
 
-        // Le client existe, on le met à jour
+        // Client exists - preserve existing phone and address
+        const existingClient = response.data;
+        clientData.phone = existingClient.phone || clientData.phone;
+        clientData.address = existingClient.address || clientData.address;
+
+        // Update the existing client
         await axios.put(
           `http://localhost:8080/api/clients/byZitadelId/${zitadelId}`,
           clientData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          }
+          { headers: { "Content-Type": "application/json", Accept: "application/json" } }
         );
-      } catch (checkError: any) {
-        // Si le client n'existe pas (erreur 404), on le crée
-        if (checkError.response && checkError.response.status === 404) {
-          console.log(
-            "Client non trouvé, création d'un nouveau client:",
-            clientData
-          );
-          await axios.post(`http://localhost:8080/api/clients`, clientData, {
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
+        console.log("Client updated successfully");
+
+      } catch (error: any) {
+        // Check if error is due to client not existing (404)
+        if (error.response?.status === 404) {
+          // Create new client
+          await axios.post("http://localhost:8080/api/clients", clientData, {
+            headers: { "Content-Type": "application/json", Accept: "application/json" }
           });
+          console.log("New client created successfully");
         } else {
-          // Une autre erreur s'est produite lors de la vérification
-          throw checkError;
+          // Handle other API errors
+          console.error("API error:", error.response?.data || error.message);
+          toast.error("Error synchronizing user data");
+          throw error; // Re-throw for outer catch
         }
       }
     } catch (error: any) {
       console.error(
-        "Erreur lors de la gestion du client:",
+        "Client creation/update failed:",
         error.response?.data || error.message || error
       );
+      toast.error("Failed to sync your profile. Please try again later.");
     }
   };
 
