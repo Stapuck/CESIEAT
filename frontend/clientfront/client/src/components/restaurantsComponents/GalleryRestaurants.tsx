@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Restaurant from "../restaurantsComponents/Restaurant";
 import Search from "../Search";
-import { Link } from "react-router-dom";
 import RestaurantWithoutLogin from "./RestaurantWithoutLogin";
 
 // Interface pour définir la structure d'un restaurant
@@ -148,6 +147,6 @@ const GalleryRestaurants: React.FC<GalleryRestaurantsProps> = ({ login }) => {
       )}
     </div>
   );
-}
+};
 
 export default GalleryRestaurants;

@@ -8,7 +8,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Icône personnalisée pour les restaurants
 const customIcon = new L.Icon({
@@ -34,20 +34,8 @@ interface IRestaurant {
   url: string;
 }
 
-interface RestaurantProps {
-  id?: string;
-  name: string;
-  address: string;
-  ville: string;
-  phone: string;
-  url: string;
-  position: [number, number];
-  onDelete?: () => void; // Pour rafraîchir la liste après suppression
-}
-
 const Search = () => {
   const [restaurants, setRestaurants] = useState<IRestaurant[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [position, setPosition] = useState<[number, number]>([
     46.603354, 1.888334,
   ]); // Position par défaut : France
@@ -86,7 +74,7 @@ const Search = () => {
   // Dans la fonction getRestaurants, filtrer les restaurants avec des coordonnées valides
   const getRestaurants = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       const response = await axios.get(
         "http://localhost:8080/api/restaurateurs"
       );
@@ -113,10 +101,10 @@ const Search = () => {
         }));
 
       setRestaurants(validRestaurants);
-      setIsLoading(false);
+      setLoading(false);
     } catch (error) {
       console.error("Erreur lors de la récupération des restaurants :", error);
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 

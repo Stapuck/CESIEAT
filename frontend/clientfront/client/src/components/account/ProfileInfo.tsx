@@ -47,7 +47,7 @@ const ProfileInfo = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,7 +73,9 @@ const ProfileInfo = () => {
       {isEditing ? (
         <form onSubmit={handleSubmit} className="space-y-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nom:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nom:
+            </label>
             <input
               type="text"
               name="name"
@@ -83,7 +85,9 @@ const ProfileInfo = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email:
+            </label>
             <input
               type="email"
               name="email"
@@ -93,7 +97,9 @@ const ProfileInfo = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Phone:
+            </label>
             <input
               type="text"
               name="phone"
@@ -103,7 +109,9 @@ const ProfileInfo = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Adresse:</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Adresse:
+            </label>
             <input
               type="text"
               name="address"

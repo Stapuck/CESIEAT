@@ -65,22 +65,6 @@ const useCart = () => {
     });
   }, []);
 
-  const handleQuantityChange = useCallback((id: string, quantity: number) => {
-    setCartItems(prevItems => {
-      const itemIndex = prevItems.findIndex(item => item.id === id);
-      if (itemIndex === -1) {
-        return prevItems;
-      }
-
-      const newItems = [...prevItems];
-      if (quantity > 0) {
-        newItems[itemIndex] = { ...newItems[itemIndex], quantity };
-      } else {
-        newItems.splice(itemIndex, 1);
-      }
-      return newItems;
-    });
-  }, []);
 
   // Supprimer un article du panier
   const removeItemFromCart = useCallback((id: string) => {

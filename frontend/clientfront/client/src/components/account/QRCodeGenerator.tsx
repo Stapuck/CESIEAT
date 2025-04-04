@@ -17,8 +17,6 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({
 
   return (
     <section className="bg-white rounded-lg ">
-
-
       <div className="flex flex-col items-center space-y-4">
         {showQRCode ? (
           <>

@@ -1,8 +1,7 @@
 import BackgroundFood from "../assets/background_food.jpg";
-import SearchIcon from "../assets/icons/magnifyingglass.svg";
 import Quote from "../assets/quote.svg";
 import InversedQuote from "../assets/quote_inversed.svg";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useAuth } from "react-oidc-context";
 import axios from "axios";
@@ -57,10 +56,9 @@ const Hero = () => {
         clientId_Zitadel: zitadelId,
       };
 
-
       // Vérifier d'abord si le client existe
       try {
-        const checkResponse = await axios.get(
+        await axios.get(
           `http://localhost:8080/api/clients/byZitadelId/${zitadelId}`,
           {
             headers: {
@@ -70,7 +68,7 @@ const Hero = () => {
         );
 
         // Le client existe, on le met à jour
-        const updateResponse = await axios.put(
+        await axios.put(
           `http://localhost:8080/api/clients/byZitadelId/${zitadelId}`,
           clientData,
           {
@@ -87,16 +85,12 @@ const Hero = () => {
             "Client non trouvé, création d'un nouveau client:",
             clientData
           );
-          const createResponse = await axios.post(
-            `http://localhost:8080/api/clients`,
-            clientData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-            }
-          );
+          await axios.post(`http://localhost:8080/api/clients`, clientData, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          });
         } else {
           // Une autre erreur s'est produite lors de la vérification
           throw checkError;
@@ -152,7 +146,7 @@ const Hero = () => {
       };
 
       // Effectuer la requête POST avec une URL API correcte
-      const response = await axios.post(
+      await axios.post(
         "/api/posts", // Remplacez par l'URL correcte de votre API
         { content: postContent },
         config
