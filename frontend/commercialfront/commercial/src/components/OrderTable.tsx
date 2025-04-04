@@ -8,9 +8,10 @@ interface OrderTableProps {
   restaurants: any[];
   livreurs: any[];
   handleViewLivreurDetails: (livreurId: string) => void;
+  statuses: string[]; // Add statuses prop
 }
 
-const OrderTable: React.FC<OrderTableProps> = ({ status, orders, getName, clients, restaurants, livreurs, handleViewLivreurDetails }) => {
+const OrderTable: React.FC<OrderTableProps> = ({ status, orders, getName, clients, restaurants, livreurs, handleViewLivreurDetails, statuses }) => {
   const showLivreurColumn = !['En attente', 'Préparation', 'Prêt'].includes(status);
 
   return (
@@ -21,12 +22,9 @@ const OrderTable: React.FC<OrderTableProps> = ({ status, orders, getName, client
       <table className="table-auto w-full border-collapse border border-gray-300">
         <thead>
           <tr>
-            <th className="border border-gray-300 px-4 py-2">Client</th>
-            <th className="border border-gray-300 px-4 py-2">Commande</th>
-            <th className="border border-gray-300 px-4 py-2">Restaurant</th>
-            <th className="border border-gray-300 px-4 py-2">Prix Total (€)</th>
-            <th className="border border-gray-300 px-4 py-2">Créée le</th>
-            <th className="border border-gray-300 px-4 py-2">Status</th>
+            {statuses.map((header, index) => (
+              <th key={index} className="border border-gray-300 px-4 py-2">{header}</th>
+            ))}
             {showLivreurColumn && <th className="border border-gray-300 px-4 py-2">Livreur</th>}
             <th className="border border-gray-300 px-4 py-2">Mise à jour le</th>
           </tr>

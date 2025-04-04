@@ -1,18 +1,7 @@
 import React from 'react';
 import Swal from 'sweetalert2';
 
-interface ArchivedOrdersProps {
-  orders: any[];
-  showArchived: boolean;
-  setShowArchived: React.Dispatch<React.SetStateAction<boolean>>;
-  getName: (id: string, data: any[], key: string) => string;
-  clients: any[];
-  restaurants: any[];
-  livreurs: any[];
-  handleViewLivreurDetails: (livreurId: string) => void;
-}
-
-const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
+const ArchivedOrders = ({
   orders,
   showArchived,
   setShowArchived,
@@ -20,11 +9,11 @@ const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
   clients,
   restaurants,
   livreurs,
-  handleViewLivreurDetails,
+  hiddenStatuses, // Accept hidden statuses
 }) => {
-  const archivedOrders = orders.filter(order => order.status === 'Livrée');
+  const archivedOrders = orders.filter(order => hiddenStatuses.includes(order.status)); // Filter by hidden statuses
 
-  const handleShowLivreurDetails = (livreurId: string) => {
+  const handleShowLivreurDetails = livreurId => {
     const livreur = livreurs.find(l => l._id === livreurId);
     if (livreur) {
       Swal.fire({
@@ -51,12 +40,12 @@ const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
         onClick={() => setShowArchived(!showArchived)}
         className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
       >
-        {showArchived ? 'Masquer les commandes livrées' : 'Afficher les commandes livrées'}
+        {showArchived ? 'Masquer les commandes livrées et annulées' : 'Afficher les commandes livrées et annulées'}
       </button>
       {showArchived && archivedOrders.length > 0 && (
         <div>
           <h2 className="text-lg font-bold mb-4">
-            Commandes livrées ({archivedOrders.length})
+            Commandes livrées et annulées ({archivedOrders.length})
           </h2>
           <table className="table-auto w-full border-collapse border border-gray-300">
             <thead>
@@ -104,7 +93,7 @@ const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
         </div>
       )}
       {showArchived && archivedOrders.length === 0 && (
-        <p className="text-gray-500">Aucune commande livrée.</p>
+        <p className="text-gray-500">Aucune commande livrée ou annulée.</p>
       )}
     </div>
   );

@@ -38,6 +38,14 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
         return now.getTime() - orderDate.getTime() <= 3600000;
       case 'day':
         return now.toDateString() === orderDate.toDateString();
+      case 'yesterday': {
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        yesterday.setHours(0, 0, 0, 0);
+        const endOfYesterday = new Date(yesterday);
+        endOfYesterday.setHours(23, 59, 59, 999);
+        return orderDate >= yesterday && orderDate <= endOfYesterday;
+      }
       case 'week': {
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay());
@@ -84,6 +92,7 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
           </option>
           <option value="hour">Dernière heure</option>
           <option value="day">Aujourd'hui</option>
+          <option value="yesterday">Hier</option>
           <option value="week">Cette semaine</option>
           <option value="month">Ce mois</option>
           <option value="year">Cette année</option>
