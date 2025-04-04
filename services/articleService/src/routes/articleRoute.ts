@@ -100,7 +100,7 @@ articleRoute.get(
                 description: 'Articles API',
             },
             servers: [
-                { url: `http://localhost:3005${baseUrl}${openapi_url}`, description: 'Local Server' },
+                { url: `http://localhost:3005`, description: 'Local Server' },
             ],
         },
     })
