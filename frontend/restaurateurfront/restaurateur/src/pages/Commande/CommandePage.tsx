@@ -6,39 +6,19 @@ import { useAuth } from "react-oidc-context";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-// interface ICommande {
-//   _id: string;
-//   client: string;
-//   restaurant: string;
-//   livreur?: string;
-//   menu: [];
-//   totalAmount: number;
-//   status: string;
-//   createdAt: string;
-// }
-
-interface ICommande  {
-  _id : string;
+interface ICommande {
+  _id: string;
   clientId_Zitadel: string;
   restaurantId: string;
   livreurId_Zitadel?: string;
   menuId: string;
   totalAmount: number;
   status: string;
-  createdAt : string;
-  updatedAt : string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-interface ILivreur {
-  _id: string;
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  vehicleType: string;
-  isAvailable: boolean;
-  codeLivreur: string;
-}
+
 
 interface IRestaurateur {
   _id: string;
@@ -53,7 +33,6 @@ interface IRestaurateur {
 }
 const CommandesPage = () => {
   const auth = useAuth();
-  const [restaurant, setRestaurant] = useState<IRestaurateur>();
   const [restaurantmanager, setRestaurantManager] =
     useState<IRestaurateur | null>(null);
 
@@ -81,17 +60,17 @@ const CommandesPage = () => {
     getRestaurateurByManagerId();
   }, []);
 
-  const [intervalMs, setIntervalMs] = useState(3000);
+  const intervalMs = 3000; // Valeur fixe au lieu du state inutilisé
 
-  const { status, data, error, isFetching } = useQuery({
+  const { status, data, error } = useQuery({
     queryKey: ["todos", restaurantmanager?._id], // Ajout de l'ID comme dépendance
-    
+
     queryFn: async (): Promise<Array<ICommande>> => {
       if (!restaurantmanager?._id) return []; // Évite une requête invalide
       const response = await fetch(
         `http://localhost:8080/api/commandes/restaurateur/${restaurantmanager._id}`
       );
-      
+
       return await response.json();
     },
     enabled: !!restaurantmanager?._id, // Exécute la requête seulement si l'ID est défini
@@ -99,8 +78,7 @@ const CommandesPage = () => {
   });
 
   const [commandes, setCommandes] = useState<ICommande[]>([]);
-  const [livreur, setLivreur] = useState<ILivreur>();
-  const [idlivreur, setIdLivreur] = useState();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [showNouvellesCommandes, setShowNouvellesCommandes] = useState(true);
@@ -178,8 +156,6 @@ const CommandesPage = () => {
         `http://localhost:8080/api/livreurs/codelivreur/${codeLivreur}`
       );
       const livreur = response.data;
-      setLivreur(livreur);
-      setIdLivreur(livreur._id);
 
       if (!livreur || !livreur._id) {
         console.error("Livreur non trouvé");

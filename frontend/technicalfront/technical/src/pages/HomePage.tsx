@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import GalleryProduct from "../components/GalleryProduct";
 
 const HomePage = () => {
   return (
@@ -73,7 +72,6 @@ const HomePage = () => {
 
         {/* Galerie de composants existante */}
         <div>
-          <GalleryProduct />
         </div>
       </div>
 
