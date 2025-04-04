@@ -2,17 +2,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 
-// interface ICommande {
-//   _id: string;
-//   client: number;
-//   restaurant: number;
-//   livreur?: number;
-//   menu: string;
-//   totalAmount: number;
-//   status: string;
-//   createdAt: string;
-//   updatedAt: string;
-// }
 
 interface ICommande {
   _id: string;
@@ -238,7 +227,9 @@ const HistoriqueCommande = () => {
       <div className="mb-4">
         <button
           className={`mr-4 px-4 py-2 ${
-            filterByAll ? "bg-tertiary text-white rounded transform hover:scale-105 transition duration-300" : "transform hover:scale-105 transition duration-300 bg-gray-300 rounded"
+            filterByAll
+              ? "bg-tertiary text-white rounded transform hover:scale-105 transition duration-300"
+              : "transform hover:scale-105 transition duration-300 bg-gray-300 rounded"
           }`}
           onClick={() => {
             setFilterByAll(true);
@@ -250,7 +241,9 @@ const HistoriqueCommande = () => {
         </button>
         <button
           className={`mr-4 px-4 py-2 ${
-            filterByToday ? "bg-tertiary text-white rounded transform hover:scale-105 transition duration-300" : "bg-gray-300 rounded transform hover:scale-105 transition duration-300"
+            filterByToday
+              ? "bg-tertiary text-white rounded transform hover:scale-105 transition duration-300"
+              : "bg-gray-300 rounded transform hover:scale-105 transition duration-300"
           }`}
           onClick={() => {
             setFilterByToday(true);
@@ -262,7 +255,9 @@ const HistoriqueCommande = () => {
         </button>
         <button
           className={`mr-4 px-4 py-2 ${
-            filterByDate ? "bg-tertiary text-white rounded transform hover:scale-105 transition duration-300"  : "bg-gray-300 rounded transform hover:scale-105 transition duration-300"
+            filterByDate
+              ? "bg-tertiary text-white rounded transform hover:scale-105 transition duration-300"
+              : "bg-gray-300 rounded transform hover:scale-105 transition duration-300"
           }`}
           onClick={() => {
             setFilterByDate(true);
@@ -275,7 +270,7 @@ const HistoriqueCommande = () => {
       </div>
 
       {filterByDate && (
-        <div className="mb-4 ">
+        <div className="mb-4 p-2 rounded-t-md bg-transparent-background">
           <label className="mr-2">Start Date:</label>
           <input
             type="date"
@@ -292,7 +287,7 @@ const HistoriqueCommande = () => {
           />
         </div>
       )}
-      <div className="mt-4 mb-4">
+      <div className="p-2 rounded-t-md bg-transparent-background">
         <label className="text-lg font-bold mb-4">
           Total des Montants des Commandes:{" "}
         </label>
@@ -307,14 +302,14 @@ const HistoriqueCommande = () => {
       <table className="table-auto w-full border-collapse border bg-tertiary border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="border border-gray-300 px-4 py-2">id commande</th>
+            <th className="border border-gray-300 px-4 py-2">Numéro de commande</th>
             <th className="border border-gray-300 px-4 py-2">Client</th>
             <th className="border border-gray-300 px-4 py-2">Livreur</th>
-            <th className="border border-gray-300 px-4 py-2">menu</th>
+            <th className="border border-gray-300 px-4 py-2">Menu</th>
             <th className="border border-gray-300 px-4 py-2">Montant Total</th>
             <th className="border border-gray-300 px-4 py-2">Statut</th>
-            <th className="border border-gray-300 px-4 py-2">créé le</th>
-            <th className="border border-gray-300 px-4 py-2">last update</th>
+            <th className="border border-gray-300 px-4 py-2">Créé le</th>
+            <th className="border border-gray-300 px-4 py-2">Dernière MàJ</th>
           </tr>
         </thead>
         <tbody>
@@ -369,7 +364,7 @@ const HistoriqueCommande = () => {
         </tbody>
       </table>
 
-      <div className="mt-8">
+      <div className="p-2 rounded-t-md bg-transparent-background mt-4">
         <h2 className="text-xl font-bold mb-4">
           Top 3 des Menus les Plus Commandés
         </h2>

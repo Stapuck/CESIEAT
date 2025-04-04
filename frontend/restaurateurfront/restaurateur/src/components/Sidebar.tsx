@@ -1,5 +1,4 @@
 import { Link, useLocation } from "react-router-dom";
-import { FaUser, FaList, FaFileAlt, FaShoppingCart, FaHistory } from "react-icons/fa";
 import IconArtcile from "../assets/icons/list.bullet.clipboard.fill.svg";
 import IconMenus from "../assets/icons/list.bullet.svg";
 import IconCommande from "../assets/icons/cart.fill.svg";
@@ -15,8 +14,8 @@ const Sidebar = ({ isSidebarOpen }: SidebarProps) => {
 
   const getLinkClassName = (path: string) => {
     return location.pathname === path
-      ? "flex items-center space-x-2 py-3 hover:bg-gray-700 rounded text-white font-semibold"
-      : "flex items-center space-x-2 py-3 hover:bg-gray-700 rounded text-black ";
+      ? "flex items-center space-x-2 py-3 pr-5  rounded text-white font-semibold"
+      : "flex items-center space-x-2 py-3 pr-5  rounded text-black ";
   };
 
   return (
@@ -28,7 +27,7 @@ const Sidebar = ({ isSidebarOpen }: SidebarProps) => {
       <nav className="z-1 text-black">
         <ul className="space-y-2 space-x-0">
 
-          <li className="flex justify-start items-center text-black">
+          <li className="flex justify-start items-center text-black ">
             <Link to="/restaurateur/article" className={getLinkClassName("/restaurateur/article")}>
               <img src={IconArtcile} alt="ArticleIcon" className="w-4 mr-1" /> <span className="ml-1">Mes Articles</span>
             </Link>
