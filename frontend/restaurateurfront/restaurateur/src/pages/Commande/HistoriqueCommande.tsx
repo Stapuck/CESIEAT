@@ -14,16 +14,16 @@ import { useAuth } from "react-oidc-context";
 //   updatedAt: string;
 // }
 
-interface ICommande  {
-  _id : string;
+interface ICommande {
+  _id: string;
   clientId_Zitadel: string;
   restaurantId: string;
   livreurId_Zitadel?: string;
   menuId: string;
   totalAmount: number;
   status: string;
-  createdAt : string;
-  updatedAt : string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface IClient {
@@ -230,7 +230,7 @@ const HistoriqueCommande = () => {
     .slice(0, 3);
 
   return (
-    <div className="p-4">
+    <div className="p-4 mt-25">
       <h1 className="text-2xl font-bold mb-4">
         Historique des Commandes ({ordersToDisplay.length})
       </h1>
@@ -238,7 +238,7 @@ const HistoriqueCommande = () => {
       <div className="mb-4">
         <button
           className={`mr-4 px-4 py-2 ${
-            filterByAll ? "bg-blue-500 text-white" : "bg-gray-300"
+            filterByAll ? "bg-tertiary text-white rounded transform hover:scale-105 transition duration-300" : "transform hover:scale-105 transition duration-300 bg-gray-300 rounded"
           }`}
           onClick={() => {
             setFilterByAll(true);
@@ -250,7 +250,7 @@ const HistoriqueCommande = () => {
         </button>
         <button
           className={`mr-4 px-4 py-2 ${
-            filterByToday ? "bg-blue-500 text-white" : "bg-gray-300"
+            filterByToday ? "bg-tertiary text-white rounded transform hover:scale-105 transition duration-300" : "bg-gray-300 rounded transform hover:scale-105 transition duration-300"
           }`}
           onClick={() => {
             setFilterByToday(true);
@@ -262,7 +262,7 @@ const HistoriqueCommande = () => {
         </button>
         <button
           className={`mr-4 px-4 py-2 ${
-            filterByDate ? "bg-blue-500 text-white" : "bg-gray-300"
+            filterByDate ? "bg-tertiary text-white rounded transform hover:scale-105 transition duration-300"  : "bg-gray-300 rounded transform hover:scale-105 transition duration-300"
           }`}
           onClick={() => {
             setFilterByDate(true);
@@ -275,34 +275,36 @@ const HistoriqueCommande = () => {
       </div>
 
       {filterByDate && (
-        <div className="mb-4">
+        <div className="mb-4 ">
           <label className="mr-2">Start Date:</label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="border border-gray-300 p-2"
+            className="border border-gray-300 rounded bg-white p-2"
           />
           <label className="ml-4 mr-2">End Date:</label>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="border border-gray-300 p-2"
+            className="border border-gray-300 rounded bg-white p-2"
           />
         </div>
       )}
       <div className="mt-4 mb-4">
-        <label className="text-lg font-bold mb-4">Total des Montants des Commandes: </label>
+        <label className="text-lg font-bold mb-4">
+          Total des Montants des Commandes:{" "}
+        </label>
         <input
           type="text"
           value={`${totalSum.toFixed(2)}€`}
           readOnly
-          className="border border-gray-400 p-2 mt-2 rounded-lg w-24"
+          className="border border-gray-400 bg-white rounded p-2 mt-2 w-24"
         />
       </div>
 
-      <table className="table-auto w-full border-collapse border border-gray-300">
+      <table className="table-auto w-full border-collapse border bg-tertiary border-gray-300">
         <thead>
           <tr className="bg-gray-200">
             <th className="border border-gray-300 px-4 py-2">id commande</th>
@@ -330,13 +332,16 @@ const HistoriqueCommande = () => {
                     #{commande._id.slice(-6)}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {clients.find((client) => client.clientId_Zitadel === commande.clientId_Zitadel)
-                      ?.name || "Inconnu"}
+                    {clients.find(
+                      (client) =>
+                        client.clientId_Zitadel === commande.clientId_Zitadel
+                    )?.name || "Inconnu"}
                   </td>
 
                   <td className="border border-gray-300 px-4 py-2">
                     {livreurs.find(
-                      (livreur) => livreur.livreurId_Zitadel === commande.livreurId_Zitadel
+                      (livreur) =>
+                        livreur.livreurId_Zitadel === commande.livreurId_Zitadel
                     )?.name || "N/A"}
                   </td>
                   {/* <td className="border border-gray-300 px-4 py-2"> revoir le model commande </td> */}
@@ -369,7 +374,7 @@ const HistoriqueCommande = () => {
           Top 3 des Menus les Plus Commandés
         </h2>
 
-        <table className="table-auto w-full border-collapse border border-gray-300">
+        <table className="table-auto w-full border-collapse border bg-tertiary border-gray-300">
           <thead>
             <tr className="bg-gray-200">
               <th className="border border-gray-300 px-4 py-2">ID</th>

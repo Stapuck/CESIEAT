@@ -90,7 +90,7 @@ const Account = () => {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="max-w-4xl mx-auto p-6 pt-20 space-y-6">
       <div className="bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-2xl font-semibold">Account</h2>
         <p>

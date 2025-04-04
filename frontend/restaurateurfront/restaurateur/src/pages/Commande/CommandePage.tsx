@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "react-oidc-context";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import Hide from "../../assets/icons/chevron.up.svg";
+import Show from "../../assets/icons/chevron.down.svg";
 
 interface ICommande {
   _id: string;
@@ -17,8 +19,6 @@ interface ICommande {
   createdAt: string;
   updatedAt: string;
 }
-
-
 
 interface IRestaurateur {
   _id: string;
@@ -210,7 +210,7 @@ const CommandesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-transparent-background mt-25 mx-3 p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
           Gestion des Commandes
@@ -232,7 +232,17 @@ const CommandesPage = () => {
                     setShowNouvellesCommandes(!showNouvellesCommandes)
                   }
                 >
-                  {showNouvellesCommandes ? "Masquer" : "Afficher"}
+                  {showNouvellesCommandes ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showNouvellesCommandes && (
@@ -270,7 +280,17 @@ const CommandesPage = () => {
                     setShowEnPreparationCommandes(!showEnPreparationCommandes)
                   }
                 >
-                  {showEnPreparationCommandes ? "Masquer" : "Afficher"}
+                  {showEnPreparationCommandes ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showEnPreparationCommandes && (
@@ -311,7 +331,17 @@ const CommandesPage = () => {
                     )
                   }
                 >
-                  {showEnAttenteDeRecupCommandes ? "Masquer" : "Afficher"}
+                  {showEnAttenteDeRecupCommandes ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showEnAttenteDeRecupCommandes && (
@@ -349,7 +379,17 @@ const CommandesPage = () => {
                     setShowEnLivraisonCommandes(!showEnLivraisonCommandes)
                   }
                 >
-                  {showEnLivraisonCommandes ? "Masquer" : "Afficher"}
+                  {showEnLivraisonCommandes ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showEnLivraisonCommandes && (
@@ -385,7 +425,17 @@ const CommandesPage = () => {
                   className="text-sm text-blue-500"
                   onClick={() => setShowLivreeCommande(!showLivreeCommande)}
                 >
-                  {showLivreeCommande ? "Masquer" : "Afficher"}
+                  {showLivreeCommande ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showLivreeCommande && (
@@ -421,7 +471,17 @@ const CommandesPage = () => {
                   className="text-sm text-blue-500"
                   onClick={() => setShowAnnuleeCommande(!showAnnuleeCommande)}
                 >
-                  {showLivreeCommande ? "Masquer" : "Afficher"}
+                  {showAnnuleeCommande ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showLivreeCommande && (

@@ -119,7 +119,7 @@ const CreateMenu = () => {
   };
 
   return (
-    <div className="max-w-lg bg-white shadow-lg mx-auto p-7 rounded mt-6">
+    <div className="max-w-lg bg-white shadow-lg mx-auto p-7 rounded mt-25">
       <h2 className="font-semibold text-2xl mb-4 text-center">Créer un Menu</h2>
       <form onSubmit={saveMenu}>
         <div className="space-y-2">
@@ -176,7 +176,7 @@ const CreateMenu = () => {
             {selectedArticles.length > 0 ? (
               <label className="my-4">Articles</label>
             ) : (
-              <label className="my-4 mx-2">Choissiez des articles</label>
+              <label className="my-4 "></label>
             )}
             {selectedArticles.map((selectedArticle, index) => (
               <div className="flex items-center space-x-2" key={index}>
@@ -205,7 +205,7 @@ const CreateMenu = () => {
                 <button
                   type="button"
                   onClick={() => handleRemoveArticle(index)}
-                  className="bg-red-500 text-white px-2 py-1 rounded"
+                  className="bg-red-500 text-white px-2 py-1 mt-2 w-[33px]  rounded transform hover:scale-105 transition duration-300"
                 >
                   -
                 </button>
@@ -214,21 +214,21 @@ const CreateMenu = () => {
             <button
               type="button"
               onClick={handleAddArticle}
-              className="mt-2 bg-green-500 text-white px-3 py-1 rounded"
+              className="mt-2 bg-primary  text-black px-3 py-1  rounded transform hover:scale-105 transition duration-300 "
             >
-              +
+              + Ajouter un article
             </button>
           </div>
           <div>
             {!isLoading && (
               <div>
-                <button className="block w-full mt-6 bg-blue-700 text-white rounded px-4 py-2 font-bold hover:bg-blue-600">
+                <button className="block w-full mt-6 bg-tertiary text-white rounded px-4 py-2 font-bold hover:bg-tertiary transform hover:scale-105 transition duration-300">
                   Enregistrer
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="block w-full mt-4 bg-gray-500 text-white rounded px-4 py-2 font-bold hover:bg-gray-600 text-center"
+                  className="block w-full mt-4 bg-gray-500 text-white rounded px-4 py-2 font-bold hover:bg-gray-600 text-center transform hover:scale-105 transition duration-300"
                 >
                   Retour
                 </button>
