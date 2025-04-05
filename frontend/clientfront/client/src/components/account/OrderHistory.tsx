@@ -3,6 +3,9 @@ import axios from "axios";
 import QRCodeGenerator from "./QRCodeGenerator";
 import { useAuth } from "react-oidc-context";
 import Swal from "sweetalert2"; // Ajout de l'import SweetAlert2
+import LogoCart from "../../assets/icons/cart.svg";
+import LogoDelete from "../../assets/icons/minus.circle.svg";
+
 
 interface MenuItem {
   menuItem: string;
@@ -255,6 +258,7 @@ const OrderHistory = () => {
 
   return (
     <section className="bg-white rounded-lg shadow-md p-6 mb-8">
+      <img src={LogoCart} alt="Logo Compte" className="w-16 h-16 mb-4" />
       <h2 className="text-xl font-semibold text-gray-700 mb-4">
         Vos Commandes
       </h2>
@@ -340,7 +344,7 @@ const OrderHistory = () => {
                   </div>
                 )}
 
-                <div className="mt-3 flex justify-between items-center">
+                <div className="my-3 flex justify-between items-center">
                   {canCancelOrder(order.status) && (
                     <button
                       onClick={() => cancelOrder(order._id)}
@@ -348,9 +352,14 @@ const OrderHistory = () => {
                       className={`px-3 py-1 rounded text-sm font-medium ${
                         cancellingOrderId === order._id
                           ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-red-600 text-white hover:bg-red-700"
+                          : "bg-red-600 text-white hover:bg-red-700 shadow-md rounded-md hover:cursor-pointer transform hover:scale-105 transition-transform duration-200 ease-in-out"
                       }`}
                     >
+                      <img
+                        src={LogoDelete}
+                        alt="Logo Supprimer"
+                        className="w-4 h-4 inline-block mr-1 mb-1"
+                      />
                       {cancellingOrderId === order._id
                         ? "Annulation..."
                         : "Annuler la commande"}

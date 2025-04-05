@@ -12,14 +12,37 @@ import { useAuth } from "react-oidc-context";
 const Checkout: React.FC = () => {
   const { cartItems, clearCart, getTotalPrice } = useCart();
   const navigate = useNavigate();
+  const auth = useAuth();
+  const zitadelId = auth.user?.profile.sub;
+  
   const [customerInfo, setCustomerInfo] = useState({
-    name: `${useAuth().user?.profile.family_name || ""} ${
-      useAuth().user?.profile.given_name || ""
+    name: `${auth.user?.profile.family_name || ""} ${
+      auth.user?.profile.given_name || ""
     }`.trim(),
-    email: useAuth().user?.profile.email || "",
+    email: auth.user?.profile.email || "",
     address: "",
-    clientId_Zitadel: useAuth().user?.profile.sub,
+    clientId_Zitadel: zitadelId,
   });
+  
+  React.useEffect(() => {
+    const fetchClientAddress = async () => {
+      if (zitadelId) {
+        try {
+          const response = await axios.get(`https://localhost/api/clients/byZitadelId/${zitadelId}`);
+          if (response.data && response.data.address) {
+            setCustomerInfo(prev => ({
+              ...prev,
+              address: response.data.address
+            }));
+          }
+        } catch (error) {
+          console.error("Failed to fetch client address:", error);
+        }
+      }
+    };
+    
+    fetchClientAddress();
+  }, [zitadelId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -67,8 +90,6 @@ const Checkout: React.FC = () => {
           status: "En attente",
         };
 
-        console.log("Creating order:", payload);
-
         await axios.post("https://cesieat.com/api/commandes", payload, {
           headers: {
             "Content-Type": "application/json",
@@ -76,7 +97,6 @@ const Checkout: React.FC = () => {
         });
       }
 
-      //TODO : Préramplir l'adresse du client
 
       Swal.fire({
         title: "Paiement réussi !",
@@ -277,3 +297,4 @@ const Checkout: React.FC = () => {
 };
 
 export default Checkout;
+
