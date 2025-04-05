@@ -1,15 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import {
   FaHashtag,
   FaStore,
   FaUser,
   FaMapMarkerAlt,
-  FaEye,
   FaEyeSlash,
 } from "react-icons/fa";
-import CompteLogo from "../assets/icons/person.crop.circle.svg";
-import { useAuth } from "react-oidc-context";
 import { toast } from "react-toastify";
 
 interface CommandeItemProps {
@@ -45,7 +41,6 @@ const CommandeItem: React.FC<CommandeItemProps> = ({
   onHide,
   onTake,
 }) => {
-  const auth = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   // Fonction pour déterminer la classe CSS du statut
@@ -131,7 +126,7 @@ const CommandeItem: React.FC<CommandeItemProps> = ({
   // Empêche la propagation du clic sur les boutons
   const handleButtonClick = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Empêcher la sélection de la commande
-    
+
     if (onTake) {
       setIsLoading(true);
       try {
@@ -211,7 +206,7 @@ const CommandeItem: React.FC<CommandeItemProps> = ({
           >
             <FaEyeSlash />
           </button>
-          
+
           <button
             className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center"
             onClick={handleButtonClick}

@@ -60,6 +60,7 @@ const DeliveryIcon = L.icon({
 });
 
 interface ICommande {
+  _id: string;
   clientId_Zitadel: string;
   restaurantId: string;
   menuId: string;
@@ -123,6 +124,9 @@ export default function HomePage() {
   const antPathsRef = useRef<any[]>([]);
   // Référence pour le marqueur de position actuelle
   const currentLocationMarkerRef = useRef<L.Marker | null>(null);
+
+  // Ajout d'un état pour gérer le recentrage initial de la carte
+  const [hasUserInitialView, setHasUserInitialView] = useState(false);
 
   // Charger toutes les données au chargement de la page
   useEffect(() => {
@@ -248,8 +252,9 @@ export default function HomePage() {
         loadMyOrders();
 
         // Notification de succès
+        toast.success("Commande prise avec succès.");
       } else {
-        const errorData = await response.json();
+        await response.json();
       }
     } catch (error) {
       toast.error(
@@ -346,19 +351,19 @@ export default function HomePage() {
         .addTo(map)
         .bindPopup("<b>Votre position actuelle</b>");
 
-      // Recentrer la carte sur la position actuelle seulement au premier chargement
-      // ou lors d'une mise à jour explicite via le bouton
-      if (!mapInstanceRef.current.userInitialView && !selectedCommande) {
+      // Correction de la vérification et de la mise à jour de `userInitialView`
+      if (!hasUserInitialView && !selectedCommande) {
         map.setView(currentLocation, 14); // Zoom un peu plus proche
-        mapInstanceRef.current.userInitialView = true;
+        setHasUserInitialView(true); // Marquer comme recentré
       }
     }
 
     // Ajouter les marqueurs des restaurants et tracer les itinéraires
     if (restaurateurs?.length > 0 && commandes?.length > 0) {
+      // Correction de l'appel à `L.latLngBounds` pour éviter les erreurs de type
       const bounds = currentLocation
-        ? L.latLngBounds([currentLocation])
-        : L.latLngBounds();
+        ? L.latLngBounds([currentLocation]) // Utilisation correcte de `currentLocation`
+        : L.latLngBounds([[48.8566, 2.3522]]); // Valeur par défaut (Paris)
 
       restaurateurs.forEach((resto) => {
         if (
@@ -366,7 +371,7 @@ export default function HomePage() {
           Array.isArray(resto.position) &&
           resto.position.length === 2
         ) {
-          const marker = L.marker(resto.position as [number, number], {
+          L.marker(resto.position as [number, number], {
             icon: RestaurantIcon,
           }).addTo(map).bindPopup(`
             <div>
@@ -389,7 +394,8 @@ export default function HomePage() {
           (resto) => resto._id === selectedOrder?.restaurantId
         );
         const selectedClient = clients.find(
-          (client) => client.clientId_Zitadel === selectedOrder?.clientId_Zitadel
+          (client) =>
+            client.clientId_Zitadel === selectedOrder?.clientId_Zitadel
         );
 
         if (selectedRestaurant && selectedClient) {
@@ -407,7 +413,7 @@ export default function HomePage() {
             // Convertir l'adresse du client en coordonnées si nécessaire
             const getClientCoordinates = async () => {
               if (isValidCoordinate(selectedClient.address as any)) {
-                return selectedClient.address as [number, number];
+                return selectedClient.address as unknown as [number, number];
               } else {
                 return await geocodeAddress(selectedClient.address);
               }
@@ -447,6 +453,15 @@ export default function HomePage() {
 
                       antPathsRef.current.push(antPath);
 
+                      // Ajouter un marqueur pour le client
+                      L.marker(clientCoordinates, {
+                        icon: ClientIcon,
+                      })
+                        .addTo(map)
+                        .bindPopup(
+                          `<b>${selectedClient.name}</b><br>${selectedClient.address}`
+                        );
+
                       // Ajouter un marqueur animé qui suit le chemin
                       const animatedMarker = L.marker(routeCoordinates[0], {
                         icon: DeliveryIcon,
@@ -467,15 +482,24 @@ export default function HomePage() {
 
                       // Afficher un toast avec la distance totale
                       const distanceInKm = (route.distance / 1000).toFixed(2); // Convertir en kilomètres
-                      toast.info(`Distance totale de l'itinéraire : ${distanceInKm} km`);
+                      toast.info(
+                        `Distance totale de l'itinéraire : ${distanceInKm} km`
+                      );
                     }
                   })
                   .catch((error) => {
-                    console.error("Erreur lors de la récupération de l'itinéraire:", error);
-                    toast.error("Impossible de récupérer l'itinéraire. Veuillez réessayer.");
+                    console.error(
+                      "Erreur lors de la récupération de l'itinéraire:",
+                      error
+                    );
+                    toast.error(
+                      "Impossible de récupérer l'itinéraire. Veuillez réessayer."
+                    );
                   });
               } else {
-                console.error("Impossible de convertir l'adresse du client en coordonnées.");
+                console.error(
+                  "Impossible de convertir l'adresse du client en coordonnées."
+                );
                 toast.error("Adresse du client invalide.");
               }
             });
@@ -505,15 +529,13 @@ export default function HomePage() {
   // Rafraîchir la position actuelle
   const refreshCurrentLocation = () => {
     getCurrentLocation();
-    // Reset le flag pour permettre le recentrage automatique
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.userInitialView = false;
-    }
+    // Réinitialiser l'état pour permettre un nouveau recentrage
+    setHasUserInitialView(false);
   };
 
   // Fonction pour ouvrir la modal de scan QR
   const handleOpenQRScanner = () => {
-    let root = null; // Pour stocker la référence au root React
+    let root: any; // Pour stocker la référence au root React
 
     Swal.fire({
       title: "Scanner un QR Code",
@@ -634,7 +656,7 @@ export default function HomePage() {
               : livreurData.isAvailable,
         };
 
-        const updateResponse = await axios.put(
+        await axios.put(
           `https://cesieat.com/api/livreurs/byZitadelId/${zitadelId}`,
           updatedData,
           {
@@ -651,16 +673,12 @@ export default function HomePage() {
             "Livreur non trouvé, création d'un nouveau livreur:",
             livreurData
           );
-          const createResponse = await axios.post(
-            `https://cesieat.com/api/livreurs`,
-            livreurData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-            }
-          );
+          await axios.post(`https://cesieat.com/api/livreurs`, livreurData, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          });
         } else {
           // Une autre erreur s'est produite lors de la vérification
           throw checkError;
@@ -674,11 +692,6 @@ export default function HomePage() {
     }
   };
 
-  // Fonction pour générer un code livreur unique
-  const generateCodeLivreur = () => {
-    return "L" + Math.random().toString(36).substring(2, 8).toUpperCase();
-  };
-
   // Ajoutez cet useEffect pour appeler la fonction au chargement
   useEffect(() => {
     if (auth.isAuthenticated && auth.user) {
@@ -687,7 +700,9 @@ export default function HomePage() {
   }, [auth.isAuthenticated, auth.user]);
 
   // Fonction pour convertir une adresse en coordonnées
-  const geocodeAddress = async (address: string): Promise<[number, number] | null> => {
+  const geocodeAddress = async (
+    address: string
+  ): Promise<[number, number] | null> => {
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
@@ -700,7 +715,10 @@ export default function HomePage() {
       }
       return null;
     } catch (error) {
-      console.error("Erreur lors de la conversion de l'adresse en coordonnées:", error);
+      console.error(
+        "Erreur lors de la conversion de l'adresse en coordonnées:",
+        error
+      );
       return null;
     }
   };
@@ -879,6 +897,7 @@ export default function HomePage() {
                       e.stopPropagation();
                       toggleHideCommande(id);
                     }}
+                    onTake={handleTakeCommande} // Utilisation correcte de `onTake`
                   />
                 );
               })}
