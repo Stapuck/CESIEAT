@@ -1,5 +1,3 @@
-
-
 import dotenv from 'dotenv';
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
@@ -9,7 +7,6 @@ import mongoose from 'mongoose'
 const app = new Hono()
 
 dotenv.config();
-
 
 // const MONGO_URL = process.env.MONGO_URL as string;
 // const FRONTEND1 = process.env.FRONTEND1 as string;  
@@ -21,13 +18,6 @@ const PORT = Number(process.env.PORT) || 3006;
 
 import menuRoute from './routes/menuRoute.js';
 
-// CORS configuration
-// app.use('*', cors({
-//   origin: [FRONTEND1, FRONTEND2, FRONTEND3, FRONTEND4, FRONTEND5 ],
-//   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
-// }));
-
-
 
 app.use('*', cors({
   origin: '*', // Autoriser toutes les origines
@@ -36,13 +26,11 @@ app.use('*', cors({
 
 app.route('/api/menus', menuRoute);
 
+const menuDbConnection = mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/CesiEat_Menu?retryWrites=true&w=majority', {
+});
 
-
-// mongoose.connect(MONGO_URL)
-mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-.then( () => {
-  console.log('connected to mongodb')
- 
+menuDbConnection.then( () => {
+  console.log('Connected to mongodb : CesiEat_Menu database');
   serve({
     fetch: app.fetch,
     port: PORT

@@ -40,10 +40,11 @@ app.use('*', cors({
 app.route('/api/commandes', commandeRoute);
 
 
-// mongoose.connect(MONGO_URL)
-mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-.then( () => {
-  console.log('connected to mongodb')
+const CommandeDbConnection = mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/CesiEat_Commande?retryWrites=true&w=majority', {
+});
+
+CommandeDbConnection.then( () => {
+  console.log('Connected to mongodb : CesiEat_Commande database');
  
   serve({
     fetch: app.fetch,

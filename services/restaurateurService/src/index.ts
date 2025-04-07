@@ -19,14 +19,6 @@ const PORT = Number(process.env.PORT) || 3001;
 import restaurateurRoute from './routes/restaurateurRoute.js';
 
 
-
-// app.use('*', cors({
-//   origin: [FRONTEND1, FRONTEND2, FRONTEND3, FRONTEND4, FRONTEND5 ],
-//   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
-// }));
-
-
-
 app.use('*', cors({
   origin: '*', // Autoriser toutes les origines
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -35,11 +27,11 @@ app.use('*', cors({
 app.route('/api/restaurateurs', restaurateurRoute);
 
 
-// mongoose.connect(MONGO_URL)
-mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-.then( () => {
-  console.log('connected to mongodb')
- 
+const RestaurantDbConnection = mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/CesiEat_Restaurant?retryWrites=true&w=majority', {
+});
+
+RestaurantDbConnection.then( () => {
+  console.log('Connected to mongodb : CesiEat_Restaurant database');
   serve({
     fetch: app.fetch,
     port: PORT
