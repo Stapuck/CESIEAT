@@ -17,6 +17,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { Link } from "react-router-dom"
 
 export function NavMain({
   items,
@@ -34,7 +35,7 @@ export function NavMain({
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -56,9 +57,7 @@ export function NavMain({
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
+                        <Link to={subItem.url}>{subItem.title}</Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}
