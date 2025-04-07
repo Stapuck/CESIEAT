@@ -223,6 +223,19 @@ services:
     networks:
       - app-network
 
+  # Restaurateur Service
+  commentaire-service:
+    build:
+      context: ./services/commentaireService
+      dockerfile: Dockerfile
+    container_name: commentaireService
+    restart: unless-stopped
+
+    ports:
+      - "3007:3000"
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge # Ensures proper communication between services
