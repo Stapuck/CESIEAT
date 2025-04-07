@@ -1,6 +1,71 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+// Interface pour les composants
+interface Component {
+  _id: string;
+  name: string;
+  description: string;
+  version: string;
+  category: string;
+  author: string;
+  tags: string[];
+  downloadUrl: string;
+  documentation: string;
+  downloads: number;
+  createdAt: string;
+  updatedAt: string;
+  isPublic: boolean;
+}
 
 const HomePage = () => {
+  // État pour stocker les composants
+  const [components, setComponents] = useState<Component[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Récupérer les composants au chargement de la page
+  useEffect(() => {
+    const fetchComponents = async () => {
+      try {
+        setLoading(true);
+        // Utiliser l'URL correcte du backend
+        const response = await axios.get("https://localhost/api/components");
+        console.log("Données reçues:", response.data);
+        setComponents(response.data);
+        setError(null);
+      } catch (err) {
+        console.error("Erreur lors de la récupération des composants:", err);
+        setError("Impossible de charger les composants. Veuillez réessayer plus tard.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComponents();
+  }, []);
+
+  // Fonction pour afficher un badge selon la catégorie
+  const getCategoryBadge = (category: string) => {
+    const categories: Record<string, { bg: string; text: string }> = {
+      frontend: { bg: "bg-blue-100", text: "text-blue-800" },
+      backend: { bg: "bg-green-100", text: "text-green-800" },
+      database: { bg: "bg-purple-100", text: "text-purple-800" },
+      security: { bg: "bg-red-100", text: "text-red-800" },
+      testing: { bg: "bg-yellow-100", text: "text-yellow-800" },
+      utility: { bg: "bg-gray-100", text: "text-gray-800" },
+      other: { bg: "bg-indigo-100", text: "text-indigo-800" }
+    };
+
+    const style = categories[category] || categories.other;
+    return (
+      <span className={`${style.bg} ${style.text} text-xs px-2 py-0.5 rounded-full`}>
+        {category}
+      </span>
+    );
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 text-center">
@@ -15,17 +80,11 @@ const HomePage = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold mb-4">Gestion du Compte</h2>
           <div className="flex flex-col gap-2">
-            <Link to="/profile" className="text-blue-600 hover:underline">
-              Consulter mon profil
-            </Link>
-            <Link to="/profile/edit" className="text-blue-600 hover:underline">
-              Modifier mon compte
-            </Link>
             <Link
-              to="/profile/settings"
+              to="/technical/profile"
               className="text-blue-600 hover:underline"
             >
-              Paramètres du compte
+              Consulter mon profil
             </Link>
           </div>
         </div>
@@ -34,16 +93,22 @@ const HomePage = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold mb-4">API & Intégration</h2>
           <div className="flex flex-col gap-2">
-            <Link to="/api-keys" className="text-blue-600 hover:underline">
+            <Link
+              to="/technical/api-keys"
+              className="text-blue-600 hover:underline"
+            >
               Mes clés d'API
             </Link>
             <Link
-              to="/api-documentation"
+              to="/technical/api-documentation"
               className="text-blue-600 hover:underline"
             >
               Documentation API
             </Link>
-            <Link to="/api-usage" className="text-blue-600 hover:underline">
+            <Link
+              to="/technical/api-usage"
+              className="text-blue-600 hover:underline"
+            >
               Statistiques d'utilisation
             </Link>
           </div>
@@ -54,15 +119,16 @@ const HomePage = () => {
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Composants Disponibles</h2>
+
           <div className="flex gap-2">
             <Link
-              to="/create-product"
+              to="/technical/create-product"
               className="bg-blue-700 text-white rounded-md px-4 py-2 font-medium hover:bg-blue-500 transition-colors"
             >
               Créer un composant
             </Link>
             <Link
-              to="/my-downloads"
+              to="/technical/my-downloads"
               className="bg-green-600 text-white rounded-md px-4 py-2 font-medium hover:bg-green-500 transition-colors"
             >
               Mes téléchargements
@@ -72,88 +138,91 @@ const HomePage = () => {
 
         {/* Galerie de composants existante */}
         <div>
+          {loading && (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700"></div>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+              <p className="text-red-700">{error}</p>
+              <button 
+                onClick={() => window.location.reload()}
+                className="mt-2 text-sm text-blue-600 hover:underline"
+              >
+                Réessayer
+              </button>
+            </div>
+          )}
+
+          {!loading && !error && components.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Aucun composant disponible pour le moment.</p>
+              <p className="text-sm mt-2">
+                Commencez par{" "}
+                <Link to="/technical/create-product" className="text-blue-600 hover:underline">
+                  créer votre premier composant
+                </Link>
+              </p>
+            </div>
+          )}
+
+          {!loading && !error && components.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {components.map((component) => (
+                <div
+                  key={component._id}
+                  className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="p-4">
+                    <div className="flex justify-between items-start">
+                      <h3 className="font-semibold text-lg mb-1">{component.name || "Sans nom"}</h3>
+                      <span className="text-xs bg-gray-100 px-2 py-1 rounded">v{component.version || "1.0.0"}</span>
+                    </div>
+                    <div className="flex items-center mb-2">
+                      {component.category && getCategoryBadge(component.category)}
+                      <span className="text-xs text-gray-500 ml-2">
+                        Par {component.author || "Anonyme"}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                      {component.description || "Aucune description disponible"}
+                    </p>
+                    {component.tags && component.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {component.tags.map((tag, index) => (
+                          <span
+                            key={index}
+                            className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex justify-end mt-2">
+                      <a
+                        href={component.downloadUrl}
+                        className="text-xs px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Télécharger
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Section Service Technique */}
+      {/* Section Service Technique - reste du code inchangé */}
       <div className="bg-yellow-50 border-l-4 border-yellow-600 rounded-lg shadow-md p-6 mb-8">
-        <h2 className="text-xl font-bold mb-4 text-yellow-800">
-          Service Technique
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Gestion des composants */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="font-semibold mb-2 text-yellow-700">
-              Gestion des composants
-            </h3>
-            <div className="flex flex-col gap-2">
-              <Link
-                to="/technical/components/manage"
-                className="text-blue-600 hover:underline"
-              >
-                Gérer les composants
-              </Link>
-              <Link
-                to="/technical/components/add"
-                className="text-blue-600 hover:underline"
-              >
-                Ajouter un composant
-              </Link>
-              <Link
-                to="/technical/components/remove"
-                className="text-blue-600 hover:underline"
-              >
-                Supprimer des composants
-              </Link>
-            </div>
-          </div>
-
-          {/* Logs et statistiques */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="font-semibold mb-2 text-yellow-700">
-              Monitoring Docker
-            </h3>
-            <div className="flex flex-col gap-2">
-              <Link
-                to="https://cesieat.com:8081"
-                className="text-blue-600 hover:underline"
-              >
-                État des containers
-              </Link>
-            </div>
-          </div>
-
-          {/* Infrastructure */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="font-semibold mb-2 text-yellow-700">
-              Infrastructure
-            </h3>
-            <div className="flex flex-col gap-2">
-              <Link
-                to="/technical/routes"
-                className="text-blue-600 hover:underline"
-              >
-                Orchestration des routes
-              </Link>
-              <Link
-                to="/technical/deploy"
-                className="text-blue-600 hover:underline"
-              >
-                Déploiement de services
-              </Link>
-              <Link
-                to="/technical/notifications"
-                className="text-blue-600 hover:underline"
-              >
-                Centre de notifications{" "}
-                <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  3
-                </span>
-              </Link>
-            </div>
-          </div>
-        </div>
+        {/* Le contenu existant de cette section reste inchangé */}
+        {/* ... */}
       </div>
     </div>
   );

@@ -214,7 +214,10 @@ const OrderHistory = () => {
     setCancelError(null);
 
     try {
-      await axios.delete(`https://cesieat.com/api/commandes/${orderId}`);
+      // Update order status to "Annulée" using PUT instead of PATCH
+      await axios.put(`https://cesieat.com/api/commandes/${orderId}`, {
+        status: "Annulée"
+      });
 
       // Mettre à jour la commande localement
       setOrders((prevOrders) =>

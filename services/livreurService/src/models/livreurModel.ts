@@ -51,8 +51,8 @@ const livreurSchema = new Schema(
 // revoir pour mettre la fonction lors du create todo 
 livreurSchema.pre('save', async function (next) {
     if (this.isNew) {
-        let generatedCode = Math.floor(1000 + Math.random() * 9000).toString(); 
-        
+        let generatedCode = Math.floor(1000 + Math.random() * 9000).toString();
+
         // Convertir en chaîne de caractères avec des zéros devant si nécessaire
         generatedCode = generatedCode.toString().padStart(4, '0'); // Assurer que le code a 4 chiffres
 

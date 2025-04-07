@@ -199,6 +199,23 @@ services:
     networks:
       - app-network
 
+  # Components Service
+  component-service:
+    build:
+      context: ./services/componentService
+      dockerfile: Dockerfile
+    container_name: componentService
+    restart: unless-stopped
+    ports:
+      - "3002:3002"  # IMPORTANT: changer le port exposé pour correspondre au port interne
+    volumes:
+      - component_uploads:/app/uploads  # Corriger le chemin du volume
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge # Ensures proper communication between services
+
+volumes:
+  component_uploads:

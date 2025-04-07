@@ -13,7 +13,8 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import Protected from "./pages/Protected";
-import LoginButton from "./components/LoginButton";
+import LoginPage from "./pages/LoginPage"; // Importez la page de connexion
+import CreateProductPage from "./pages/CreateProductPage";
 
 function App() {
   return (
@@ -22,13 +23,11 @@ function App() {
         <Navbar />
         <div className="container mx-auto p-2 h-full">
           <Routes>
-            <Route path="/technical/tmplogin" element={<LoginButton />} />
-
+            <Route path="/technical/" element={<HomePage />} />
+            <Route path="/technical/login" element={<LoginPage />} /> {/* Nouvelle route */}
             <Route element={<Protected />}>
-              <Route index element={<HomePage />}></Route>
-              <Route path="/technical/" element={<HomePage />}></Route>
-
-              {/* Routes de gestion du compte */}
+              <Route index element={<HomePage />} />
+              {/* Routes protégées */}
               <Route
                 path="/technical/profile"
                 element={<ProfilePage />}
@@ -66,6 +65,11 @@ function App() {
                 path="/technical/product/:id"
                 element={<ProductDetailPage />}
               ></Route>
+              <Route
+                path="/technical/create-product"
+                element={<CreateProductPage />}
+              ></Route>
+
 
               {/* Routes de gestion des containers */}
             </Route>
