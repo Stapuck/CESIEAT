@@ -21,6 +21,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Routes>
+        
         <Route element={<Layout />}>
           <Route path="restaurateur/" element={<HomePage />} />
 

@@ -2,18 +2,16 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-
-
-interface ICommande  {
-  _id : string;
+interface ICommande {
+  _id: string;
   clientId_Zitadel: string;
   restaurantId: string;
   livreurId_Zitadel?: string;
   menuId: string;
   totalAmount: number;
   status: string;
-  createdAt : string;
-  updatedAt : string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface IArticle {
@@ -27,9 +25,8 @@ interface IArticle {
   restaurantid: string;
 }
 
-
 interface ILivreur {
-  _id : string;
+  _id: string;
   name: string;
   email: string;
   phone: string;
@@ -79,7 +76,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetClientById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/clients/byZitadelId/${commande.clientId_Zitadel}`
+        `https://localhost/api/clients/byZitadelId/${commande.clientId_Zitadel}`
       );
       setClient(response.data);
     } catch (error) {
@@ -90,7 +87,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetLivreurById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/livreurs/byZitadelId/${commande.livreurId_Zitadel}`
+        `https://localhost/api/livreurs/byZitadelId/${commande.livreurId_Zitadel}`
       );
       setLivreur(response.data);
     } catch (error) {
@@ -101,7 +98,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetMenuById = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/menus/${commande.menuId}`
+        `https://localhost/api/menus/${commande.menuId}`
       );
       setMenu(response.data);
 
@@ -110,7 +107,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
         const articlesDetails = await Promise.all(
           response.data.articles.map(async (articleId: string) => {
             const articleRes = await axios.get(
-              `http://localhost:8080/api/articles/${articleId}`
+              `https://localhost/api/articles/${articleId}`
             );
             return articleRes.data; // Retourne l'objet article
           })
@@ -134,7 +131,6 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   }, []);
 
   const handleLivraison = () => {
-
     if (!codeLivreur) {
       toast.error("Veuillez entrer un Code livreur Valide.");
       return;
@@ -161,13 +157,11 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
     });
   };
   return (
-    <div className="p-2 border rounded shadow-lg bg-white mb-4">
+    <div className="p-2 border  shadow-lg bg-white mb-4 transform hover:scale-101 transition duration-300">
       <p className="flex justify-center mb-1">
         {formatDate(commande.createdAt)}
       </p>
-      <p className="text-gray-600 flex justify-center mb-3">
-        {commande.status}
-      </p>
+
 
       <p className="text-gray-800 font-semibold">
         Commande id : #{commande._id.toString().slice(-6)}
@@ -200,13 +194,13 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
           {commande.status === "En attente" && (
             <div className="">
               <button
-                className="bg-red-500 text-white p-2 rounded"
+                className="bg-red-500 text-white p-2 px-3 mr-2 rounded transform hover:scale-105 transition duration-300"
                 onClick={() => onCancel(commande)}
               >
                 Refuser
               </button>
               <button
-                className="bg-blue-500 text-white p-2 rounded"
+                className="bg-blue-500 text-white p-2 px-3 ml-2 rounded transform hover:scale-105 transition duration-300"
                 onClick={() => onValidate(commande)}
               >
                 Valider
@@ -217,13 +211,13 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
           {commande.status === "Préparation" && (
             <div className="">
               <button
-                className="bg-red-500 text-white p-2 rounded"
+                className="bg-red-500 text-white px-3 p-2 mr-2 rounded transform hover:scale-105 transition duration-300"
                 onClick={() => onCancel(commande)}
               >
                 Annuler
               </button>
               <button
-                className="bg-yellow-500 text-white p-2 rounded"
+                className="bg-yellow-500 text-white px-4 p-2 ml-2 rounded transform hover:scale-105 transition duration-300"
                 onClick={() => onPrepare(commande)}
               >
                 Prêt
@@ -234,13 +228,13 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
           {commande.status === "Prêt" && (
             <div className="">
               <button
-                className="bg-red-500 text-white p-2 rounded"
+                className="bg-red-500 text-white p-2 px-3 mr-2 rounded transform hover:scale-105 transition duration-300"
                 onClick={() => onCancel(commande)}
               >
                 Annuler
               </button>
               <button
-                className="bg-green-500 text-white p-2 rounded"
+                className="bg-tertiary text-white p-2 px-2 ml-2 rounded transform hover:scale-105 transition duration-300"
                 onClick={() => setIsModalOpen(true)} // Ouvrir la modal
               >
                 Livraison
@@ -266,13 +260,13 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
             />
             <div className="flex justify-end gap-2">
               <button
-                className="bg-gray-500 text-white p-2 rounded"
+                className="bg-gray-500 text-white p-2 rounded transform hover:scale-105 transition duration-300"
                 onClick={() => setIsModalOpen(false)} // Fermer la modal
               >
                 Annuler
               </button>
               <button
-                className="bg-green-500 text-white p-2 rounded"
+                className="bg-green-500 text-white p-2 rounded transform hover:scale-105 transition duration-300"
                 onClick={() => handleLivraison()} // Confirmer livraison
               >
                 Confirmer Livraison

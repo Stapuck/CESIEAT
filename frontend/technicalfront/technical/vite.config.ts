@@ -27,7 +27,7 @@ export default defineConfig({
     // Configuration de proxy pour les services backend
     proxy: {
       '/api': {
-        target: 'http://gateway:8080',
+        target: 'https://gateway:8080',
         changeOrigin: true,
         ws: true,
       },

@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import FoodIcon from "../assets/icons/fork.knife.circle.fill.svg";
 import LocationPin from "../assets/icons/mappin.svg";
 import LoadingArrow from "../assets/icons/arrow.trianglehead.2.clockwise.svg";
+import LocateUserLogo from "../assets/icons/location.circle.fill.svg";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { toast } from "react-toastify";
@@ -31,7 +32,7 @@ interface IRestaurant {
   name: string;
   position: [number, number];
   ville: string;
-  url: string;
+  url_image: string;
 }
 
 const Search = () => {
@@ -49,7 +50,7 @@ const Search = () => {
   const navigate = useNavigate();
 
   // Fonction pour naviguer vers la page des menus du restaurant
-  const goToRestaurantMenus = (id: string, name: string, url: string) => {
+  const goToRestaurantMenus = (id: string, name: string, url_image: string) => {
     if (id && /^[0-9a-fA-F]{24}$/.test(id)) {
       // Utiliser un slug dans l'URL basé sur le nom du restaurant pour SEO
       const restaurantSlug = name
@@ -60,7 +61,7 @@ const Search = () => {
         state: {
           restaurantId: id,
           restaurantName: name,
-          restaurantImage: url,
+          restaurantImage: url_image,
         },
       });
     } else {
@@ -76,7 +77,7 @@ const Search = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:8080/api/restaurateurs"
+        "https://localhost/api/restaurateurs"
       );
 
       // Filtrer pour n'inclure que les restaurants avec des positions valides
@@ -97,7 +98,7 @@ const Search = () => {
           name: restaurant.restaurantName,
           position: restaurant.position as [number, number],
           ville: restaurant.address,
-          url: restaurant.url || "", // Ajouter une valeur par défaut pour url
+          url_image: restaurant.url_image || "", // Ajouter une valeur par défaut pour url
         }));
 
       setRestaurants(validRestaurants);
@@ -171,16 +172,35 @@ const Search = () => {
     return null;
   };
 
+  const locateUser = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setPosition([latitude, longitude]);
+          setZoom(13);
+          toast.success("Position actuelle trouvée !");
+        },
+        (error) => {
+          console.error("Erreur lors de la récupération de la position :", error);
+          toast.error("Impossible de récupérer votre position.");
+        }
+      );
+    } else {
+      toast.error("La géolocalisation n'est pas supportée par votre navigateur.");
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center relative z-10 bg-primary py-8">
-      <p className="text-white font-bold text-center pb-4">
+    <div className="flex flex-col items-center relative z-10 bg-primary py-8 px-4 sm:px-8">
+      <p className="text-black font-bold text-center pb-4 text-lg sm:text-xl md:text-2xl">
         Rapide et proche de chez vous
       </p>
-      <div className="relative w-[270px] sm:w-[370px] md:w-[470px] lg:w-[570px] xl:w-[670px]">
+      <div className="relative w-full max-w-[670px]">
         <input
           type="text"
           onChange={handleInputChange}
-          className="input shadow-xl input-bordered text-text-search-color bg-white rounded-full font-bold p-3 w-full"
+          className="input shadow-xl input-bordered text-text-search-color bg-white rounded-full font-bold p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Votre ville ou restaurant"
           aria-label="Champ de recherche"
           onKeyDown={(e) => {
@@ -191,7 +211,7 @@ const Search = () => {
         />
         <button
           onClick={handleSearch}
-          className="absolute top-1/2 right-3 transform -translate-y-1/2 bg-button-background p-2 rounded-full hover:cursor-pointer hover:scale-110 transition-transform duration-200"
+          className="absolute top-1/2 right-3 transform -translate-y-1/2 bg-button-background p-2 rounded-full hover:cursor-pointer hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
           aria-label="Rechercher"
         >
           {loading ? (
@@ -200,13 +220,20 @@ const Search = () => {
             <img src={SearchIcon} alt="Search" className="w-5 h-5" />
           )}
         </button>
+        <button
+          onClick={locateUser}
+          className="absolute top-1/2 right-12 transform -translate-y-1/2 bg-green-500 p-2 mr-2 rounded-full hover:cursor-pointer hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+          aria-label="Localiser"
+        >
+          <img src={LocateUserLogo} alt="Localiser" className="w-5 h-5" />
+        </button>
         {showSuggestions && (
           <ul className="absolute bg-white border border-gray-300 rounded-lg shadow-lg mt-2 w-full max-h-40 overflow-y-auto z-50">
             {filteredSuggestions.map((point) => (
               <li
                 key={point._id}
                 onClick={() => handleSuggestionClick(point)}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
               >
                 {point.name} - {point.ville}
               </li>
@@ -215,12 +242,12 @@ const Search = () => {
         )}
       </div>
 
-      <div className="w-full h-[400px] mt-8 px-3 z-1 max-w-350">
+      <div className="w-full h-[400px] mt-8 px-3 z-1 max-w-[1200px]">
         <MapContainer
           center={position}
           zoom={zoom}
           scrollWheelZoom={true}
-          className="h-full w-full rounded-lg shadow-lg"
+          className="h-full w-full rounded-lg shadow-lg border border-gray-300"
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -257,7 +284,7 @@ const Search = () => {
                 <Popup>
                   <div
                     className="flex flex-col items-center justify-center overflow-clip rounded-lg bg-cover bg-center h-32 w-78"
-                    style={{ backgroundImage: `url(${restaurant.url})` }}
+                    style={{ backgroundImage: `url(${restaurant.url_image})` }}
                   ></div>
                   <p className="my-0">{restaurant.name}</p>
 
@@ -269,7 +296,7 @@ const Search = () => {
                       goToRestaurantMenus(
                         restaurant._id,
                         restaurant.name,
-                        restaurant.url
+                        restaurant.url_image
                       );
                     }}
                   >

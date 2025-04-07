@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "react-oidc-context";
+import LogoCompte from "../../assets/icons/person.circle.svg";
 
 interface IClient {
   _id: string;
@@ -20,7 +21,7 @@ const ProfileInfo = () => {
   const getClientInfos = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/clients/byZitadelId/${auth.user?.profile.sub}`
+        `https://localhost/api/clients/byZitadelId/${auth.user?.profile.sub}`
       );
       setClientInfo(response.data);
     } catch (error) {
@@ -54,7 +55,7 @@ const ProfileInfo = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:8080/api/clients/${clientInfo?._id}`,
+        `https://localhost/api/clients/${clientInfo?._id}`,
         formData
       );
       setClientInfo({ ...clientInfo!, ...formData });
@@ -66,6 +67,7 @@ const ProfileInfo = () => {
 
   return (
     <section className="bg-white rounded-lg shadow-md p-6 mb-8">
+      <img src={LogoCompte} alt="Logo Compte" className="w-16 h-16 mb-4" />
       <h2 className="text-xl font-semibold text-gray-700 mb-4">
         Informations du Profil
       </h2>
@@ -123,14 +125,14 @@ const ProfileInfo = () => {
           <div className="flex space-x-4 pt-2">
             <button
               type="submit"
-              className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
+              className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 shadow-md rounded-md hover:cursor-pointer transform hover:scale-105 transition-transform duration-200 ease-in-out"
             >
               Enregistrer
             </button>
             <button
               type="button"
               onClick={() => setIsEditing(false)}
-              className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
+              className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 shadow-md rounded-md hover:cursor-pointer transform hover:scale-105 transition-transform duration-200 ease-in-out"
             >
               Annuler
             </button>
@@ -152,7 +154,7 @@ const ProfileInfo = () => {
           </p>
           <button
             onClick={() => setIsEditing(true)}
-            className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
+            className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 shadow-md rounded-md hover:cursor-pointer transform hover:scale-105 transition-transform duration-200 ease-in-out"
           >
             Modifier le Profil
           </button>

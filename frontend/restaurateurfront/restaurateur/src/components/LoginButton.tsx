@@ -1,34 +1,29 @@
-import { FaUser } from "react-icons/fa";
 import { useAuth } from "react-oidc-context";
+import ZitadelLogo from "../assets/zitadel.png";
 
 function LoginButton() {
   const auth = useAuth();
-  return (
-    <div className="mt-auto pt-4 border-t border-gray-700">
-      {!auth.isAuthenticated && (
-        <button
-          onClick={() => void auth.signinRedirect()}
-          className="flex items-center space-x-2 py-3 px-4 w-full hover:bg-gray-700 rounded text-white font-semibold"
-        >
-          <FaUser /> <span>Se connecter</span>
-        </button>
-      )}
-      {auth.isAuthenticated && (
-        <button
-          onClick={() => void auth.removeUser()}
-          className="flex items-center space-x-2 py-3 px-4 w-full hover:bg-gray-700 rounded text-white font-semibold"
-        >
-          <FaUser /> <span>Se déconnecter</span>
-        </button>
-      )}
-    </div>
-  );
 
   if (auth.isAuthenticated) {
-    return <button onClick={() => void auth.removeUser()}>Log out</button>;
+    return (
+      <button
+        className="flex w-50 items-center justify-center gap-2 px-4 py-2 bg-tertiary text-white rounded hover:bg-blue-600"
+        onClick={() => void auth.removeUser()}
+      >
+        Se déconnecter
+      </button>
+    );
   }
 
-  return <button onClick={() => void auth.signinRedirect()}>Log in</button>;
+  return (
+    <button
+      onClick={() => void auth.signinRedirect()}
+      className="flex w-50 justify-center items-center gap-2 px-4 py-2 bg-tertiary text-white rounded hover:bg-blue-600"
+    >
+      <img src={ZitadelLogo} alt="Zitadel Logo" className="h-5" />
+      Se connecter
+    </button>
+  );
 }
 
 export default LoginButton;

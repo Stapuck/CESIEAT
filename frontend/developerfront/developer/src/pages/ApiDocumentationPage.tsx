@@ -112,7 +112,7 @@ const ApiDocumentationPage = () => {
                   La version actuelle de l'API est <code>v1</code>. Toutes les requêtes doivent être adressées à:
                 </p>
                 <pre className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
-                  https://api.cesieat.com/v1/
+                  https://api.localhost/v1/
                 </pre>
                 <h3>Format des données</h3>
                 <p>
@@ -145,12 +145,12 @@ const ApiDocumentationPage = () => {
                 <pre className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
                   {`curl -H "Authorization: Bearer api_key_1a2b3c4d5e6f" \
      -H "Content-Type: application/json" \
-     https://api.cesieat.com/v1/components`}
+     https://api.localhost/v1/components`}
                 </pre>
                 <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4">
                   <div className="flex">
                     <div className="flex-shrink-0">
-                      <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <svg className="h-5 w-5 text-yellow-400" xmlns="https://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
                     </div>
@@ -295,7 +295,7 @@ const ApiDocumentationPage = () => {
                 <h3>JavaScript (fetch)</h3>
                 <pre className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
                   {`// Récupérer la liste des composants
-fetch('https://api.cesieat.com/v1/components', {
+fetch('https://api.localhost/v1/components', {
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
     'Content-Type': 'application/json'
@@ -316,7 +316,7 @@ headers = {
 }
 
 # Récupérer la liste des composants
-response = requests.get('https://api.cesieat.com/v1/components', headers=headers)
+response = requests.get('https://api.localhost/v1/components', headers=headers)
 print(response.json())`}
                 </pre>
 
@@ -324,7 +324,7 @@ print(response.json())`}
                 <pre className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
                   {`<?php
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "https://api.cesieat.com/v1/components");
+curl_setopt($ch, CURLOPT_URL, "https://api.localhost/v1/components");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     'Authorization: Bearer YOUR_API_KEY',

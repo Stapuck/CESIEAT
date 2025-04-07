@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import {
-  MediaPermissionsError,
   MediaPermissionsErrorType,
   requestMediaPermissions
 } from 'mic-check';
@@ -67,7 +66,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onScan, onClose, onError }) => {
       
       // Si l'autorisation est accordée, marquer comme accordée
       setPermissionGranted(true);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erreur lors de la demande d'autorisation de la caméra:", err);
       
       if ('type' in err && 'message' in err) {

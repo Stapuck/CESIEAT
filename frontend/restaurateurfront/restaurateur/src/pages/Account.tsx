@@ -32,7 +32,7 @@ const Account = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://localhost/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
       setRestaurant(response.data.length > 0 ? response.data[0] : null);
     } catch (error) {
@@ -50,7 +50,7 @@ const Account = () => {
     if (restaurant) {
       try {
         await axios.put(
-          `http://localhost:8080/api/restaurateurs/${restaurant._id}`,
+          `https://localhost/api/restaurateurs/${restaurant._id}`,
           restaurant
         );
         setIsEditing(false);
@@ -75,7 +75,7 @@ const Account = () => {
       if (restaurant) {
         try {
           await axios.delete(
-            `http://localhost:8080/api/restaurateurs/${restaurant._id}`
+            `https://localhost/api/restaurateurs/${restaurant._id}`
           );
         } catch (error: any) {
           // console.log(error);
@@ -90,69 +90,55 @@ const Account = () => {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-2xl font-semibold">Account</h2>
-        <p>
-          <strong>Email :</strong> {auth.user?.profile.email}
-        </p>
-        <p>
-          <strong>ID utilisateur :</strong> {auth.user?.profile.sub}
-        </p>
-        <p>
-          <strong>Nom :</strong> {auth.user?.profile.family_name}
-        </p>
-        <p>
-          <strong>Prénom :</strong> {auth.user?.profile.given_name}
-        </p>
-        <p className="mt-4 font-semibold">Rôles :</p>
-        {roleEntries.length > 0 ? (
-          <ul className="list-disc list-inside">
-            {roleEntries.map(([role, value]) => (
-              <li key={value} className="text-gray-600">
-                {role}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Aucun rôle trouvé</p>
-        )}
+    <div className="p-6 pt-20 mt-25 mr-40 flex justify-between">
+      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+        <h1 className="text-2xl pb-3 font-semibold text-center">Mon Profil Restaurateur</h1>
+        <div className="space-y-2">
+          <p className="text-gray-700">
+            <strong>Email :</strong> {auth.user?.profile.email}
+          </p>
+          <p className="text-gray-700">
+            <strong>ID utilisateur :</strong> {auth.user?.profile.sub}
+          </p>
+          <p className="text-gray-700">
+            <strong>Nom :</strong> {auth.user?.profile.family_name}
+          </p>
+          <p className="text-gray-700">
+            <strong>Prénom :</strong> {auth.user?.profile.given_name}
+          </p>
+        </div>
+        <div className="mt-4">
+          <p className="font-semibold text-gray-800">Rôles :</p>
+          {roleEntries.length > 0 ? (
+            <ul className="list-disc list-inside text-gray-600">
+              {roleEntries.map(([role, value]) => (
+                <li key={value}>{role}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500">Aucun rôle trouvé</p>
+          )}
+        </div>
       </div>
 
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg mx-auto mt-6">
+      <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-semibold text-center">
-            Votre Restaurant
-          </h1>
-          {isLoading ? (
-            <></>
-          ) : (
-            <>
-              {restaurant ? (
-                <>
-                  <div className="space-x-4">
-                    {isEditing ? (
-                      <>
-                        <button onClick={handleSave}>
-                          <FaSave className="inline mr-2 text-black" />
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button onClick={handleEdit}>
-                          <FaPen className="inline mr-2 text-black" />
-                        </button>
-                      </>
-                    )}
-                    <button onClick={handlesuppression}>
-                      <FaTrash className="inline mr-2 text-black" />
-                    </button>
-                  </div>
-                </>
+          <h1 className="text-3xl font-semibold text-center">Votre Restaurant</h1>
+          {isLoading ? null : restaurant && (
+            <div className="space-x-4">
+              {isEditing ? (
+                <button onClick={handleSave} className="bg-green-600 rounded p-2 text-white">
+                  <FaSave className="inline mx-1" /> 
+                </button>
               ) : (
-                <></>
+                <button onClick={handleEdit} className="bg-blue-600 rounded p-2 text-white">
+                  <FaPen className="inline mx-1" /> 
+                </button>
               )}
-            </>
+              <button onClick={handlesuppression} className="bg-red-600 p-2 rounded text-white">
+                <FaTrash className="inline mx-1 " />
+              </button>
+            </div>
           )}
         </div>
         {isLoading ? (
@@ -165,7 +151,6 @@ const Account = () => {
                 alt="Restaurant"
                 className="w-full h-64 object-cover rounded-lg shadow-md mb-4"
               />
-
               <div className="w-full space-y-4">
                 <div>
                   <strong className="block text-sm text-gray-600">
@@ -273,10 +258,9 @@ const Account = () => {
           </div>
         ) : (
           <div className="text-center">
-            <p>Aucun restaurant associé.</p>
             <Link
               to="/restaurateur/create-restaurant"
-              className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg shadow hover:bg-blue-600 transition"
+              className="mt-4 bg-tertiary text-white py-2 px-6 rounded-lg shadow hover:bg-gray-100 hover:text-tertiary transform hover:scale-105 transition duration-300 "
             >
               Créer un restaurant
             </Link>

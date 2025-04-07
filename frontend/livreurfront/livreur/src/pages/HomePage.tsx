@@ -18,8 +18,7 @@ import Swal from "sweetalert2";
 import QRScanner from "../components/QRScanner";
 // Modifier l'import pour avoir accès à la fois aux anciennes et nouvelles API
 import * as ReactDOM from "react-dom/client";
-// Importer également le ReactDOM classique pour les méthodes render et unmountComponentAtNode
-
+import BikeLogo from "../assets/icons/bicycle.circle.fill.svg";
 // Configuration de l'icône par défaut pour Leaflet
 
 // Créer des icônes personnalisées
@@ -45,6 +44,15 @@ const ClientIcon = L.icon({
 const CurrentLocationIcon = L.icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+// Icône pour le livreur
+const DeliveryIcon = L.icon({
+  iconUrl: BikeLogo,
   shadowUrl: iconShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -117,6 +125,9 @@ export default function HomePage() {
   // Référence pour le marqueur de position actuelle
   const currentLocationMarkerRef = useRef<L.Marker | null>(null);
 
+  // Ajout d'un état pour gérer le recentrage initial de la carte
+  const [hasUserInitialView, setHasUserInitialView] = useState(false);
+
   // Charger toutes les données au chargement de la page
   useEffect(() => {
     loadAllData();
@@ -150,7 +161,7 @@ export default function HomePage() {
   // Récupérer les commandes disponibles (seulement Préparation et Prêt)
   const getCommandes = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/commandes");
+      const response = await axios.get("https://localhost/api/commandes");
       // Filtrer pour n'inclure que les statuts "Préparation" et "Prêt"
       const filteredCommandes = response.data.filter(
         (cmd: ICommande) =>
@@ -166,7 +177,7 @@ export default function HomePage() {
 
   const getClients = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/clients");
+      const response = await axios.get("https://localhost/api/clients");
       setClients(response.data);
     } catch (error) {
       console.error("Erreur lors de la récupération des clients:", error);
@@ -175,9 +186,7 @@ export default function HomePage() {
 
   const getRestaurateurs = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/api/restaurateurs"
-      );
+      const response = await axios.get("https://localhost/api/restaurateurs");
 
       setRestaurateur(response.data);
     } catch (error) {
@@ -187,7 +196,7 @@ export default function HomePage() {
 
   const getLivreus = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/livreurs");
+      const response = await axios.get("https://localhost/api/livreurs");
       setLivreurs(response.data);
     } catch (error) {
       console.error("Erreur lors de la récupération des livreurs:", error);
@@ -200,7 +209,7 @@ export default function HomePage() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/commandes/livreur/${auth.user.profile.sub}`
+        `https://localhost/api/commandes/livreur/${auth.user.profile.sub}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -223,7 +232,7 @@ export default function HomePage() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/commandes/${commandeId}/${auth.user.profile.sub}/assign`,
+        `https://localhost/api/commandes/${commandeId}/${auth.user.profile.sub}/assign`,
         {
           method: "PUT",
           headers: {
@@ -243,8 +252,9 @@ export default function HomePage() {
         loadMyOrders();
 
         // Notification de succès
+        toast.success("Commande prise avec succès.");
       } else {
-        const errorData = await response.json();
+        await response.json();
       }
     } catch (error) {
       toast.error(
@@ -341,26 +351,19 @@ export default function HomePage() {
         .addTo(map)
         .bindPopup("<b>Votre position actuelle</b>");
 
-      // Recentrer la carte sur la position actuelle seulement au premier chargement
-      // ou lors d'une mise à jour explicite via le bouton
-      if (!mapInstanceRef.current.userInitialView && !selectedCommande) {
+      // Correction de la vérification et de la mise à jour de `userInitialView`
+      if (!hasUserInitialView && !selectedCommande) {
         map.setView(currentLocation, 14); // Zoom un peu plus proche
-        mapInstanceRef.current.userInitialView = true;
+        setHasUserInitialView(true); // Marquer comme recentré
       }
     }
 
-    // Ajouter les marqueurs des restaurants
+    // Ajouter les marqueurs des restaurants et tracer les itinéraires
     if (restaurateurs?.length > 0 && commandes?.length > 0) {
-      // Filtre les restaurants qui ont des commandes associées
-      const restaurantsWithOrders = restaurateurs.filter((resto) =>
-        commandes.some((cmd) => cmd.restaurantId === resto._id)
-      );
-
-      // Pour stocker les limites de la carte (quels restaurants afficher)
+      // Correction de l'appel à `L.latLngBounds` pour éviter les erreurs de type
       const bounds = currentLocation
-        ? L.latLngBounds([currentLocation])
-        : L.latLngBounds();
-      let selectedRestaurant = null;
+        ? L.latLngBounds([currentLocation]) // Utilisation correcte de `currentLocation`
+        : L.latLngBounds([[48.8566, 2.3522]]); // Valeur par défaut (Paris)
 
       restaurateurs.forEach((resto) => {
         if (
@@ -368,23 +371,8 @@ export default function HomePage() {
           Array.isArray(resto.position) &&
           resto.position.length === 2
         ) {
-          // Vérifier si ce restaurant est associé à la commande sélectionnée
-          const isSelectedRestaurant =
-            selectedCommande &&
-            commandes.some(
-              (cmd) =>
-                cmd._id === selectedCommande && cmd.restaurantId === resto._id
-            );
-
-          if (isSelectedRestaurant) {
-            selectedRestaurant = resto;
-          }
-
-          // Toujours afficher tous les restaurants sur la carte
-          const marker = L.marker(resto.position as [number, number], {
+          L.marker(resto.position as [number, number], {
             icon: RestaurantIcon,
-            // Mettre en évidence le restaurant sélectionné avec un zIndex plus élevé
-            zIndexOffset: isSelectedRestaurant ? 500 : 0,
           }).addTo(map).bindPopup(`
             <div>
               <h3 style="font-weight: bold; font-size: 16px;">${resto.restaurantName}</h3>
@@ -393,82 +381,133 @@ export default function HomePage() {
             </div>
           `);
 
-          // Si ce restaurant est sélectionné, ouvrir automatiquement le popup
-          if (isSelectedRestaurant) {
-            marker.openPopup();
-          }
-
-          // N'ajouter à la délimitation que si aucune commande n'est sélectionnée
-          // ou si c'est le restaurant de la commande sélectionnée
-          if (!selectedCommande || isSelectedRestaurant) {
-            bounds.extend(resto.position);
-          }
+          bounds.extend(resto.position);
         }
       });
 
-      // Tracer un chemin UNIQUEMENT pour le restaurant sélectionné
-      if (currentLocation && selectedCommande && selectedRestaurant) {
-        // Fetch route from current location to selected restaurant
-        fetch(
-          `https://routing.openstreetmap.de/routed-car/route/v1/driving/${currentLocation[1]},${currentLocation[0]};${selectedRestaurant.position[1]},${selectedRestaurant.position[0]}?overview=full&geometries=geojson`
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.routes && data.routes.length > 0) {
-              // Extract the coordinates from the route
-              const routeCoordinates = data.routes[0].geometry.coordinates.map(
-                (coord: [number, number]) => [coord[1], coord[0]] // Convert [lng, lat] to [lat, lng] for Leaflet
-              );
+      // Tracer un itinéraire complet si une commande est sélectionnée
+      if (currentLocation && selectedCommande) {
+        const selectedOrder = commandes.find(
+          (cmd) => cmd._id === selectedCommande
+        );
+        const selectedRestaurant = restaurateurs.find(
+          (resto) => resto._id === selectedOrder?.restaurantId
+        );
+        const selectedClient = clients.find(
+          (client) =>
+            client.clientId_Zitadel === selectedOrder?.clientId_Zitadel
+        );
 
-              // Create the animated path with the actual route
-              const antPath = (L as any).polyline
-                .antPath(routeCoordinates, {
-                  delay: 800,
-                  dashArray: [10, 20],
-                  weight: 5, // Un peu plus épais pour être plus visible
-                  color: "#0275d8",
-                  pulseColor: "#2A93EE",
-                  paused: false,
-                  reverse: false,
-                  hardwareAccelerated: true,
-                })
-                .addTo(map);
+        if (selectedRestaurant && selectedClient) {
+          // Valider les coordonnées avant de construire l'URL
+          const isValidCoordinate = (coord: [number, number]) =>
+            Array.isArray(coord) &&
+            coord.length === 2 &&
+            typeof coord[0] === "number" &&
+            typeof coord[1] === "number";
 
-              antPathsRef.current.push(antPath);
+          if (
+            isValidCoordinate(currentLocation) &&
+            isValidCoordinate(selectedRestaurant.position)
+          ) {
+            // Convertir l'adresse du client en coordonnées si nécessaire
+            const getClientCoordinates = async () => {
+              if (isValidCoordinate(selectedClient.address as any)) {
+                return selectedClient.address as unknown as [number, number];
+              } else {
+                return await geocodeAddress(selectedClient.address);
+              }
+            };
 
-              // Ajuster la vue pour montrer tout l'itinéraire
-              const routeBounds = L.latLngBounds(routeCoordinates);
-              map.fitBounds(routeBounds, { padding: [50, 50] });
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching route:", error);
+            getClientCoordinates().then((clientCoordinates) => {
+              if (clientCoordinates) {
+                const routeUrl = `https://routing.openstreetmap.de/routed-car/route/v1/driving/${currentLocation[1]},${currentLocation[0]};${selectedRestaurant.position[1]},${selectedRestaurant.position[0]};${clientCoordinates[1]},${clientCoordinates[0]}`;
 
-            // Fallback to direct line if route fetching fails
-            const antPath = (L as any).polyline
-              .antPath([currentLocation, selectedRestaurant.position], {
-                delay: 800,
-                dashArray: [10, 20],
-                weight: 5,
-                color: "#0275d8",
-                pulseColor: "#2A93EE",
-                paused: false,
-                reverse: false,
-                hardwareAccelerated: true,
-              })
-              .addTo(map);
+                fetch(`${routeUrl}?overview=full&geometries=geojson`)
+                  .then((response) => {
+                    if (!response.ok) {
+                      throw new Error(`Erreur API: ${response.status}`);
+                    }
+                    return response.json();
+                  })
+                  .then((data) => {
+                    if (data.routes && data.routes.length > 0) {
+                      const route = data.routes[0];
+                      const routeCoordinates = route.geometry.coordinates.map(
+                        (coord: [number, number]) => [coord[1], coord[0]]
+                      );
 
-            antPathsRef.current.push(antPath);
+                      // Ajouter le chemin animé
+                      const antPath = (L as any).polyline
+                        .antPath(routeCoordinates, {
+                          delay: 800,
+                          dashArray: [10, 20],
+                          weight: 5,
+                          color: "#0275d8",
+                          pulseColor: "#2A93EE",
+                          paused: false,
+                          reverse: false,
+                          hardwareAccelerated: true,
+                        })
+                        .addTo(map);
 
-            // Ajuster la vue pour montrer le trajet direct
-            map.fitBounds([currentLocation, selectedRestaurant.position], {
-              padding: [50, 50],
+                      antPathsRef.current.push(antPath);
+
+                      // Ajouter un marqueur pour le client
+                      L.marker(clientCoordinates, {
+                        icon: ClientIcon,
+                      })
+                        .addTo(map)
+                        .bindPopup(
+                          `<b>${selectedClient.name}</b><br>${selectedClient.address}`
+                        );
+
+                      // Ajouter un marqueur animé qui suit le chemin
+                      const animatedMarker = L.marker(routeCoordinates[0], {
+                        icon: DeliveryIcon,
+                      }).addTo(map);
+
+                      let index = 0;
+                      const interval = setInterval(() => {
+                        if (index < routeCoordinates.length) {
+                          animatedMarker.setLatLng(routeCoordinates[index]);
+                          index++;
+                        } else {
+                          clearInterval(interval);
+                        }
+                      }, 10); // Ajuster la vitesse en modifiant l'intervalle (en millisecondes)
+
+                      const routeBounds = L.latLngBounds(routeCoordinates);
+                      map.fitBounds(routeBounds, { padding: [50, 50] });
+
+                      // Afficher un toast avec la distance totale
+                      const distanceInKm = (route.distance / 1000).toFixed(2); // Convertir en kilomètres
+                      toast.info(
+                        `Distance totale de l'itinéraire : ${distanceInKm} km`
+                      );
+                    }
+                  })
+                  .catch((error) => {
+                    console.error(
+                      "Erreur lors de la récupération de l'itinéraire:",
+                      error
+                    );
+                    toast.error(
+                      "Impossible de récupérer l'itinéraire. Veuillez réessayer."
+                    );
+                  });
+              } else {
+                console.error(
+                  "Impossible de convertir l'adresse du client en coordonnées."
+                );
+                toast.error("Adresse du client invalide.");
+              }
             });
-          });
-      }
-      // Si aucune commande n'est sélectionnée, ajuster la vue pour montrer tous les restaurants
-      else if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [50, 50] });
+          } else {
+            console.error("Coordonnées invalides pour le routage.");
+            toast.error("Coordonnées invalides pour le routage.");
+          }
+        }
       }
     }
   }, [currentLocation, restaurateurs, commandes, selectedCommande]);
@@ -483,20 +522,20 @@ export default function HomePage() {
     }
   };
 
-  useEffect (() => {loadMyOrders()}, [myCommandes]);
+  useEffect(() => {
+    loadMyOrders();
+  }, [myCommandes]);
 
   // Rafraîchir la position actuelle
   const refreshCurrentLocation = () => {
     getCurrentLocation();
-    // Reset le flag pour permettre le recentrage automatique
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.userInitialView = false;
-    }
+    // Réinitialiser l'état pour permettre un nouveau recentrage
+    setHasUserInitialView(false);
   };
 
   // Fonction pour ouvrir la modal de scan QR
   const handleOpenQRScanner = () => {
-    let root = null; // Pour stocker la référence au root React
+    let root: any; // Pour stocker la référence au root React
 
     Swal.fire({
       title: "Scanner un QR Code",
@@ -548,7 +587,7 @@ export default function HomePage() {
         return;
       }
 
-      await axios.put(`http://localhost:8080/api/commandes/${commandeId}`, {
+      await axios.put(`https://localhost/api/commandes/${commandeId}`, {
         status: "Livrée",
       });
       toast.success("Commande marquée comme livrée avec succès!");
@@ -577,43 +616,48 @@ export default function HomePage() {
       }
 
       const zitadelId = auth.user.profile.sub;
-      
+
       // Données du livreur à créer/mettre à jour
       const livreurData = {
-        name: auth.user.profile.given_name + " " + auth.user.profile.family_name,
+        name:
+          auth.user.profile.given_name + " " + auth.user.profile.family_name,
         email: auth.user.profile.email,
         phone: "À renseigner", // Valeur par défaut
         address: "À renseigner", // Valeur par défaut
         vehicleType: "Vélo", // Valeur par défaut (corrigé: vehicleType au lieu de vehiculeType)
         livreurId_Zitadel: zitadelId,
-        isAvailable: true
+        isAvailable: true,
       };
 
       // Vérifier d'abord si le livreur existe
       try {
         const checkResponse = await axios.get(
-          `http://localhost:8080/api/livreurs/byZitadelId/${zitadelId}`,
+          `https://localhost/api/livreurs/byZitadelId/${zitadelId}`,
           {
             headers: {
               Accept: "application/json",
             },
           }
         );
-        
+
         // Le livreur existe, on récupère ses données actuelles
-        
+
         // Mettre à jour le livreur (en conservant certaines données existantes)
         const updatedData = {
           ...livreurData,
           phone: checkResponse.data.phone || livreurData.phone,
           address: checkResponse.data.address || livreurData.address,
-          vehicleType: checkResponse.data.vehicleType || livreurData.vehicleType, // Corriger ici aussi
+          vehicleType:
+            checkResponse.data.vehicleType || livreurData.vehicleType, // Corriger ici aussi
 
-          isAvailable: checkResponse.data.isAvailable !== undefined ? checkResponse.data.isAvailable : livreurData.isAvailable
+          isAvailable:
+            checkResponse.data.isAvailable !== undefined
+              ? checkResponse.data.isAvailable
+              : livreurData.isAvailable,
         };
-        
-        const updateResponse = await axios.put(
-          `http://localhost:8080/api/livreurs/byZitadelId/${zitadelId}`,
+
+        await axios.put(
+          `https://localhost/api/livreurs/byZitadelId/${zitadelId}`,
           updatedData,
           {
             headers: {
@@ -622,21 +666,19 @@ export default function HomePage() {
             },
           }
         );
-        
       } catch (checkError: any) {
         // Si le livreur n'existe pas (erreur 404), on le crée
         if (checkError.response && checkError.response.status === 404) {
-          console.log("Livreur non trouvé, création d'un nouveau livreur:", livreurData);
-          const createResponse = await axios.post(
-            `http://localhost:8080/api/livreurs`,
-            livreurData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-            }
+          console.log(
+            "Livreur non trouvé, création d'un nouveau livreur:",
+            livreurData
           );
+          await axios.post(`https://localhost/api/livreurs`, livreurData, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          });
         } else {
           // Une autre erreur s'est produite lors de la vérification
           throw checkError;
@@ -650,11 +692,6 @@ export default function HomePage() {
     }
   };
 
-  // Fonction pour générer un code livreur unique
-  const generateCodeLivreur = () => {
-    return 'L' + Math.random().toString(36).substring(2, 8).toUpperCase();
-  };
-
   // Ajoutez cet useEffect pour appeler la fonction au chargement
   useEffect(() => {
     if (auth.isAuthenticated && auth.user) {
@@ -662,25 +699,62 @@ export default function HomePage() {
     }
   }, [auth.isAuthenticated, auth.user]);
 
+  // Fonction pour convertir une adresse en coordonnées
+  const geocodeAddress = async (
+    address: string
+  ): Promise<[number, number] | null> => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+          address
+        )}&format=json&limit=1`
+      );
+      const data = await response.json();
+      if (data.length > 0) {
+        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      }
+      return null;
+    } catch (error) {
+      console.error(
+        "Erreur lors de la conversion de l'adresse en coordonnées:",
+        error
+      );
+      return null;
+    }
+  };
+
+  // Fonction pour masquer ou réafficher une commande
+  const toggleHideCommande = (commandeId: string) => {
+    if (hiddenCommandes.includes(commandeId)) {
+      // Si la commande est déjà masquée, la réafficher
+      setHiddenCommandes(hiddenCommandes.filter((id) => id !== commandeId));
+    } else {
+      // Sinon, la masquer
+      setHiddenCommandes([...hiddenCommandes, commandeId]);
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center p-4">
-      <div className="bg-secondary flex justify-between w-full p-4 my-3 items-center rounded-xl">
-        <h1 className="text-xl font-bold">Livraisons disponibles</h1>
+    <div className="flex flex-col items-center p-6 bg-primary min-h-screen">
+      <div className="bg-tertiary flex justify-between w-full p-6 my-4 items-center rounded-xl shadow-md">
+        <h1 className="text-2xl font-bold text-gray-800">
+          Livraisons disponibles
+        </h1>
       </div>
 
-      <div className="w-full pt-4 rounded-b-xl">
+      <div className="w-full pt-6 rounded-b-xl">
         {/* Carte interactive */}
-        <div className="relative mb-4 flex flex-col items-center"></div>
+        <div className="relative mb-6 flex flex-col items-center"></div>
         <div
           ref={mapRef}
-          className="w-full h-64 rounded-lg shadow-inner border shadow-md border-gray-200"
-          style={{ height: "300px" }}
+          className="w-full h-72 z-1 rounded-lg shadow-lg border border-gray-300"
+          style={{ height: "350px" }}
         ></div>
 
         {/* Bouton pour rafraîchir la position */}
         <button
           onClick={refreshCurrentLocation}
-          className="flex items-center justify-between right-2 bg-white mt-2 p-2 px-4 rounded-2xl shadow-md hover:bg-gray-100"
+          className="flex items-center justify-between bg-blue-500 text-white mt-4 p-3 px-5 rounded-full shadow-md hover:bg-blue-600 transition-all"
           title="Actualiser ma position"
         >
           Actualiser ma position
@@ -689,7 +763,7 @@ export default function HomePage() {
 
         {/* Message d'erreur de localisation */}
         {locationError && (
-          <div className="mt-2 p-2 bg-red-100 text-red-700 rounded-md text-sm">
+          <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md text-sm shadow-sm">
             {locationError}
           </div>
         )}
@@ -697,17 +771,18 @@ export default function HomePage() {
 
       {/* Commandes que j'ai prises */}
       {myCommandes.length > 0 && (
-        <div className="w-full mt-8 mb-6">
-          <h2 className="text-xl font-semibold mb-4 text-green-700 flex items-center">
-            <span className="mr-2">🚚</span> Mes livraisons en cours{" "}
-            <span className="text-black bg-white rounded-md shadow-lg px-2 py-1 ml-4">
-              {" "+livreurs.find(
-                (l) => l.livreurId_Zitadel === auth.user?.profile.sub
-              )?.codeLivreur}
+        <div className="w-full mt-10 mb-8">
+          <h2 className="text-2xl font-semibold mb-6 text-green-700 flex items-center">
+            <span className="mr-3">🚚</span> Mes livraisons en cours{" "}
+            <span className="text-black bg-white rounded-md shadow-lg px-3 py-1 ml-4">
+              {" " +
+                livreurs.find(
+                  (l) => l.livreurId_Zitadel === auth.user?.profile.sub
+                )?.codeLivreur}
             </span>
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {myCommandes.map((commande) => {
               const restaurant = restaurateurs.find(
                 (r) => r._id === commande.restaurantId
@@ -720,23 +795,23 @@ export default function HomePage() {
                 <Link
                   to={`/livreur/`}
                   key={commande._id}
-                  className="bg-green-50 border border-green-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-all"
+                  className="bg-green-50 border border-green-200 rounded-lg shadow-md p-5 hover:shadow-lg transition-all"
                 >
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm font-medium px-3 py-1 rounded-full bg-blue-100 text-blue-800">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-sm font-medium px-4 py-2 rounded-full bg-blue-100 text-blue-800">
                       En livraison
                     </span>
 
                     <div className="flex items-center text-gray-500 text-sm">
-                      <FaHashtag className="mr-1" />
+                      <FaHashtag className="mr-2" />
                       <span>
                         {commande._id.substring(commande._id.length - 6)}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-start mb-3">
-                    <FaStore className="text-gray-500 mt-1 mr-2" />
+                  <div className="flex items-start mb-4">
+                    <FaStore className="text-gray-500 mt-1 mr-3" />
                     <div>
                       <h3 className="font-semibold text-gray-800">
                         {restaurant?.restaurantName || "Restaurant inconnu"}
@@ -745,7 +820,7 @@ export default function HomePage() {
                   </div>
 
                   <div className="flex items-start">
-                    <FaUser className="text-gray-500 mt-1 mr-2" />
+                    <FaUser className="text-gray-500 mt-1 mr-3" />
                     <div>
                       <h3 className="font-semibold text-gray-800">
                         {client?.name || "Client inconnu"}
@@ -759,28 +834,32 @@ export default function HomePage() {
 
           <button
             onClick={handleOpenQRScanner}
-            className="flex justify-center items-center bg-blue-500 text-white px-3 my-2 py-2 rounded-lg hover:bg-blue-600 w-auto"
+            className="flex justify-center items-center bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600 shadow-md mt-6"
           >
-            <FaQrcode className="text-lg mr-2" />
+            <FaQrcode className="text-lg mr-3" />
             <span>Scanner</span>
           </button>
         </div>
       )}
 
       {/* Liste des commandes disponibles */}
-      <div className="w-full mt-6">
-        <h2 className="text-xl font-semibold mb-4">Commandes à livrer</h2>
+      <div className="w-full mt-8">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+          Commandes à livrer
+        </h2>
 
         {isLoading ? (
-          <div className="text-center py-4">Chargement des commandes...</div>
+          <div className="text-center py-6 text-gray-600">
+            Chargement des commandes...
+          </div>
         ) : commandes.length === 0 ? (
-          <div className="text-center py-4 bg-gray-50 rounded-lg shadow-sm">
+          <div className="text-center py-6 bg-gray-50 rounded-lg shadow-md text-gray-600">
             Aucune commande disponible pour le moment.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {commandes
-              .filter((cmd) => !hiddenCommandes.includes(cmd._id))
+              .filter((commande) => !hiddenCommandes.includes(commande._id)) // Filtrer les commandes masquées
               .map((commande) => {
                 const restaurant = restaurateurs.find(
                   (r) => r._id === commande.restaurantId
@@ -816,12 +895,24 @@ export default function HomePage() {
                     onSelect={handleSelectCommande}
                     onHide={(id, e) => {
                       e.stopPropagation();
-                      setHiddenCommandes([...hiddenCommandes, id]);
+                      toggleHideCommande(id);
                     }}
-                    onTake={handleTakeCommande}
+                    onTake={handleTakeCommande} // Utilisation correcte de `onTake`
                   />
                 );
               })}
+          </div>
+        )}
+
+        {/* Bouton pour réafficher toutes les commandes masquées */}
+        {hiddenCommandes.length > 0 && (
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => setHiddenCommandes([])} // Réinitialiser les commandes masquées
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
+            >
+              Réafficher toutes les commandes masquées
+            </button>
           </div>
         )}
       </div>

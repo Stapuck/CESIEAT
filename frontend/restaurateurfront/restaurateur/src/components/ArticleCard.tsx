@@ -27,7 +27,7 @@ const ArticleCard = ({ article, getArticles }: { article: IArticle; getArticles:
 
         if (result.isConfirmed) {
             try {
-                await axios.delete(`http://localhost:8080/api/articles/${id}`);
+                await axios.delete(`https://localhost/api/articles/${id}`);
                 toast.success("Article deleted successfully");
                 getArticles();
             } catch (error: any) {
