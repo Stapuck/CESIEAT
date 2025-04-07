@@ -23,7 +23,7 @@ const CreatePage = () => {
         try {
             setIsLoading(true)
             // const response = await axios.post(`${VITE_BACKEND_URL_PRODUCT}/api/products`, {name: name, quantity: quantity, price: price, image: image})
-            const response = await axios.post("https://cesieat.com/api/products", {name: name, quantity: quantity, price: price, image: image})
+            const response = await axios.post("https://localhost/api/products", {name: name, quantity: quantity, price: price, image: image})
            
             // alert(`Save ${response.data.name} successfully`);
             toast.success(`Save ${response.data.name} successfully`)

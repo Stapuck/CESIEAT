@@ -21,7 +21,7 @@ const ClientList: React.FC = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const response = await fetch('https://cesieat.com/api/clients');
+        const response = await fetch('https://localhost/api/clients');
         if (!response.ok) throw new Error('Failed to fetch clients');
         const data = await response.json();
         setClients(data); // Fetch all clients
@@ -35,7 +35,7 @@ const ClientList: React.FC = () => {
 
   const handleEditSubmit = async (updatedClient: Client) => {
     try {
-      const response = await fetch(`https://cesieat.com/api/clients/${updatedClient._id}`, {
+      const response = await fetch(`https://localhost/api/clients/${updatedClient._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedClient),
@@ -97,7 +97,7 @@ const ClientList: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        const response = await fetch(`https://cesieat.com/api/clients/${clientId}`, {
+        const response = await fetch(`https://localhost/api/clients/${clientId}`, {
           method: 'DELETE',
         });
         if (!response.ok) throw new Error('Failed to delete client');

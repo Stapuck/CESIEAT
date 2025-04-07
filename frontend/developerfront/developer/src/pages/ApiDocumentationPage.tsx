@@ -112,7 +112,7 @@ const ApiDocumentationPage = () => {
                   La version actuelle de l'API est <code>v1</code>. Toutes les requêtes doivent être adressées à:
                 </p>
                 <pre className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
-                  https://api.cesieat.com/v1/
+                  https://api.localhost/v1/
                 </pre>
                 <h3>Format des données</h3>
                 <p>
@@ -145,7 +145,7 @@ const ApiDocumentationPage = () => {
                 <pre className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
                   {`curl -H "Authorization: Bearer api_key_1a2b3c4d5e6f" \
      -H "Content-Type: application/json" \
-     https://api.cesieat.com/v1/components`}
+     https://api.localhost/v1/components`}
                 </pre>
                 <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4">
                   <div className="flex">
@@ -295,7 +295,7 @@ const ApiDocumentationPage = () => {
                 <h3>JavaScript (fetch)</h3>
                 <pre className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
                   {`// Récupérer la liste des composants
-fetch('https://api.cesieat.com/v1/components', {
+fetch('https://api.localhost/v1/components', {
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
     'Content-Type': 'application/json'
@@ -316,7 +316,7 @@ headers = {
 }
 
 # Récupérer la liste des composants
-response = requests.get('https://api.cesieat.com/v1/components', headers=headers)
+response = requests.get('https://api.localhost/v1/components', headers=headers)
 print(response.json())`}
                 </pre>
 
@@ -324,7 +324,7 @@ print(response.json())`}
                 <pre className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
                   {`<?php
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "https://api.cesieat.com/v1/components");
+curl_setopt($ch, CURLOPT_URL, "https://api.localhost/v1/components");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     'Authorization: Bearer YOUR_API_KEY',

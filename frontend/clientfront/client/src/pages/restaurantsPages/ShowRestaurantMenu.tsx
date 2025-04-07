@@ -115,7 +115,7 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
         setLoading(true);
 
         // Récupérer tous les menus
-        const response = await axios.get("https://cesieat.com/api/menus");
+        const response = await axios.get("https://localhost/api/menus");
 
         if (response.data && response.data.length > 0) {
           // Filtrer les menus par restaurant
@@ -157,7 +157,7 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
 
     try {
       const response = await axios.get(
-        `https://cesieat.com/api/articles/${id}`
+        `https://localhost/api/articles/${id}`
       );
       setArticles((prev) => ({
         ...prev,

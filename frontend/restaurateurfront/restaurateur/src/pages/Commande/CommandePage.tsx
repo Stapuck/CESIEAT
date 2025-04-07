@@ -40,7 +40,7 @@ const CommandesPage = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `https://cesieat.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://localhost/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
 
       if (Array.isArray(response.data) && response.data.length > 0) {
@@ -68,7 +68,7 @@ const CommandesPage = () => {
     queryFn: async (): Promise<Array<ICommande>> => {
       if (!restaurantmanager?._id) return []; // Évite une requête invalide
       const response = await fetch(
-        `https://cesieat.com/api/commandes/restaurateur/${restaurantmanager._id}`
+        `https://localhost/api/commandes/restaurateur/${restaurantmanager._id}`
       );
 
       return await response.json();
@@ -123,7 +123,7 @@ const CommandesPage = () => {
     );
 
     axios
-      .put(`https://cesieat.com/api/commandes/${commande._id}`, {
+      .put(`https://localhost/api/commandes/${commande._id}`, {
         status: "Préparation",
       })
       .catch((error) => console.log("Erreur de mise à jour:", error));
@@ -140,7 +140,7 @@ const CommandesPage = () => {
     );
 
     axios
-      .put(`https://cesieat.com/api/commandes/${commande._id}`, {
+      .put(`https://localhost/api/commandes/${commande._id}`, {
         status: "Prêt",
       })
       .catch((error) => console.log("Erreur de mise à jour:", error));
@@ -153,7 +153,7 @@ const CommandesPage = () => {
 
       // Récupération du livreur
       const response = await axios.get(
-        `https://cesieat.com/api/livreurs/codelivreur/${codeLivreur}`
+        `https://localhost/api/livreurs/codelivreur/${codeLivreur}`
       );
       const livreur = response.data;
 
@@ -173,7 +173,7 @@ const CommandesPage = () => {
       );
 
       // Mise à jour de la commande côté backend
-      await axios.put(`https://cesieat.com/api/commandes/${commande._id}`, {
+      await axios.put(`https://localhost/api/commandes/${commande._id}`, {
         status: "En livraison",
         livreur: livreur._id, // Ajout de l'ID du livreur
       });
@@ -202,7 +202,7 @@ const CommandesPage = () => {
       );
 
       axios
-        .put(`https://cesieat.com/api/commandes/${commande._id}`, {
+        .put(`https://localhost/api/commandes/${commande._id}`, {
           status: "Annulée",
         })
         .catch((error) => console.log("Erreur de mise à jour:", error));

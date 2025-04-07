@@ -32,7 +32,7 @@ const CreateMenu = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `https://cesieat.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://localhost/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
       if (response.data.length > 0) {
         setRestaurant(response.data[0]);
@@ -47,7 +47,7 @@ const CreateMenu = () => {
   const getArticlesByRestaurant = async () => {
     try {
       const response = await axios.get(
-        `https://cesieat.com/api/articles/restaurateur/${restaurant?._id}`
+        `https://localhost/api/articles/restaurateur/${restaurant?._id}`
       );
       setArticles(response.data);
     } catch (error) {
@@ -93,7 +93,7 @@ const CreateMenu = () => {
 
     try {
       setIsLoading(true);
-      await axios.post("https://cesieat.com/api/menus", {
+      await axios.post("https://localhost/api/menus", {
         name,
         price,
         articles: selectedArticles,

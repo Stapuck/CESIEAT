@@ -35,7 +35,7 @@ const EditMenu = () => {
       }
       
       const response = await axios.get(
-        `https://cesieat.com/api/articles/restaurateur/${restaurant._id}`
+        `https://localhost/api/articles/restaurateur/${restaurant._id}`
       );
 
       setArticles(response.data);
@@ -49,7 +49,7 @@ const EditMenu = () => {
       setIsLoading(true);
 
       const response = await axios.get(
-        `https://cesieat.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://localhost/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
       
       // S'assurer que nous récupérons le premier élément du tableau
@@ -67,7 +67,7 @@ const EditMenu = () => {
 
   const fetchMenu = async () => {
     try {
-      const response = await axios.get(`https://cesieat.com/api/menus/${id}`);
+      const response = await axios.get(`https://localhost/api/menus/${id}`);
       const menu = response.data;
       setName(menu.name);
       setPrice(menu.price);
@@ -112,7 +112,7 @@ const EditMenu = () => {
 
     try {
       setIsLoading(true);
-      await axios.put(`https://cesieat.com/api/menus/${id}`, {
+      await axios.put(`https://localhost/api/menus/${id}`, {
         name,
         price,
         articles: selectedArticles,

@@ -32,7 +32,7 @@ const Account = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `https://cesieat.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://localhost/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
       setRestaurant(response.data.length > 0 ? response.data[0] : null);
     } catch (error) {
@@ -50,7 +50,7 @@ const Account = () => {
     if (restaurant) {
       try {
         await axios.put(
-          `https://cesieat.com/api/restaurateurs/${restaurant._id}`,
+          `https://localhost/api/restaurateurs/${restaurant._id}`,
           restaurant
         );
         setIsEditing(false);
@@ -75,7 +75,7 @@ const Account = () => {
       if (restaurant) {
         try {
           await axios.delete(
-            `https://cesieat.com/api/restaurateurs/${restaurant._id}`
+            `https://localhost/api/restaurateurs/${restaurant._id}`
           );
         } catch (error: any) {
           // console.log(error);

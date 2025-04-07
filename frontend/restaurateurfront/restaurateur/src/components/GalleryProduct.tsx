@@ -13,7 +13,7 @@ function GalleryProduct() {
       try { 
         // console.log(VITE_BACKEND_URL);
         setIsLoading(true);
-        const response = await axios.get("https://cesieat.com/api/products");
+        const response = await axios.get("https://localhost/api/products");
         // const response = await axios.get(`${VITE_BACKEND_URL_PRODUCT}/api/products`);
         // console.log(response.data);
         setProducts(response.data);

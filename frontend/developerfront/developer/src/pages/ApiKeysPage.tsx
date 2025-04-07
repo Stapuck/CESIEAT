@@ -139,7 +139,7 @@ const ApiKeysPage = () => {
         <div className="prose max-w-none">
           <p>Utilisez votre clé API pour vous authentifier lors des appels à notre API. Voici un exemple:</p>
           <pre className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
-            {`curl -H "Authorization: Bearer YOUR_API_KEY" https://api.cesieat.com/v1/components`}
+            {`curl -H "Authorization: Bearer YOUR_API_KEY" https://api.localhost/v1/components`}
           </pre>
           <p className="mt-4">Pour plus d'informations, consultez notre <Link to="/developer/api-documentation" className="text-blue-600 hover:underline">documentation API</Link>.</p>
         </div>

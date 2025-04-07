@@ -161,7 +161,7 @@ export default function HomePage() {
   // Récupérer les commandes disponibles (seulement Préparation et Prêt)
   const getCommandes = async () => {
     try {
-      const response = await axios.get("https://cesieat.com/api/commandes");
+      const response = await axios.get("https://localhost/api/commandes");
       // Filtrer pour n'inclure que les statuts "Préparation" et "Prêt"
       const filteredCommandes = response.data.filter(
         (cmd: ICommande) =>
@@ -177,7 +177,7 @@ export default function HomePage() {
 
   const getClients = async () => {
     try {
-      const response = await axios.get("https://cesieat.com/api/clients");
+      const response = await axios.get("https://localhost/api/clients");
       setClients(response.data);
     } catch (error) {
       console.error("Erreur lors de la récupération des clients:", error);
@@ -186,7 +186,7 @@ export default function HomePage() {
 
   const getRestaurateurs = async () => {
     try {
-      const response = await axios.get("https://cesieat.com/api/restaurateurs");
+      const response = await axios.get("https://localhost/api/restaurateurs");
 
       setRestaurateur(response.data);
     } catch (error) {
@@ -196,7 +196,7 @@ export default function HomePage() {
 
   const getLivreus = async () => {
     try {
-      const response = await axios.get("https://cesieat.com/api/livreurs");
+      const response = await axios.get("https://localhost/api/livreurs");
       setLivreurs(response.data);
     } catch (error) {
       console.error("Erreur lors de la récupération des livreurs:", error);
@@ -209,7 +209,7 @@ export default function HomePage() {
 
     try {
       const response = await fetch(
-        `https://cesieat.com/api/commandes/livreur/${auth.user.profile.sub}`
+        `https://localhost/api/commandes/livreur/${auth.user.profile.sub}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -232,7 +232,7 @@ export default function HomePage() {
 
     try {
       const response = await fetch(
-        `https://cesieat.com/api/commandes/${commandeId}/${auth.user.profile.sub}/assign`,
+        `https://localhost/api/commandes/${commandeId}/${auth.user.profile.sub}/assign`,
         {
           method: "PUT",
           headers: {
@@ -587,7 +587,7 @@ export default function HomePage() {
         return;
       }
 
-      await axios.put(`https://cesieat.com/api/commandes/${commandeId}`, {
+      await axios.put(`https://localhost/api/commandes/${commandeId}`, {
         status: "Livrée",
       });
       toast.success("Commande marquée comme livrée avec succès!");
@@ -632,7 +632,7 @@ export default function HomePage() {
       // Vérifier d'abord si le livreur existe
       try {
         const checkResponse = await axios.get(
-          `https://cesieat.com/api/livreurs/byZitadelId/${zitadelId}`,
+          `https://localhost/api/livreurs/byZitadelId/${zitadelId}`,
           {
             headers: {
               Accept: "application/json",
@@ -657,7 +657,7 @@ export default function HomePage() {
         };
 
         await axios.put(
-          `https://cesieat.com/api/livreurs/byZitadelId/${zitadelId}`,
+          `https://localhost/api/livreurs/byZitadelId/${zitadelId}`,
           updatedData,
           {
             headers: {
@@ -673,7 +673,7 @@ export default function HomePage() {
             "Livreur non trouvé, création d'un nouveau livreur:",
             livreurData
           );
-          await axios.post(`https://cesieat.com/api/livreurs`, livreurData, {
+          await axios.post(`https://localhost/api/livreurs`, livreurData, {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",

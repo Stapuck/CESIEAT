@@ -46,7 +46,7 @@ const Hero = () => {
       try {
         // Try to fetch existing client data
         const response = await axios.get(
-          `https://cesieat.com/api/clients/byZitadelId/${zitadelId}`,
+          `https://localhost/api/clients/byZitadelId/${zitadelId}`,
           { headers: { Accept: "application/json" } }
         );
 
@@ -57,7 +57,7 @@ const Hero = () => {
 
         // Update the existing client
         await axios.put(
-          `https://cesieat.com/api/clients/byZitadelId/${zitadelId}`,
+          `https://localhost/api/clients/byZitadelId/${zitadelId}`,
           clientData,
           { headers: { "Content-Type": "application/json", Accept: "application/json" } }
         );
@@ -67,7 +67,7 @@ const Hero = () => {
         // Check if error is due to client not existing (404)
         if (error.response?.status === 404) {
           // Create new client
-          await axios.post("https://cesieat.com/api/clients", clientData, {
+          await axios.post("https://localhost/api/clients", clientData, {
             headers: { "Content-Type": "application/json", Accept: "application/json" }
           });
           console.log("New client created successfully");

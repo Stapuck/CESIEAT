@@ -104,7 +104,7 @@ const OrderHistory = () => {
   const fetchRestaurantDetails = async (restaurantId: string) => {
     try {
       const response = await axios.get(
-        `https://cesieat.com/api/restaurateurs/${restaurantId}`
+        `https://localhost/api/restaurateurs/${restaurantId}`
       );
       setRestaurants((prev) => ({ ...prev, [restaurantId]: response.data }));
     } catch (err) {
@@ -120,7 +120,7 @@ const OrderHistory = () => {
     if (!livreurId) return;
     try {
       const response = await axios.get(
-        `https://cesieat.com/api/livreurs/byZitadelId/${livreurId}`
+        `https://localhost/api/livreurs/byZitadelId/${livreurId}`
       );
       setLivreurs((prev) => ({ ...prev, [livreurId]: response.data }));
     } catch (err) {
@@ -142,7 +142,7 @@ const OrderHistory = () => {
 
       try {
         const response = await axios.get(
-          `https://cesieat.com/api/commandes/client/${clientId_Zitadel}`
+          `https://localhost/api/commandes/client/${clientId_Zitadel}`
         );
         const ordersData = response.data;
 
@@ -215,7 +215,7 @@ const OrderHistory = () => {
 
     try {
       // Update order status to "Annulée" using PUT instead of PATCH
-      await axios.put(`https://cesieat.com/api/commandes/${orderId}`, {
+      await axios.put(`https://localhost/api/commandes/${orderId}`, {
         status: "Annulée"
       });
 

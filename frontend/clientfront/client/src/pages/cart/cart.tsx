@@ -48,7 +48,7 @@ const ShoppingCart: React.FC = () => {
         uniqueRestaurantIds.map(async (id) => {
           try {
             const response = await axios.get(
-              `https://cesieat.com/api/restaurateurs/${id}`
+              `https://localhost/api/restaurateurs/${id}`
             );
             names[id] = response.data.restaurantName || "Inconnu";
           } catch (error) {

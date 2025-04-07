@@ -90,7 +90,7 @@ const Checkout: React.FC = () => {
           status: "En attente",
         };
 
-        await axios.post("https://cesieat.com/api/commandes", payload, {
+        await axios.post("https://localhost/api/commandes", payload, {
           headers: {
             "Content-Type": "application/json",
           },
