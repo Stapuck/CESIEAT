@@ -19,13 +19,6 @@ const PORT = Number(process.env.PORT) || 3005;
 
 import articleRoute from './routes/articleRoute.js';
 
-// CORS configuration
-// app.use('*', cors({
-//   origin: [FRONTEND1, FRONTEND2, FRONTEND3, FRONTEND4, FRONTEND5 ],
-//   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
-// }));
-
-
 app.use('*', cors({
   origin: '*', // Autoriser toutes les origines
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -34,9 +27,13 @@ app.use('*', cors({
 
 app.route('/api/articles', articleRoute);
 
-mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-.then( () => {
-  console.log('connected to mongodb')
+const ArticleDbConnection = mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/CesiEat_Article?retryWrites=true&w=majority', {
+});
+
+// mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+ArticleDbConnection.then( () => {
+  console.log('Connected to mongodb : CesiEat_Article database');
+
  
   serve({
     fetch: app.fetch,

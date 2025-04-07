@@ -52,6 +52,7 @@ const CurrentLocationIcon = L.icon({
 });
 
 interface ICommande {
+  _id: string;
   clientId_Zitadel: string;
   restaurantId: string;
   menuId: string;

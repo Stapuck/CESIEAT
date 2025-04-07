@@ -33,10 +33,11 @@ app.use('*', cors({
 
 app.route('/api/clients', clientRoute);
 
-// mongoose.connect(MONGO_URL)
-mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-.then( () => {
-  console.log('connected to mongodb')
+const ClientDbConnection = mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/CesiEat_Client?retryWrites=true&w=majority', {
+});
+
+ClientDbConnection.then( () => {
+  console.log('Connected to mongodb : CesiEat_Client database');
  
   serve({
     fetch: app.fetch,
