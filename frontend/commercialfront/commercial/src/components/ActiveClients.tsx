@@ -10,7 +10,7 @@ const ActiveClients: React.FC<{
 }> = ({ clients, selectedClients, setSelectedClients, handleBulkAction }) => {
   const fetchClientDetails = async (clientId: string): Promise<Client | null> => {
     try {
-      const response = await fetch(`http://localhost:8080/api/clients/${clientId}`);
+      const response = await fetch(`https://localhost/api/clients/${clientId}`);
       if (!response.ok) throw new Error('Failed to fetch client details');
       return await response.json();
     } catch {
@@ -92,7 +92,7 @@ const ActiveClients: React.FC<{
       }).then(async result => {
         if (result.isConfirmed) {
           try {
-            const response = await fetch(`http://localhost:8080/api/clients/${clientId}`, {
+            const response = await fetch(`https://localhost/api/clients/${clientId}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(result.value),

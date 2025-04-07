@@ -33,7 +33,7 @@ const ClientList: React.FC = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/clients');
+        const response = await fetch('https://localhost/api/clients');
         if (!response.ok) throw new Error('Failed to fetch clients');
         const data = await response.json();
         setClients(data);
@@ -73,19 +73,19 @@ const ClientList: React.FC = () => {
         const promises = selectedClients.map(clientId => {
           const client = clients.find(c => c._id === clientId);
           if (action === 'suspend') {
-            return fetch(`http://localhost:8080/api/clients/${clientId}`, {
+            return fetch(`https://localhost/api/clients/${clientId}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ ...client, isPaused: true }),
             });
           } else if (action === 'unsuspend') {
-            return fetch(`http://localhost:8080/api/clients/${clientId}`, {
+            return fetch(`https://localhost/api/clients/${clientId}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ ...client, isPaused: false }),
             });
           } else if (action === 'delete') {
-            return fetch(`http://localhost:8080/api/clients/${clientId}`, { method: 'DELETE' });
+            return fetch(`https://localhost/api/clients/${clientId}`, { method: 'DELETE' });
           }
         });
 

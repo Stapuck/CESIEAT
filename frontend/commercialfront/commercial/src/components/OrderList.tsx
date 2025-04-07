@@ -32,7 +32,7 @@ const OrderList: React.FC = () => {
   useEffect(() => {
     const fetchData = async (endpoint: string, setter: React.Dispatch<any>, errorSetter?: React.Dispatch<any>) => {
       try {
-        const response = await fetch(`http://localhost:8080/api/${endpoint}`);
+        const response = await fetch(`https://localhost/api/${endpoint}`);
         if (!response.ok) throw new Error(`Failed to fetch ${endpoint}`);
         const data = await response.json();
         setter(data);
@@ -77,7 +77,7 @@ const OrderList: React.FC = () => {
 
   const handleViewClientDetails = async (clientId: string) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/clients`);
+      const response = await fetch(`https://localhost/api/clients`);
       if (!response.ok) throw new Error('Failed to fetch client details');
       const clients = await response.json();
 
@@ -130,7 +130,7 @@ const OrderList: React.FC = () => {
 
   const handleViewLivreurDetails = async (livreurId: string) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/livreurs`);
+      const response = await fetch(`https://localhost/api/livreurs`);
       if (!response.ok) throw new Error('Failed to fetch livreur details');
       const livreurs = await response.json();
 
