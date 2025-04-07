@@ -60,7 +60,8 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
       }
       case 'week': {
         const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay());
+        const dayOfWeek = now.getDay() || 7; // Adjust for Sunday as the first day
+        startOfWeek.setDate(now.getDate() - dayOfWeek + 1); // Set to Monday
         startOfWeek.setHours(0, 0, 0, 0);
         return orderDate >= startOfWeek;
       }
@@ -78,7 +79,7 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
   const filteredRevenue = filteredOrders.reduce((acc, order) => acc + order.totalAmount, 0);
 
   return (
-    <div className="grid grid-cols-1 gap-6 p-6 bg-gray-100 rounded-lg">
+    <div className="grid grid-cols-1 gap-6 p-6">
       {/* Revenue Section */}
       <div className="p-6 bg-white shadow rounded-lg">
         <h2 className="text-lg font-semibold">Chiffre d'affaires total</h2>

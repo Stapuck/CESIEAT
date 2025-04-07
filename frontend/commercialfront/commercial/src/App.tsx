@@ -7,9 +7,9 @@ import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex bg-gray-50">
       {/* Left Side Navigation */}
-      <div className="w-1/4 bg-gray-800 text-white p-4">
+      <div className="w-1/6 bg-gray-800 text-white p-4">
         <h2 className="text-2xl font-bold mb-6">Portail Commercial</h2>
         <ul>
           <li>
