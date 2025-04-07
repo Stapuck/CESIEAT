@@ -1,0 +1,18 @@
+{
+  "name": "logService",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "hono": "^4.7.5",
+    "mongoose": "^8.13.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1"
+  }
+}
