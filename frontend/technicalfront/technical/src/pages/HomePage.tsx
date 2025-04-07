@@ -37,7 +37,9 @@ const HomePage = () => {
         setError(null);
       } catch (err) {
         console.error("Erreur lors de la récupération des composants:", err);
-        setError("Impossible de charger les composants. Veuillez réessayer plus tard.");
+        setError(
+          "Impossible de charger les composants. Veuillez réessayer plus tard."
+        );
       } finally {
         setLoading(false);
       }
@@ -55,12 +57,14 @@ const HomePage = () => {
       security: { bg: "bg-red-100", text: "text-red-800" },
       testing: { bg: "bg-yellow-100", text: "text-yellow-800" },
       utility: { bg: "bg-gray-100", text: "text-gray-800" },
-      other: { bg: "bg-indigo-100", text: "text-indigo-800" }
+      other: { bg: "bg-indigo-100", text: "text-indigo-800" },
     };
 
     const style = categories[category] || categories.other;
     return (
-      <span className={`${style.bg} ${style.text} text-xs px-2 py-0.5 rounded-full`}>
+      <span
+        className={`${style.bg} ${style.text} text-xs px-2 py-0.5 rounded-full`}
+      >
         {category}
       </span>
     );
@@ -147,7 +151,7 @@ const HomePage = () => {
           {error && (
             <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
               <p className="text-red-700">{error}</p>
-              <button 
+              <button
                 onClick={() => window.location.reload()}
                 className="mt-2 text-sm text-blue-600 hover:underline"
               >
@@ -158,10 +162,15 @@ const HomePage = () => {
 
           {!loading && !error && components.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-gray-500">Aucun composant disponible pour le moment.</p>
+              <p className="text-gray-500">
+                Aucun composant disponible pour le moment.
+              </p>
               <p className="text-sm mt-2">
                 Commencez par{" "}
-                <Link to="/technical/create-product" className="text-blue-600 hover:underline">
+                <Link
+                  to="/technical/create-product"
+                  className="text-blue-600 hover:underline"
+                >
                   créer votre premier composant
                 </Link>
               </p>
@@ -177,11 +186,16 @@ const HomePage = () => {
                 >
                   <div className="p-4">
                     <div className="flex justify-between items-start">
-                      <h3 className="font-semibold text-lg mb-1">{component.name || "Sans nom"}</h3>
-                      <span className="text-xs bg-gray-100 px-2 py-1 rounded">v{component.version || "1.0.0"}</span>
+                      <h3 className="font-semibold text-lg mb-1">
+                        {component.name || "Sans nom"}
+                      </h3>
+                      <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                        v{component.version || "1.0.0"}
+                      </span>
                     </div>
                     <div className="flex items-center mb-2">
-                      {component.category && getCategoryBadge(component.category)}
+                      {component.category &&
+                        getCategoryBadge(component.category)}
                       <span className="text-xs text-gray-500 ml-2">
                         Par {component.author || "Anonyme"}
                       </span>
@@ -219,10 +233,85 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Section Service Technique - reste du code inchangé */}
+      {/* Section Service Technique */}
       <div className="bg-yellow-50 border-l-4 border-yellow-600 rounded-lg shadow-md p-6 mb-8">
-        {/* Le contenu existant de cette section reste inchangé */}
-        {/* ... */}
+        <h2 className="text-xl font-bold mb-4 text-yellow-800">
+          Service Technique
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Gestion des composants */}
+          <div className="bg-white rounded-lg shadow p-4">
+            <h3 className="font-semibold mb-2 text-yellow-700">
+              Gestion des composants
+            </h3>
+            <div className="flex flex-col gap-2">
+              <Link
+                to="/technical/components/manage"
+                className="text-blue-600 hover:underline"
+              >
+                Gérer les composants
+              </Link>
+              <Link
+                to="/technical/components/add"
+                className="text-blue-600 hover:underline"
+              >
+                Ajouter un composant
+              </Link>
+              <Link
+                to="/technical/components/remove"
+                className="text-blue-600 hover:underline"
+              >
+                Supprimer des composants
+              </Link>
+            </div>
+          </div>
+
+          {/* Logs et statistiques */}
+          <div className="bg-white rounded-lg shadow p-4">
+            <h3 className="font-semibold mb-2 text-yellow-700">
+              Monitoring Docker
+            </h3>
+            <div className="flex flex-col gap-2">
+              <Link
+                to="https://cesieat.com:8081"
+                className="text-blue-600 hover:underline"
+              >
+                État des containers
+              </Link>
+            </div>
+          </div>
+
+          {/* Infrastructure */}
+          <div className="bg-white rounded-lg shadow p-4">
+            <h3 className="font-semibold mb-2 text-yellow-700">
+              Infrastructure
+            </h3>
+            <div className="flex flex-col gap-2">
+              <Link
+                to="/technical/routes"
+                className="text-blue-600 hover:underline"
+              >
+                Orchestration des routes
+              </Link>
+              <Link
+                to="/technical/deploy"
+                className="text-blue-600 hover:underline"
+              >
+                Déploiement de services
+              </Link>
+              <Link
+                to="/technical/notifications"
+                className="text-blue-600 hover:underline"
+              >
+                Centre de notifications{" "}
+                <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  3
+                </span>
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
