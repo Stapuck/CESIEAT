@@ -37,15 +37,17 @@ app.route('/api/components', componentRoute);
 // Route test pour vérifier que l'API fonctionne
 app.get('/', (c) => c.text('Component Service API is running'));
 
-// mongoose.connect(MONGO_URL)
-mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-.then( () => {
+
+const ComposantDbConnection = mongoose.connect('mongodb+srv://root:root@cluster0.zdnx3.mongodb.net/CesiEat_Composant?retryWrites=true&w=majority', {
+});
+
+ComposantDbConnection.then( () => {
   console.log('connected to mongodb')
  
   serve({
     fetch: app.fetch,
     port: PORT
   }, (info) => {
-    console.log(`Server Menu is running on http://localhost:${info.port}`)
+    console.log(`Server Component Service is running on http://localhost:${info.port}`)
   })
 })
