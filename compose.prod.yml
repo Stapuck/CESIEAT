@@ -1,0 +1,75 @@
+# Configuration pour la production
+version: '3.8'
+
+services:
+  # Client frontend (Prod)
+  client-frontend-prod:
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile.prod
+    container_name: clientFrontendProd
+    ports:
+      - "3080:80"
+    restart: unless-stopped
+    networks:
+      - app-network
+  
+  # Restaurant frontend (Prod)
+  restaurateur-frontend-prod:
+    build:
+      context: .
+      dockerfile: apps/restaurateur/Dockerfile.prod
+    container_name: restaurateurFrontendProd
+    ports:
+      - "3081:80"
+    restart: unless-stopped
+    networks:
+      - app-network
+  
+  # Livreur frontend (Prod)
+  livreur-frontend-prod:
+    build:
+      context: .
+      dockerfile: apps/livreur/Dockerfile.prod
+    container_name: livreurFrontendProd
+    ports:
+      - "3082:80"
+    restart: unless-stopped
+    networks:
+      - app-network
+  
+  # Commercial frontend (Prod)
+  commercial-frontend-prod:
+    build:
+      context: .
+      dockerfile: apps/commercial/Dockerfile.prod
+    container_name: commercialFrontendProd
+    ports:
+      - "3083:80"
+    restart: unless-stopped
+    networks:
+      - app-network
+  
+  # Developer frontend (Prod)
+  developer-frontend-prod:
+    build:
+      context: .
+      dockerfile: apps/developer/Dockerfile.prod
+    container_name: developerFrontendProd
+    ports:
+      - "3084:80"
+    restart: unless-stopped
+    networks:
+      - app-network
+  
+  # Technical frontend (Prod)
+  technical-frontend-prod:
+    build:
+      context: .
+      dockerfile: apps/technical/Dockerfile.prod
+    container_name: technicalFrontendProd
+    ports:
+      - "3085:80"
+    restart: unless-stopped
+    networks:
+      - app-network

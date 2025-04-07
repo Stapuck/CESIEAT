@@ -1,0 +1,13 @@
+FROM node:18
+
+WORKDIR /app
+
+# Installer PNPM
+RUN npm install -g pnpm@10.7.1
+
+# Les dépendances seront montées en volume
+# Le code sera monté en volume
+
+EXPOSE 5173
+
+CMD ["sh", "-c", "cd apps/technical && pnpm run dev"]

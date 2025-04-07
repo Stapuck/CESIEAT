@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   nginx:
     image: nginx:latest
@@ -5,10 +7,10 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./websocket.conf:/etc/nginx/websocket.conf:ro
-      - ./certs:/etc/nginx/certs:ro # Montez les certificats SSL
+      - ./certs:/etc/nginx/certs:ro
     ports:
       - "8080:8080"
-      - "443:443" # Port HTTPS
+      - "443:443"
     restart: unless-stopped
     networks:
       - app-network
@@ -20,7 +22,7 @@ services:
       - menu-service
       - restaurateur-service
     extra_hosts:
-      - "cesieat.com:127.0.0.1" # Ajoute une entrée DNS pour cesieat.com
+      - "cesieat.com:127.0.0.1"
 
   dozzle:
     container_name: dozzle
@@ -33,17 +35,14 @@ services:
       - app-network
     restart: unless-stopped
 
-
-
-
   # Client frontend (Production)
   client-frontend-prod:
     build:
-      context: ./frontend/clientfront/client
-      dockerfile: Dockerfile.prod
+      context: .  # Utiliser la racine du monorepo comme contexte
+      dockerfile: apps/client/Dockerfile.prod  # Chemin vers le Dockerfile dans la nouvelle structure
     container_name: clientFrontendProd
     ports:
-      - "3080:80"  # Exposez le port 80 de nginx sur le port 3080 de l'hôte
+      - "3080:80"
     restart: unless-stopped
     networks:
       - app-network
@@ -51,55 +50,54 @@ services:
   # Restaurant frontend (Production)
   restaurateur-frontend-prod:
     build:
-      context: ./frontend/restaurateurfront/restaurateur
-      dockerfile: Dockerfile.prod
+      context: .  # Utiliser la racine du monorepo comme contexte
+      dockerfile: apps/restaurateur/Dockerfile.prod
     container_name: restaurateurFrontendProd
     ports:
-      - "3081:80"  # Exposez le port 80 de nginx sur le port 3081 de l'hôte
+      - "3081:80"
     restart: unless-stopped
     networks:
       - app-network
-
   
-  #Livreur frontend (Production)
+  # Livreur frontend (Production)
   livreur-frontend-prod:
     build:
-      context: ./frontend/livreurfront/livreur
-      dockerfile: Dockerfile.prod
+      context: .  # Utiliser la racine du monorepo comme contexte
+      dockerfile: apps/livreur/Dockerfile.prod
     container_name: livreurFrontendProd
     ports:
-      - "3082:80"  # Exposez le port 80 de nginx sur le port 3082 de l'hôte
+      - "3082:80"
     restart: unless-stopped
     networks:
       - app-network
   
-
-  # Commercial frontend (Vite project)
+  # Commercial frontend
   commercial-frontend:
     build:
-      context: ./frontend/commercialfront/commercial
-      dockerfile: Dockerfile
+      context: .  # Utiliser la racine du monorepo comme contexte
+      dockerfile: apps/commercial/Dockerfile
     container_name: commercialFrontend
     ports:
-      - "5178:5178" # Expose Vite default port for commercial frontend
+      - "5178:5178"
     environment:
-      - HOST=0.0.0.0 # Ensure external access
+      - HOST=0.0.0.0
       - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/commercial/
     volumes:
-      - ./frontend/commercialfront/commercial:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
+      - ./apps/commercial:/app/apps/commercial  # Adapter les volumes
+      - /app/node_modules
+      - /app/apps/commercial/node_modules  # Isoler les node_modules de l'app commercial
     networks:
       - app-network
     restart: unless-stopped
   
-# Developer frontend (Production)
+  # Developer frontend (Production)
   developer-frontend-prod:
     build:
-      context: ./frontend/developerfront/developer
-      dockerfile: Dockerfile.prod
+      context: .  # Utiliser la racine du monorepo comme contexte
+      dockerfile: apps/developer/Dockerfile.prod
     container_name: developerFrontendProd
     ports:
-      - "3084:80"  # Exposez le port 80 de nginx sur le port 3084 de l'hôte
+      - "3084:80"
     restart: unless-stopped
     networks:
       - app-network
@@ -107,20 +105,14 @@ services:
   # Technical frontend (Production)
   technical-frontend-prod:
     build:
-      context: ./frontend/technicalfront/technical
-      dockerfile: Dockerfile.prod
+      context: .  # Utiliser la racine du monorepo comme contexte
+      dockerfile: apps/technical/Dockerfile.prod
     container_name: technicalFrontendProd
     ports:
-      - "3085:80"  # Exposez le port 80 de nginx sur le port 3085 de l'hôte
+      - "3085:80"
     restart: unless-stopped
     networks:
       - app-network
-
-
-  # Commercial frontend (Vite project)
-
-
-
 
   # Article Service
   article-service:
@@ -131,7 +123,6 @@ services:
     ports:
       - "3005:3000"
     restart: unless-stopped
-
     networks:
       - app-network
 
@@ -154,7 +145,6 @@ services:
       dockerfile: Dockerfile
     container_name: commandeService
     restart: unless-stopped
-
     ports:
       - "3003:3000"
     networks:
@@ -167,7 +157,6 @@ services:
       dockerfile: Dockerfile
     container_name: livreurService
     restart: unless-stopped
-
     ports:
       - "3004:3000"
     networks:
@@ -180,7 +169,6 @@ services:
       dockerfile: Dockerfile
     container_name: menuService
     restart: unless-stopped
-
     ports:
       - "3006:3000"
     networks:
@@ -193,7 +181,6 @@ services:
       dockerfile: Dockerfile
     container_name: restaurateurService
     restart: unless-stopped
-
     ports:
       - "3001:3000"
     networks:
@@ -219,3 +206,4 @@ networks:
 
 volumes:
   component_uploads:
+  node_modules:
