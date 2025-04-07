@@ -74,23 +74,17 @@ services:
       - app-network
   
 
-  # Commercial frontend (Vite project)
-  commercial-frontend:
+  # Commercial frontend (Production)
+  commercial-frontend-prod:
     build:
       context: ./frontend/commercialfront/commercial
-      dockerfile: Dockerfile
-    container_name: commercialFrontend
+      dockerfile: Dockerfile.prod
+    container_name: commercialFrontendProd
     ports:
-      - "5178:5178" # Expose Vite default port for commercial frontend
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/commercial/
-    volumes:
-      - ./frontend/commercialfront/commercial:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
+      - "3083:80"  # Exposez le port 80 de nginx sur le port 3083 de l'hôte
+    restart: unless-stopped
     networks:
       - app-network
-    restart: unless-stopped
   
 # Developer frontend (Production)
   developer-frontend-prod:

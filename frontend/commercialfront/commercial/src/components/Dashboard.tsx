@@ -38,10 +38,6 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
 
   const totalRevenue = orders.reduce((acc, order) => acc + order.totalAmount, 0);
 
-  const transactionalRevenue = orders
-    .filter(order => ['Préparation', 'Prêt', 'En attente', 'En livraison'].includes(order.status))
-    .reduce((acc, order) => acc + order.totalAmount, 0);
-
   const filteredOrders = orders.filter(order => {
     const now = new Date();
     const orderDate = new Date(order.createdAt);

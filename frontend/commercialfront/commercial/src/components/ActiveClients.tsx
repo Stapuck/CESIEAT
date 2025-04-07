@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Swal from 'sweetalert2';
-import { Client } from './ClientList';
+
+interface Client {
+  _id: string;
+  name: string;
+  email: string;
+  address: string;
+  phone: string;
+  isPaused: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const ActiveClients: React.FC<{
   clients: Client[];

@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import ActiveClients from './ActiveClients';
 import SuspendedClients from './SuspendedClients';
 
-interface Client {
+export interface Client {
   _id: string;
   name: string;
   email: string;

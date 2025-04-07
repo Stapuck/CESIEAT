@@ -3,7 +3,45 @@ import ActiveOrders from '../components/ActiveOrders';
 import ArchivedOrders from '../components/ArchivedOrders';
 import Swal from 'sweetalert2';
 
+export interface Order {
+  _id: string;
+  clientId_Zitadel: string;
+  livreurId_Zitadel: string;
+  restaurantId: string;
+  menuId: string;
+  totalAmount: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Client {
+  _id: string;
+  clientId_Zitadel: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  isPaused: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Livreur {
+  _id: string;
+  livreurId_Zitadel: string;
+  name: string;
+  email: string;
+  phone: string;
+  vehicleType: string;
+  codeLivreur: string;
+  isAvailable: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface IRestaurateur {
+  _id: string;
   managerName: string;
   email: string;
   password: string;
@@ -13,21 +51,41 @@ interface IRestaurateur {
   name: string;
   position: [number, number];
   url: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Menu {
+  name: string;
+  price: number;
+  articles: Article[];
+  restaurateurId: string;
+  url_image: string;
+}
+
+interface Article extends Document {
+  name: string;
+  reference: string;
+  price: number;
+  url_image: string;
+  articleId: string;
+
 }
 
 const OrderList: React.FC = () => {
-  const [orders, setOrders] = useState([]);
-  const [clients, setClients] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [clients, setClients] = useState<Client[]>([]); // Corrected type to Client[]
   const [restaurants, setRestaurants] = useState<IRestaurateur[]>([]);
-  const [livreurs, setLivreurs] = useState([]);
-  const [menus, setMenus] = useState([]);
-  const [articles, setArticles] = useState([]); // Add state for articles
+  const [livreurs, setLivreurs] = useState<Livreur[]>([]);
+  const [menus, setMenus] = useState<Menu[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]); // Add state for articles
   const [error, setError] = useState<string | null>(null);
   const [showArchived, setShowArchived] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [itemsPerPage, setItemsPerPage] = useState<{ [key: string]: number }>({});
   const [currentPage, setCurrentPage] = useState<{ [key: string]: number }>({});
+  error && console.error('Error fetching data:', error);
 
   useEffect(() => {
     const fetchData = async (endpoint: string, setter: React.Dispatch<any>, errorSetter?: React.Dispatch<any>) => {
@@ -36,7 +94,7 @@ const OrderList: React.FC = () => {
         if (!response.ok) throw new Error(`Failed to fetch ${endpoint}`);
         const data = await response.json();
         setter(data);
-      } catch (err) {
+      } catch (err :any) {
         if (errorSetter) errorSetter(err.message);
       }
     };
@@ -165,7 +223,7 @@ const OrderList: React.FC = () => {
     const client = clients.find((c: any) => c.clientId_Zitadel === order.clientId_Zitadel); // Find the client by clientId_Zitadel
     const livreur = livreurs.find((l: any) => l.livreurId_Zitadel === order.livreurId_Zitadel); // Find the livreur by livreurId_Zitadel
     const articleNames = menu?.articles
-      ?.map((articleId: string) => {
+      ?.map((articleId: any) => { // Changé de string à any
         const article = articles.find((a: any) => a._id === articleId);
         return article ? article.name : 'Article introuvable';
       })
@@ -202,9 +260,9 @@ const OrderList: React.FC = () => {
   const filteredOrders = orders.filter(order => {
     const searchLower = searchTerm.toLowerCase();
     const result = (
-      getName(order.client, clients, 'name').toLowerCase().includes(searchLower) ||
-      getName(order.restaurant, restaurants, 'restaurantName').toLowerCase().includes(searchLower) ||
-      (order.livreur && getName(order.livreur, livreurs, 'name').toLowerCase().includes(searchLower)) ||
+      getName(order.clientId_Zitadel, clients, 'name').toLowerCase().includes(searchLower) || // Remplacé order.client par order.clientId_Zitadel
+      getName(order.restaurantId, restaurants, 'restaurantName').toLowerCase().includes(searchLower) || // Remplacé order.restaurant par order.restaurantId
+      (order.livreurId_Zitadel && getName(order.livreurId_Zitadel, livreurs, 'name').toLowerCase().includes(searchLower)) || // Remplacé order.livreur par order.livreurId_Zitadel
       order._id.includes(searchLower)
     );
     return result;
@@ -237,21 +295,6 @@ const OrderList: React.FC = () => {
     }));
   };
 
-  const activeOrdersProps = statuses.map(status => {
-    const props = {
-      status,
-      orders: filteredStatusOrders(status),
-      getName,
-      clients,
-      restaurants,
-      livreurs,
-      handleViewLivreurDetails,
-      handleViewClientDetails,
-      handleViewRestaurantDetails,
-      handleViewOrderDetails, // Pass the new function
-    };
-    return props;
-  });
 
   const archivedOrdersProps = {
     orders: sortedOrders,
@@ -347,7 +390,9 @@ const OrderList: React.FC = () => {
       {statuses.every(status => filteredStatusOrders(status).length === 0) && (
         <p className="text-gray-500">Aucune commande en cours</p>
       )}
-      <ArchivedOrders {...archivedOrdersProps} />
+      <ArchivedOrders itemsPerPage={0} handleItemsPerPageChange={function (_value: number): void {
+        throw new Error('Function not implemented.');
+      } } {...archivedOrdersProps} />
     </>
   );
 };
