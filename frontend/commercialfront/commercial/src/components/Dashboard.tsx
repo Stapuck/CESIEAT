@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { Order, Client, Livreur } from './OrderList';
+import { Client, Livreur } from './OrderList';
+
+interface Order {
+  _id: string;
+  clientId_Zitadel: string;
+  livreurId_Zitadel: string;
+  restaurantId: string;
+  menuId: string;
+  totalAmount: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface DashboardProps {
   orders: Order[];
@@ -38,9 +50,18 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
         return now.getTime() - orderDate.getTime() <= 3600000;
       case 'day':
         return now.toDateString() === orderDate.toDateString();
+      case 'yesterday': {
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        yesterday.setHours(0, 0, 0, 0);
+        const endOfYesterday = new Date(yesterday);
+        endOfYesterday.setHours(23, 59, 59, 999);
+        return orderDate >= yesterday && orderDate <= endOfYesterday;
+      }
       case 'week': {
         const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay());
+        const dayOfWeek = now.getDay() || 7; // Adjust for Sunday as the first day
+        startOfWeek.setDate(now.getDate() - dayOfWeek + 1); // Set to Monday
         startOfWeek.setHours(0, 0, 0, 0);
         return orderDate >= startOfWeek;
       }
@@ -58,7 +79,7 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
   const filteredRevenue = filteredOrders.reduce((acc, order) => acc + order.totalAmount, 0);
 
   return (
-    <div className="grid grid-cols-1 gap-6 p-6 bg-gray-100 rounded-lg">
+    <div className="grid grid-cols-1 gap-6 p-6">
       {/* Revenue Section */}
       <div className="p-6 bg-white shadow rounded-lg">
         <h2 className="text-lg font-semibold">Chiffre d'affaires total</h2>
@@ -84,6 +105,7 @@ const Dashboard: React.FC<DashboardProps> = ({ orders, clients, livreurs }) => {
           </option>
           <option value="hour">Dernière heure</option>
           <option value="day">Aujourd'hui</option>
+          <option value="yesterday">Hier</option>
           <option value="week">Cette semaine</option>
           <option value="month">Ce mois</option>
           <option value="year">Cette année</option>
