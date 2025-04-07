@@ -160,3 +160,12 @@ BACKEND
 - type String
 - url(image) String
 - restaurantId 
+
+## local dev
+- menuService 3006
+- commandeService 3003
+- livreurService 3004
+- articleService 3005
+- restaurateurService 3001
+- componentService 3002
+- clientService 3000
