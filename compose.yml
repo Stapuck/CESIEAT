@@ -217,6 +217,21 @@ services:
     networks:
       - app-network
 
+  # Log Service
+  log-service:
+    build:
+      context: ./services/logService
+      dockerfile: Dockerfile
+    container_name: logService
+    restart: unless-stopped
+
+    ports:
+      - "3008:3000"
+    networks:
+      - app-network
+
+  
+
 networks:
   app-network:
     driver: bridge # Ensures proper communication between services
