@@ -4,6 +4,13 @@ import { useAuth } from "react-oidc-context";
 function Protected() {
     const auth = useAuth();
 
+    console.log("Auth State:", {
+        isLoading: auth.isLoading,
+        isAuthenticated: auth.isAuthenticated,
+        error: auth.error,
+        activeNavigator: auth.activeNavigator,
+    });
+
     switch (auth.activeNavigator) {
         case "signinSilent":
             return <div>Signing you in...</div>;
@@ -16,17 +23,17 @@ function Protected() {
     }
 
     if (auth.error) {
-        return <div>Oops an error occured caused {auth.error.message}</div>;
+        console.error("Authentication Error:", auth.error);
+        return <div>Oops, an error occurred: {auth.error.message}</div>;
     }
 
     if (auth.isAuthenticated) {
-        console.log(" 🟩 AUTH");
-        return <Outlet></Outlet>;
+        console.log("🟩 User is authenticated");
+        return <Outlet />;
     }
 
-    console.log("🤡 NOT AUTH");
-
-    return <Navigate to="/technical/tmplogin/" />;
+    console.warn("🤡 User is not authenticated, redirecting to login...");
+    return <Navigate to="/technical/login" />;
 }
 
 export default Protected;

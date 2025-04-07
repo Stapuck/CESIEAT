@@ -3,6 +3,9 @@ import axios from "axios";
 import QRCodeGenerator from "./QRCodeGenerator";
 import { useAuth } from "react-oidc-context";
 import Swal from "sweetalert2"; // Ajout de l'import SweetAlert2
+import LogoCart from "../../assets/icons/cart.svg";
+import LogoDelete from "../../assets/icons/minus.circle.svg";
+
 
 interface MenuItem {
   menuItem: string;
@@ -101,7 +104,7 @@ const OrderHistory = () => {
   const fetchRestaurantDetails = async (restaurantId: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/restaurateurs/${restaurantId}`
+        `https://cesieat.com/api/restaurateurs/${restaurantId}`
       );
       setRestaurants((prev) => ({ ...prev, [restaurantId]: response.data }));
     } catch (err) {
@@ -117,7 +120,7 @@ const OrderHistory = () => {
     if (!livreurId) return;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/livreurs/byZitadelId/${livreurId}`
+        `https://cesieat.com/api/livreurs/byZitadelId/${livreurId}`
       );
       setLivreurs((prev) => ({ ...prev, [livreurId]: response.data }));
     } catch (err) {
@@ -139,7 +142,7 @@ const OrderHistory = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/commandes/client/${clientId_Zitadel}`
+          `https://cesieat.com/api/commandes/client/${clientId_Zitadel}`
         );
         const ordersData = response.data;
 
@@ -181,7 +184,7 @@ const OrderHistory = () => {
       } catch (err) {
         console.error("Erreur lors de la récupération des commandes:", err);
         setError(
-          "Impossible de charger les commandes. Veuillez réessayer plus tard."
+          "Aucunne commande trouvée."
         );
         setLoading(false);
       }
@@ -211,7 +214,10 @@ const OrderHistory = () => {
     setCancelError(null);
 
     try {
-      await axios.delete(`http://localhost:8080/api/commandes/${orderId}`);
+      // Update order status to "Annulée" using PUT instead of PATCH
+      await axios.put(`https://cesieat.com/api/commandes/${orderId}`, {
+        status: "Annulée"
+      });
 
       // Mettre à jour la commande localement
       setOrders((prevOrders) =>
@@ -255,6 +261,7 @@ const OrderHistory = () => {
 
   return (
     <section className="bg-white rounded-lg shadow-md p-6 mb-8">
+      <img src={LogoCart} alt="Logo Compte" className="w-16 h-16 mb-4" />
       <h2 className="text-xl font-semibold text-gray-700 mb-4">
         Vos Commandes
       </h2>
@@ -340,7 +347,7 @@ const OrderHistory = () => {
                   </div>
                 )}
 
-                <div className="mt-3 flex justify-between items-center">
+                <div className="my-3 flex justify-between items-center">
                   {canCancelOrder(order.status) && (
                     <button
                       onClick={() => cancelOrder(order._id)}
@@ -348,9 +355,14 @@ const OrderHistory = () => {
                       className={`px-3 py-1 rounded text-sm font-medium ${
                         cancellingOrderId === order._id
                           ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-red-600 text-white hover:bg-red-700"
+                          : "bg-red-600 text-white hover:bg-red-700 shadow-md rounded-md hover:cursor-pointer transform hover:scale-105 transition-transform duration-200 ease-in-out"
                       }`}
                     >
+                      <img
+                        src={LogoDelete}
+                        alt="Logo Supprimer"
+                        className="w-4 h-4 inline-block mr-1 mb-1"
+                      />
                       {cancellingOrderId === order._id
                         ? "Annulation..."
                         : "Annuler la commande"}

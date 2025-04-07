@@ -5,39 +5,19 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "react-oidc-context";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import Hide from "../../assets/icons/chevron.up.svg";
+import Show from "../../assets/icons/chevron.down.svg";
 
-// interface ICommande {
-//   _id: string;
-//   client: string;
-//   restaurant: string;
-//   livreur?: string;
-//   menu: [];
-//   totalAmount: number;
-//   status: string;
-//   createdAt: string;
-// }
-
-interface ICommande  {
-  _id : string;
+interface ICommande {
+  _id: string;
   clientId_Zitadel: string;
   restaurantId: string;
   livreurId_Zitadel?: string;
   menuId: string;
   totalAmount: number;
   status: string;
-  createdAt : string;
-  updatedAt : string;
-}
-
-interface ILivreur {
-  _id: string;
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  vehicleType: string;
-  isAvailable: boolean;
-  codeLivreur: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface IRestaurateur {
@@ -53,7 +33,6 @@ interface IRestaurateur {
 }
 const CommandesPage = () => {
   const auth = useAuth();
-  const [restaurant, setRestaurant] = useState<IRestaurateur>();
   const [restaurantmanager, setRestaurantManager] =
     useState<IRestaurateur | null>(null);
 
@@ -61,7 +40,7 @@ const CommandesPage = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://cesieat.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
 
       if (Array.isArray(response.data) && response.data.length > 0) {
@@ -81,17 +60,17 @@ const CommandesPage = () => {
     getRestaurateurByManagerId();
   }, []);
 
-  const [intervalMs, setIntervalMs] = useState(3000);
+  const intervalMs = 3000; // Valeur fixe au lieu du state inutilisé
 
-  const { status, data, error, isFetching } = useQuery({
+  const { status, data, error } = useQuery({
     queryKey: ["todos", restaurantmanager?._id], // Ajout de l'ID comme dépendance
-    
+
     queryFn: async (): Promise<Array<ICommande>> => {
       if (!restaurantmanager?._id) return []; // Évite une requête invalide
       const response = await fetch(
-        `http://localhost:8080/api/commandes/restaurateur/${restaurantmanager._id}`
+        `https://cesieat.com/api/commandes/restaurateur/${restaurantmanager._id}`
       );
-      
+
       return await response.json();
     },
     enabled: !!restaurantmanager?._id, // Exécute la requête seulement si l'ID est défini
@@ -99,8 +78,7 @@ const CommandesPage = () => {
   });
 
   const [commandes, setCommandes] = useState<ICommande[]>([]);
-  const [livreur, setLivreur] = useState<ILivreur>();
-  const [idlivreur, setIdLivreur] = useState();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [showNouvellesCommandes, setShowNouvellesCommandes] = useState(true);
@@ -145,7 +123,7 @@ const CommandesPage = () => {
     );
 
     axios
-      .put(`http://localhost:8080/api/commandes/${commande._id}`, {
+      .put(`https://cesieat.com/api/commandes/${commande._id}`, {
         status: "Préparation",
       })
       .catch((error) => console.log("Erreur de mise à jour:", error));
@@ -162,7 +140,7 @@ const CommandesPage = () => {
     );
 
     axios
-      .put(`http://localhost:8080/api/commandes/${commande._id}`, {
+      .put(`https://cesieat.com/api/commandes/${commande._id}`, {
         status: "Prêt",
       })
       .catch((error) => console.log("Erreur de mise à jour:", error));
@@ -175,11 +153,9 @@ const CommandesPage = () => {
 
       // Récupération du livreur
       const response = await axios.get(
-        `http://localhost:8080/api/livreurs/codelivreur/${codeLivreur}`
+        `https://cesieat.com/api/livreurs/codelivreur/${codeLivreur}`
       );
       const livreur = response.data;
-      setLivreur(livreur);
-      setIdLivreur(livreur._id);
 
       if (!livreur || !livreur._id) {
         console.error("Livreur non trouvé");
@@ -197,7 +173,7 @@ const CommandesPage = () => {
       );
 
       // Mise à jour de la commande côté backend
-      await axios.put(`http://localhost:8080/api/commandes/${commande._id}`, {
+      await axios.put(`https://cesieat.com/api/commandes/${commande._id}`, {
         status: "En livraison",
         livreur: livreur._id, // Ajout de l'ID du livreur
       });
@@ -226,7 +202,7 @@ const CommandesPage = () => {
       );
 
       axios
-        .put(`http://localhost:8080/api/commandes/${commande._id}`, {
+        .put(`https://cesieat.com/api/commandes/${commande._id}`, {
           status: "Annulée",
         })
         .catch((error) => console.log("Erreur de mise à jour:", error));
@@ -234,7 +210,7 @@ const CommandesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-transparent-background mt-25 mx-3 p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
           Gestion des Commandes
@@ -256,7 +232,17 @@ const CommandesPage = () => {
                     setShowNouvellesCommandes(!showNouvellesCommandes)
                   }
                 >
-                  {showNouvellesCommandes ? "Masquer" : "Afficher"}
+                  {showNouvellesCommandes ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showNouvellesCommandes && (
@@ -294,7 +280,17 @@ const CommandesPage = () => {
                     setShowEnPreparationCommandes(!showEnPreparationCommandes)
                   }
                 >
-                  {showEnPreparationCommandes ? "Masquer" : "Afficher"}
+                  {showEnPreparationCommandes ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showEnPreparationCommandes && (
@@ -335,7 +331,17 @@ const CommandesPage = () => {
                     )
                   }
                 >
-                  {showEnAttenteDeRecupCommandes ? "Masquer" : "Afficher"}
+                  {showEnAttenteDeRecupCommandes ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showEnAttenteDeRecupCommandes && (
@@ -373,7 +379,17 @@ const CommandesPage = () => {
                     setShowEnLivraisonCommandes(!showEnLivraisonCommandes)
                   }
                 >
-                  {showEnLivraisonCommandes ? "Masquer" : "Afficher"}
+                  {showEnLivraisonCommandes ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showEnLivraisonCommandes && (
@@ -409,7 +425,17 @@ const CommandesPage = () => {
                   className="text-sm text-blue-500"
                   onClick={() => setShowLivreeCommande(!showLivreeCommande)}
                 >
-                  {showLivreeCommande ? "Masquer" : "Afficher"}
+                  {showLivreeCommande ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showLivreeCommande && (
@@ -445,7 +471,17 @@ const CommandesPage = () => {
                   className="text-sm text-blue-500"
                   onClick={() => setShowAnnuleeCommande(!showAnnuleeCommande)}
                 >
-                  {showLivreeCommande ? "Masquer" : "Afficher"}
+                  {showAnnuleeCommande ? (
+                    <>
+                      {" "}
+                      <img src={Hide} alt="Hide" className="w-4" />
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <img src={Show} alt="Show" className="w-4" />
+                    </>
+                  )}
                 </button>
               </div>
               {showLivreeCommande && (

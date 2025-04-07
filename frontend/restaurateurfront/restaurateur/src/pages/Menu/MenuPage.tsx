@@ -1,21 +1,24 @@
-import { Link } from "react-router-dom"
-import GalleryMenu from "../../components/GalleryMenu"
+import { Link } from "react-router-dom";
+import GalleryMenu from "../../components/GalleryMenu";
+import PlusIcon from "../../assets/icons/plus.app.svg";
 
 const MenuPage = () => {
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-800">
-          Gestion des Menus
-        </h1>
-      <div>
-      <Link to='/restaurateur/create-menu' className='inline-block mx-2 mt-4 shadow-md bg-blue-700 text-white rounded-sm px-4 py-2 font-bold hover:bg-blue-500 hover:cursor-pointer'> Create a new menu</Link>
+    <div className="mt-25 ml-5">
+      <h1 className="text-2xl font-bold text-gray-800">Gestion des Menus</h1>
+      <div className="">
+        <Link
+          to="/restaurateur/create-menu"
+          className="flex items-center bg-tertiary text-white hover:bg-white hover:text-tertiary font-bold py-2 px-4 w-50 rounded   transition duration-300 mt-5"
+        >
+          <img className="w-5 mr-2" src={PlusIcon} alt="PlusIcon"/>
+          Créer un menu
+        </Link>
       </div>
 
-      <GalleryMenu/>
+      <GalleryMenu />
+    </div>
+  );
+};
 
-      
-    </div> 
-  )
-}
-
-export default MenuPage
+export default MenuPage;

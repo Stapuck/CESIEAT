@@ -19,7 +19,7 @@ const EditPage = () => {
         setIsLoading(true);
         try {
         // const response = await axios.get(`${VITE_BACKEND_URL_PRODUCT}/api/products/${id}`);
-        const response = await axios.get(`http://localhost:8080/api/products/${id}`);
+        const response = await axios.get(`https://cesieat.com/api/products/${id}`);
         setProduct({
             name: response.data.name, 
             quantity: response.data.quantity, 
@@ -39,7 +39,7 @@ const EditPage = () => {
         setIsLoading(true)
         try {
             // await axios.put(`${VITE_BACKEND_URL_PRODUCT}/api/products/${id}`, product); 
-            await axios.put(`http://localhost:8080/api/products/${id}`, product); 
+            await axios.put(`https://cesieat.com/api/products/${id}`, product); 
             toast.success(`Update a product successfully`); 
             navigate('/'); 
 

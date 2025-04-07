@@ -28,7 +28,7 @@ function GalleryMenu() {
         try {
             setIsLoading(true);
             const response = await axios.get(
-                `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
+                `https://cesieat.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
             );
             if (response.data.length > 0) {
                 setRestaurant(response.data[0]);
@@ -44,7 +44,7 @@ function GalleryMenu() {
     const getMenusByRestaurateur = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`http://localhost:8080/api/menus/restaurateur/${restaurant?._id}`);
+            const response = await axios.get(`https://cesieat.com/api/menus/restaurateur/${restaurant?._id}`);
             setMenus(response.data);
             setIsLoading(false);
         } catch (error) {
@@ -67,7 +67,7 @@ function GalleryMenu() {
 
 
     return (
-        <div className='grid grid-cols-2 lg:grid-cols-4 mt-5'>
+        <div className='grid grid-cols-2 lg:grid-cols-4 mt-5 '>
             {isLoading ? ("Loading") : (
                 <>
                     {menus.length > 0 ? (

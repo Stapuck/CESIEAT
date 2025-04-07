@@ -4,10 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "react-oidc-context";
 
-
-
 interface IRestaurateur {
-  _id : string;
+  _id: string;
   position: [number, number];
   managerName: string;
   email: string;
@@ -35,7 +33,7 @@ const CreateArticle = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `http://localhost:8080/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://cesieat.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
       setRestaurant(response.data.length > 0 ? response.data[0] : null);
     } catch (error) {
@@ -48,19 +46,19 @@ const CreateArticle = () => {
   const saveArticle = async (e: any) => {
     e.preventDefault();
 
-    if (!name  || !type || !price || !image) {
+    if (!name || !type || !price || !image) {
       alert("Veuillez remplir tous les champs");
       return;
     }
 
     try {
       setIsLoading(true);
-        await axios.post("http://localhost:8080/api/articles", {
+      await axios.post("https://cesieat.com/api/articles", {
         name,
         type,
         price,
         isInStock,
-        url_image :image,
+        url_image: image,
         restaurantId: restaurant?._id,
         reference,
       });
@@ -79,7 +77,7 @@ const CreateArticle = () => {
   }, []);
 
   return (
-    <div className="max-w-lg bg-white shadow-lg mx-auto p-7 rounded mt-6">
+    <div className="max-w-lg bg-white shadow-lg mx-auto p-7 rounded mt-25">
       <h2 className="font-semibold text-2xl mb-4 text-center">
         Créer un nouvelle article
       </h2>
@@ -107,6 +105,9 @@ const CreateArticle = () => {
               <option value="boisson">Boisson</option>
               <option value="sauce">Sauce</option>
               <option value="accompagnement">Accompagnement</option>
+              <option value="dessert">Dessert</option>
+              <option value="snack">Snack</option>
+              <option value="autre">Autre</option>
             </select>
           </div>
           <div>
@@ -120,11 +121,11 @@ const CreateArticle = () => {
             />
           </div>
           <div>
-            <label>Reference</label>
+            <label>Réference</label>
             <input
               type="text"
               value={reference}
-              onChange={(e) => setReference((e.target.value))}
+              onChange={(e) => setReference(e.target.value)}
               className="w-full block border p-3 rounded"
               placeholder="Reference"
             />
@@ -148,6 +149,13 @@ const CreateArticle = () => {
               placeholder="URL de l'image"
             />
           </div>
+          <div>
+            <img
+              src={image}
+              alt="Image de l'article"
+              className="w-full block border rounded"
+            />
+          </div>
           <div className="hidden">
             <label>ID du restaurant</label>
             <input
@@ -161,13 +169,13 @@ const CreateArticle = () => {
           <div>
             {!isLoading && (
               <div>
-                <button className="block w-full mt-6 bg-blue-700 text-white rounded px-4 py-2 font-bold hover:bg-blue-600">
+                <button className="block w-full mt-6 bg-tertiary text-white rounded px-4 py-2 font-bold hover:bg-tertiary transform hover:scale-105 transition duration-300">
                   Enregistrer
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="block w-full mt-4 bg-gray-500 text-white rounded px-4 py-2 font-bold hover:bg-gray-600 text-center"
+                  className="block w-full mt-4 bg-gray-500 text-white rounded px-4 py-2 font-bold hover:bg-gray-600 text-center hover:scale-105 transform transition duration-300"
                 >
                   Retour
                 </button>

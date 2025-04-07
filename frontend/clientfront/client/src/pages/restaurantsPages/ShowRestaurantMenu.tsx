@@ -20,6 +20,7 @@ interface Menu {
   restaurateurId: string;
   createdAt: string;
   updatedAt: string;
+  url_image: string;
 }
 
 interface RestaurantState {
@@ -32,7 +33,7 @@ interface Article {
   _id: string;
   name: string;
   price: number;
-  image: string;
+  url_image: string;
   type?: string;
   isInStock?: boolean;
 }
@@ -114,7 +115,7 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
         setLoading(true);
 
         // Récupérer tous les menus
-        const response = await axios.get("http://localhost:8080/api/menus");
+        const response = await axios.get("https://cesieat.com/api/menus");
 
         if (response.data && response.data.length > 0) {
           // Filtrer les menus par restaurant
@@ -156,7 +157,7 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/articles/${id}`
+        `https://cesieat.com/api/articles/${id}`
       );
       setArticles((prev) => ({
         ...prev,
@@ -208,7 +209,7 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
         price: menu.price,
         quantity: 1,
         restaurantId: menu.restaurateurId,
-        image: articles[menu.articles[0]]?.image || "",
+        image: articles[menu.articles[0]]?.url_image || "",
       };
 
       addItemToCart(itemToAdd);
@@ -263,15 +264,25 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
           <h1 className="text-3xl font-bold mb-6">Nos menus</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {menus.map((menu) => (
-              <div
+              <motion.div
                 key={menu._id}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
-                <div className="p-4">
-                  <h2 className="text-xl font-semibold mb-3">{menu.name}</h2>
+                className="relative bg-transparent-background rounded-lg shadow-md overflow-hidden transform transition-transform hover:scale-105 hover:shadow-lg"
+                style={{
+                  backgroundImage: `url(${menu.url_image})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
 
-                  <div className="mb-4">
-                    <h3 className="font-medium mb-2">Contenu du menu:</h3>
+                }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                <div className="relative p-4">
+                  <h2 className="text-2xl font-bold text-black bg-transparent-background  mb-3">{menu.name}</h2>
+                  <div className="mb-4 bg-transparent-background p-6 rounded-lg shadow-md">
+                    <h3 className="font-medium underline mb-2">Contenu du menu:</h3>
                     <ul className="divide-y divide-gray-200">
                       {menu.articles && menu.articles.length > 0 ? (
                         menu.articles.map((articleId, index) => {
@@ -286,11 +297,11 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
                               className="py-2"
                             >
                               <div className="flex flex-col md:flex-row">
-                                {articleDetails?.image && (
+                                {articleDetails?.url_image && (
                                   <img
-                                    src={articleDetails.image}
+                                    src={articleDetails.url_image}
                                     alt={articleDetails.name || ""}
-                                    className="w-20 h-20 object-cover rounded mr-3 mb-2 md:mb-0"
+                                    className="w-20 h-20 object-cover rounded-lg mr-3 mb-2 md:mb-0"
                                   />
                                 )}
                                 <div>
@@ -300,7 +311,7 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
                                   <p className="text-sm text-gray-600">
                                     {articleDetails?.type || "Chargement..."}
                                   </p>
-                                  <p className="text-sm">
+                                  <p className={`text-sm ${articleDetails?.isInStock ? "text-green-600" : "text-red-600"}`}>
                                     {articleDetails?.isInStock
                                       ? "En stock"
                                       : "Rupture de stock"}
@@ -319,12 +330,12 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
                   </div>
 
                   <div className="flex justify-between items-center pt-3 border-t">
-                    <div>
-                      <p className="text-lg font-bold text-amber-600">
+                    <div className="flex items-center justify-center bg-transparent-background p-6 rounded-lg shadow-md"> 
+                      <span className="text-2xl font-bold text-center text-amber-600 mr-2">
                         {menu.price.toFixed(2)} €
-                      </p>
+                      </span>
+                      <i className="fas fa-utensils text-amber-500"></i>
                     </div>
-                    {/* Modifier la condition pour afficher le bouton */}
                     {(login === true || auth.isAuthenticated === true) && (
                       <button
                         onClick={() => handleAddToCart(menu)}
@@ -335,7 +346,7 @@ const ShowRestaurantMenu: React.FC<ShowRestaurantMenuProps> = (props) => {
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

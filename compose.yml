@@ -4,9 +4,11 @@ services:
     container_name: gateway
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./websocket.conf:/etc/nginx/websocket.conf:ro # Ajoutez cette ligne
+      - ./websocket.conf:/etc/nginx/websocket.conf:ro
+      - ./certs:/etc/nginx/certs:ro # Montez les certificats SSL
     ports:
       - "8080:8080"
+      - "443:443" # Port HTTPS
     restart: unless-stopped
     networks:
       - app-network
@@ -17,6 +19,8 @@ services:
       - livreur-service
       - menu-service
       - restaurateur-service
+    extra_hosts:
+      - "cesieat.com:127.0.0.1" # Ajoute une entrée DNS pour cesieat.com
 
   dozzle:
     container_name: dozzle
@@ -29,67 +33,46 @@ services:
       - app-network
     restart: unless-stopped
 
-  # Client frontend (Vite project)
-  client-frontend:
+
+
+
+  # Client frontend (Production)
+  client-frontend-prod:
     build:
       context: ./frontend/clientfront/client
-      dockerfile: Dockerfile
-    container_name: clientFrontend
+      dockerfile: Dockerfile.prod
+    container_name: clientFrontendProd
     ports:
-      - "5173:5173" # Expose Vite default port
+      - "3080:80"  # Exposez le port 80 de nginx sur le port 3080 de l'hôte
     restart: unless-stopped
-
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/client/
-    volumes:
-      - ./frontend/clientfront/client:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
     networks:
       - app-network
-    command: npm run dev # Run Vite in development mode
-    depends_on:
-      - nginx
-
-  # Restaurateur frontend (Vite project)
-  restaurateur-frontend:
+  
+  # Restaurant frontend (Production)
+  restaurateur-frontend-prod:
     build:
       context: ./frontend/restaurateurfront/restaurateur
-      dockerfile: Dockerfile
-    container_name: restaurateurFrontend
+      dockerfile: Dockerfile.prod
+    container_name: restaurateurFrontendProd
     ports:
-      - "5174:5174" # Expose Vite default port for restaurateur frontend
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/restaurateur/
+      - "3081:80"  # Exposez le port 80 de nginx sur le port 3081 de l'hôte
     restart: unless-stopped
-
-    volumes:
-      - ./frontend/restaurateurfront/restaurateur:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
     networks:
       - app-network
-    command: npm run dev # Run Vite in development mode
 
-  # Livreur frontend (Vite project)
-  livreur-frontend:
+  
+  #Livreur frontend (Production)
+  livreur-frontend-prod:
     build:
       context: ./frontend/livreurfront/livreur
-      dockerfile: Dockerfile
-    container_name: livreurFrontend
+      dockerfile: Dockerfile.prod
+    container_name: livreurFrontendProd
     ports:
-      - "5175:5175" # Expose Vite default port for livreur frontend
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/livreur/
-    volumes:
-      - ./frontend/livreurfront/livreur:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
+      - "3082:80"  # Exposez le port 80 de nginx sur le port 3082 de l'hôte
     restart: unless-stopped
-
     networks:
       - app-network
-    command: npm run dev # Run Vite in development mode
+  
 
   # Commercial frontend (Vite project)
   commercial-frontend:
@@ -108,43 +91,36 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-
-  developer-frontend:
+  
+# Developer frontend (Production)
+  developer-frontend-prod:
     build:
       context: ./frontend/developerfront/developer
-      dockerfile: Dockerfile
-    container_name: developerFrontend
+      dockerfile: Dockerfile.prod
+    container_name: developerFrontendProd
     ports:
-      - "5176:5176" # Expose Vite default port for developer frontend
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/developer/
-    volumes:
-      - ./frontend/developerfront/developer:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
+      - "3084:80"  # Exposez le port 80 de nginx sur le port 3084 de l'hôte
     restart: unless-stopped
-
     networks:
       - app-network
-    command: npm run dev # Run Vite in development mode
-
-  technical-frontend:
+  
+  # Technical frontend (Production)
+  technical-frontend-prod:
     build:
       context: ./frontend/technicalfront/technical
-      dockerfile: Dockerfile
-    container_name: technicalFrontend
+      dockerfile: Dockerfile.prod
+    container_name: technicalFrontendProd
     ports:
-      - "5177:5177" # Expose Vite default port for technical frontend
-    environment:
-      - HOST=0.0.0.0 # Ensure external access
-      - VITE_REDIRECT_URI_RESTAURATEUR=http://localhost:8080/technical/
-    volumes:
-      - ./frontend/technicalfront/technical:/app # Sync local code with container
-      - /app/node_modules # Isolate node_modules from local setup
+      - "3085:80"  # Exposez le port 80 de nginx sur le port 3085 de l'hôte
     restart: unless-stopped
     networks:
       - app-network
-    command: npm run dev # Run Vite in development mode
+
+
+  # Commercial frontend (Vite project)
+
+
+
 
   # Article Service
   article-service:
@@ -223,6 +199,23 @@ services:
     networks:
       - app-network
 
+  # Components Service
+  component-service:
+    build:
+      context: ./services/componentService
+      dockerfile: Dockerfile
+    container_name: componentService
+    restart: unless-stopped
+    ports:
+      - "3002:3002"  # IMPORTANT: changer le port exposé pour correspondre au port interne
+    volumes:
+      - component_uploads:/app/uploads  # Corriger le chemin du volume
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge # Ensures proper communication between services
+
+volumes:
+  component_uploads:
