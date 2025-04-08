@@ -14,6 +14,8 @@ interface ArchivedOrdersProps {
   handleViewOrderDetails: (order: any) => void;
   itemsPerPage: number;
   handleItemsPerPageChange: (value: number) => void;
+  currentPage: number;
+  handlePageChange: (direction: 'prev' | 'next') => void;
 }
 
 const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
@@ -29,16 +31,27 @@ const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
   handleViewRestaurantDetails,
   handleViewOrderDetails,
   itemsPerPage,
-  handleItemsPerPageChange
+  handleItemsPerPageChange,
+  currentPage,
+  handlePageChange
 }) => {
   const deliveredOrders = orders.filter(order => order.status === 'Livrée');
   const canceledOrders = orders.filter(order => order.status === 'Annulée');
 
+  const paginatedOrders = (orders: any[], currentPage: number, itemsPerPage: number) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return orders.slice(startIndex, endIndex);
+  };
+
+  const paginatedDeliveredOrders = paginatedOrders(deliveredOrders, currentPage, itemsPerPage);
+  const paginatedCanceledOrders = paginatedOrders(canceledOrders, currentPage, itemsPerPage);
+
   return (
-    <div className="mb-8">
+    <div>
       <button
         onClick={() => setShowArchived(!showArchived)}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+        className="bg-blue-500 text-white px-4 py-2 mb-4 rounded"
       >
         {showArchived ? 'Masquer les commandes livrées et annulées' : 'Afficher les commandes livrées et annulées'}
       </button>
@@ -49,7 +62,7 @@ const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
           ) : (
             <>
               {deliveredOrders.length > 0 && (
-                <div className="mb-8">
+                <div className="p-4 bg-white shadow rounded-lg mb-4">
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-bold">
                       Commandes livrées ({deliveredOrders.length})
@@ -82,7 +95,7 @@ const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {deliveredOrders.slice(0, itemsPerPage).map(order => (
+                      {paginatedDeliveredOrders.map(order => (
                         <tr key={order._id}>
                           <td className="border border-gray-300 px-4 py-2">
                             <button
@@ -124,10 +137,27 @@ const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
                       ))}
                     </tbody>
                   </table>
+                  <div className="flex justify-between items-center mt-4">
+                    <button
+                      onClick={() => handlePageChange('prev')}
+                      className={`px-4 py-2 bg-gray-300 rounded cursor-pointer ${currentPage === 1 ? 'invisible' : ''}`}
+                      disabled={currentPage === 1}
+                    >
+                      Précédent
+                    </button>
+                    <span className="text-center flex-grow">Page {currentPage}</span>
+                    <button
+                      onClick={() => handlePageChange('next')}
+                      className={`px-4 py-2 bg-gray-300 rounded cursor-pointer ${currentPage * itemsPerPage >= deliveredOrders.length ? 'invisible' : ''}`}
+                      disabled={currentPage * itemsPerPage >= deliveredOrders.length}
+                    >
+                      Suivant
+                    </button>
+                  </div>
                 </div>
               )}
               {canceledOrders.length > 0 && (
-                <div>
+                <div className="p-4 bg-white shadow rounded-lg mb-4">
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-bold">
                       Commandes annulées ({canceledOrders.length})
@@ -160,7 +190,7 @@ const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {canceledOrders.slice(0, itemsPerPage).map(order => (
+                      {paginatedCanceledOrders.map(order => (
                         <tr key={order._id}>
                           <td className="border border-gray-300 px-4 py-2">
                             <button
@@ -202,6 +232,23 @@ const ArchivedOrders: React.FC<ArchivedOrdersProps> = ({
                       ))}
                     </tbody>
                   </table>
+                  <div className="flex justify-between items-center mt-4">
+                    <button
+                      onClick={() => handlePageChange('prev')}
+                      className={`px-4 py-2 bg-gray-300 rounded cursor-pointer ${currentPage === 1 ? 'invisible' : ''}`}
+                      disabled={currentPage === 1}
+                    >
+                      Précédent
+                    </button>
+                    <span className="text-center flex-grow">Page {currentPage}</span>
+                    <button
+                      onClick={() => handlePageChange('next')}
+                      className={`px-4 py-2 bg-gray-300 rounded cursor-pointer ${currentPage * itemsPerPage >= canceledOrders.length ? 'invisible' : ''}`}
+                      disabled={currentPage * itemsPerPage >= canceledOrders.length}
+                    >
+                      Suivant
+                    </button>
+                  </div>
                 </div>
               )}
             </>
