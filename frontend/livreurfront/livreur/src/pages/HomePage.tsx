@@ -19,7 +19,10 @@ import QRScanner from "../components/QRScanner";
 // Modifier l'import pour avoir accès à la fois aux anciennes et nouvelles API
 import * as ReactDOM from "react-dom/client";
 import BikeLogo from "../assets/icons/bicycle.circle.fill.svg";
+import { useLogger } from "../hooks/useLogger";
 // Configuration de l'icône par défaut pour Leaflet
+
+const logger = useLogger();
 
 // Créer des icônes personnalisées
 const RestaurantIcon = L.icon({
@@ -152,8 +155,12 @@ export default function HomePage() {
       ]);
 
       setIsLoading(false);
-    } catch (error) {
-      console.error("Erreur lors du chargement des données:", error);
+    } catch (error: any) {
+      logger({
+        type: "error",
+        message: `Erreur lors du chargement des données: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
       setIsLoading(false);
     }
   };
@@ -170,8 +177,12 @@ export default function HomePage() {
           cmd.status === "En attente"
       );
       setCommandes(filteredCommandes);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des commandes:", error);
+    } catch (error: any) {
+      logger({
+        type: "error",
+        message: `Erreur lors de la récupération des commandes: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
     }
   };
 
@@ -179,8 +190,12 @@ export default function HomePage() {
     try {
       const response = await axios.get("https://localhost/api/clients");
       setClients(response.data);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des clients:", error);
+    } catch (error: any) {
+      logger({
+        type: "error",
+        message: `Erreur lors de la récupération des clients: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
     }
   };
 
@@ -189,8 +204,12 @@ export default function HomePage() {
       const response = await axios.get("https://localhost/api/restaurateurs");
 
       setRestaurateur(response.data);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des restaurateurs:", error);
+    } catch (error: any) {
+      logger({
+        type: "error",
+        message: `Erreur lors de la récupération des restaurateurs: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
     }
   };
 
@@ -198,8 +217,12 @@ export default function HomePage() {
     try {
       const response = await axios.get("https://localhost/api/livreurs");
       setLivreurs(response.data);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des livreurs:", error);
+    } catch (error: any) {
+      logger({
+        type: "error",
+        message: `Erreur lors de la récupération des livreurs: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
     }
   };
 
@@ -215,11 +238,12 @@ export default function HomePage() {
         const data = await response.json();
         setMyCommandes(data);
       }
-    } catch (error) {
-      console.error(
-        "Erreur lors du chargement des commandes du livreur:",
-        error
-      );
+    } catch (error: any) {
+      logger({
+        type: "error",
+        message: `Erreur lors du chargement des commandes du livreur: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
     }
   };
 
@@ -256,10 +280,15 @@ export default function HomePage() {
       } else {
         await response.json();
       }
-    } catch (error) {
+    } catch (error: any) {
       toast.error(
         "Une erreur est survenue lors de la prise de cette commande."
       );
+      logger({
+        type: "error",
+        message: `Erreur lors de la prise de commande: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
     }
   };
 
@@ -274,8 +303,12 @@ export default function HomePage() {
           ]);
           setLocationError(null);
         },
-        (error) => {
-          console.error("Erreur de géolocalisation:", error);
+        (error: any) => {
+          logger({
+            type: "error",
+            message: `Erreur de géolocalisation: ${error.message}`,
+            clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+          });
           setLocationError("Impossible d'obtenir votre position actuelle.");
           // Position par défaut (Paris)
           setCurrentLocation([48.8566, 2.3522]);
@@ -487,24 +520,31 @@ export default function HomePage() {
                       );
                     }
                   })
-                  .catch((error) => {
-                    console.error(
-                      "Erreur lors de la récupération de l'itinéraire:",
-                      error
-                    );
+                  .catch((error: any) => {
+                    logger({
+                      type: "error",
+                      message: `Erreur lors de la récupération de l'itinéraire: ${error.message}`,
+                      clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+                    });
                     toast.error(
                       "Impossible de récupérer l'itinéraire. Veuillez réessayer."
                     );
                   });
               } else {
-                console.error(
-                  "Impossible de convertir l'adresse du client en coordonnées."
-                );
+                logger({
+                  type: "error",
+                  message: "Adresse du client invalide.",
+                  clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+                });
                 toast.error("Adresse du client invalide.");
               }
             });
           } else {
-            console.error("Coordonnées invalides pour le routage.");
+            logger({
+              type: "error",
+              message: "Coordonnées invalides pour le routage.",
+              clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+            });
             toast.error("Coordonnées invalides pour le routage.");
           }
         }
@@ -594,8 +634,12 @@ export default function HomePage() {
 
       // Rediriger vers la page de détails de la commande ou effectuer une action
       // Exemple: navigate(`/livreur/commande/${commandeId}`);
-    } catch (error) {
-      console.error("Erreur lors du traitement du QR code:", error);
+    } catch (error: any) {
+      logger({
+        type: "error",
+        message: `Erreur lors du traitement du QR code: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
       toast.error("Erreur lors du traitement du code QR");
     }
   };
@@ -611,7 +655,11 @@ export default function HomePage() {
         !auth.user?.profile.email ||
         !auth.user?.profile.sub
       ) {
-        console.error("Données utilisateur manquantes");
+        logger({
+          type: "error",
+          message: "Données utilisateur manquantes",
+          clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+        });
         return;
       }
 
@@ -669,10 +717,7 @@ export default function HomePage() {
       } catch (checkError: any) {
         // Si le livreur n'existe pas (erreur 404), on le crée
         if (checkError.response && checkError.response.status === 404) {
-          console.log(
-            "Livreur non trouvé, création d'un nouveau livreur:",
-            livreurData
-          );
+
           await axios.post(`https://localhost/api/livreurs`, livreurData, {
             headers: {
               "Content-Type": "application/json",
@@ -685,10 +730,11 @@ export default function HomePage() {
         }
       }
     } catch (error: any) {
-      console.error(
-        "Erreur lors de la gestion du livreur:",
-        error.response?.data || error.message || error
-      );
+      logger({
+        type: "error",
+        message: `Erreur lors de la création/mise à jour du livreur: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
     }
   };
 
@@ -714,11 +760,12 @@ export default function HomePage() {
         return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
       }
       return null;
-    } catch (error) {
-      console.error(
-        "Erreur lors de la conversion de l'adresse en coordonnées:",
-        error
-      );
+    } catch (error: any) {
+      logger({
+        type: "error",
+        message: `Erreur lors de la géocodage de l'adresse: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
       return null;
     }
   };
