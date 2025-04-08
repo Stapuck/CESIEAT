@@ -202,6 +202,8 @@ services:
     restart: unless-stopped
     ports:
       - "3007:3000"
+    networks:
+      - app-network
       
   # Components Service
   component-service:
@@ -216,6 +218,21 @@ services:
       - component_uploads:/app/uploads  # Corriger le chemin du volume
     networks:
       - app-network
+
+  # Log Service
+  log-service:
+    build:
+      context: ./services/logService
+      dockerfile: Dockerfile
+    container_name: logService
+    restart: unless-stopped
+
+    ports:
+      - "3008:3000"
+    networks:
+      - app-network
+
+  
 
 networks:
   app-network:
