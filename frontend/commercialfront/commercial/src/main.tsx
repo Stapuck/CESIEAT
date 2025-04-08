@@ -5,6 +5,16 @@ import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import { WebStorageStateStore } from "oidc-client-ts"
 import { AuthProvider } from "react-oidc-context"
+import {
+  QueryClient,
+  QueryClientProvider,
+  // useMutation,
+  // useQuery,
+  // useQueryClient,
+} from '@tanstack/react-query'
+// import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+const queryClient = new QueryClient()
 
 const oidcConfig = {
   authority: "https://instance1-el5q1i.zitadel.cloud/",
@@ -21,7 +31,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider {...oidcConfig}>
       <BrowserRouter>
-        <App />
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
       </BrowserRouter>
     </AuthProvider>
   </StrictMode>,
