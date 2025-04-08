@@ -11,17 +11,32 @@ services:
       - "443:443" # Port HTTPS
     restart: unless-stopped
     networks:
-      - app-network
+      primary-network:
+        ipv4_address: 172.168.1.2
+      secondary-network:
+        ipv4_address: 172.168.2.2
     depends_on:
-      - article-service
-      - client-service
-      - commande-service
-      - livreur-service
-      - menu-service
-      - restaurateur-service
+      - article-service_1
+      - article-service_2
+      - client-service_1
+      - client-service_2
+      - commande-service_1
+      - commande-service_2
+      - livreur-service_1
+      - livreur-service_2
+      - menu-service_1
+      - menu-service_2
+      - restaurateur-service_1
+      - restaurateur-service_2
+      - commentaire-service_1
+      - commentaire-service_2
+      - component-service_1
+      - component-service_2
+      - log-service_1
+      - log-service_2
+      - dozzle
     extra_hosts:
       - "cesieat.com:127.0.0.1" # Ajoute une entrée DNS pour cesieat.com
-
   dozzle:
     container_name: dozzle
     image: amir20/dozzle:latest
@@ -30,213 +45,384 @@ services:
     ports:
       - 8081:8080
     networks:
-      - app-network
+      primary-network:
+        ipv4_address: 172.168.1.3
+      secondary-network:
+        ipv4_address: 172.168.2.3
     restart: unless-stopped
 
-
-
-
   # Client frontend (Production)
-  client-frontend-prod:
+  client-frontend-prod_1:
     build:
       context: ./frontend/clientfront/client
       dockerfile: Dockerfile.prod
-    container_name: clientFrontendProd
+    container_name: clientFrontendProd1
     ports:
       - "3080:80"  # Exposez le port 80 de nginx sur le port 3080 de l'hôte
     restart: unless-stopped
     networks:
-      - app-network
+      primary-network:
+        ipv4_address: 172.168.1.10
+
+  client-frontend-prod_2:
+    build:
+      context: ./frontend/clientfront/client
+      dockerfile: Dockerfile.prod
+    container_name: clientFrontendProd2
+    ports:
+      - "4080:80"  # Exposez le port 80 de nginx sur le port 3080 de l'hôte
+    restart: unless-stopped
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.10
   
   # Restaurant frontend (Production)
-  restaurateur-frontend-prod:
+  restaurateur-frontend-prod_1:
     build:
       context: ./frontend/restaurateurfront/restaurateur
       dockerfile: Dockerfile.prod
-    container_name: restaurateurFrontendProd
+    container_name: restaurateurFrontendProd1
     ports:
       - "3081:80"  # Exposez le port 80 de nginx sur le port 3081 de l'hôte
     restart: unless-stopped
     networks:
-      - app-network
-
-  
-  #Livreur frontend (Production)
-  livreur-frontend-prod:
+      primary-network:
+        ipv4_address: 172.168.1.11
+  restaurateur-frontend-prod_2:
     build:
-      context: ./frontend/livreurfront/livreur
+      context: ./frontend/restaurateurfront/restaurateur
       dockerfile: Dockerfile.prod
-    container_name: livreurFrontendProd
+    container_name: restaurateurFrontendProd2
     ports:
-      - "3082:80"  # Exposez le port 80 de nginx sur le port 3082 de l'hôte
+      - "4081:80"  # Exposez le port 80 de nginx sur le port 3082 de l'hôte
     restart: unless-stopped
     networks:
-      - app-network
+      secondary-network:
+        ipv4_address: 172.168.2.11
   
-
   # Commercial frontend (Production)
-  commercial-frontend-prod:
+  commercial-frontend-prod_1:
     build:
       context: ./frontend/commercialfront/commercial
       dockerfile: Dockerfile.prod
-    container_name: commercialFrontendProd
+    container_name: commercialFrontendProd1
     ports:
       - "3083:80"  # Exposez le port 80 de nginx sur le port 3083 de l'hôte
     restart: unless-stopped
     networks:
-      - app-network
+      primary-network:
+        ipv4_address: 172.168.1.12
+  commercial-frontend-prod_2:
+    build:
+      context: ./frontend/commercialfront/commercial
+      dockerfile: Dockerfile.prod
+    container_name: commercialFrontendProd2
+    ports:
+      - "4083:80"  # Exposez le port 80 de nginx sur le port 3083 de l'hôte
+    restart: unless-stopped
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.12
   
 # Developer frontend (Production)
-  developer-frontend-prod:
+  developer-frontend-prod_1:
     build:
       context: ./frontend/developerfront/developer
       dockerfile: Dockerfile.prod
-    container_name: developerFrontendProd
+    container_name: developerFrontendProd1
     ports:
       - "3084:80"  # Exposez le port 80 de nginx sur le port 3084 de l'hôte
     restart: unless-stopped
     networks:
-      - app-network
+      primary-network:
+        ipv4_address: 172.168.1.13
+  developer-frontend-prod_2:
+    build:
+      context: ./frontend/developerfront/developer
+      dockerfile: Dockerfile.prod
+    container_name: developerFrontendProd2
+    ports:
+      - "4084:80"  # Exposez le port 80 de nginx sur le port 3084 de l'hôte
+    restart: unless-stopped
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.13
   
   # Technical frontend (Production)
-  technical-frontend-prod:
+  technical-frontend-prod_1:
     build:
       context: ./frontend/technicalfront/technical
       dockerfile: Dockerfile.prod
-    container_name: technicalFrontendProd
+    container_name: technicalFrontendProd1
     ports:
       - "3085:80"  # Exposez le port 80 de nginx sur le port 3085 de l'hôte
     restart: unless-stopped
     networks:
-      - app-network
+      primary-network:
+        ipv4_address: 172.168.1.14
+  technical-frontend-prod_2:
+    build:
+      context: ./frontend/technicalfront/technical
+      dockerfile: Dockerfile.prod
+    container_name: technicalFrontendProd2
+    ports:
+      - "4085:80"  # Exposez le port 80 de nginx sur le port 3085 de l'hôte
+    restart: unless-stopped
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.14
 
-
-  # Commercial frontend (Vite project)
-
-
+# Livreur frontend (Production)
+  livreur-frontend-prod_1:
+    build:
+      context: ./frontend/livreurfront/livreur
+      dockerfile: Dockerfile.prod
+    container_name: livreurFrontendProd1
+    ports:
+      - "3082:80"  # Exposez le port 80 de nginx sur le port 3086 de l'hôte
+    restart: unless-stopped
+    networks:
+      primary-network:
+        ipv4_address: 172.168.1.15
+  livreur-frontend-prod_2:  
+    build:
+      context: ./frontend/livreurfront/livreur
+      dockerfile: Dockerfile.prod
+    container_name: livreurFrontendProd2
+    ports:
+      - "4082:80"  # Exposez le port 80 de nginx sur le port 3086 de l'hôte
+    restart: unless-stopped
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.15
 
 
   # Article Service
-  article-service:
+  article-service_1:
     build:
       context: ./services/articleService
       dockerfile: Dockerfile
-    container_name: articleService
+    container_name: articleService1
     ports:
       - "3005:3000"
     restart: unless-stopped
-
     networks:
-      - app-network
-
+      primary-network:
+        ipv4_address: 172.168.1.20
+  article-service_2:
+    build:
+      context: ./services/articleService
+      dockerfile: Dockerfile
+    container_name: articleService2
+    ports:
+      - "4005:3000"
+    restart: unless-stopped
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.20
   # Client Service
-  client-service:
+  client-service_1:
     build:
       context: ./services/clientService
       dockerfile: Dockerfile
-    container_name: clientService
+    container_name: clientService1
     ports:
       - "3000:3000"
     restart: unless-stopped
     networks:
-      - app-network
-
+      primary-network:
+        ipv4_address: 172.168.1.21
+  client-service_2:
+    build:
+      context: ./services/clientService
+      dockerfile: Dockerfile
+    container_name: clientService2
+    ports:
+      - "4000:3000"
+    restart: unless-stopped
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.21
   # Commande Service
-  commande-service:
+  commande-service_1:
     build:
       context: ./services/commandeService
       dockerfile: Dockerfile
-    container_name: commandeService
+    container_name: commandeService1
     restart: unless-stopped
-
     ports:
       - "3003:3000"
     networks:
-      - app-network
-
+      primary-network:
+        ipv4_address: 172.168.1.22
+  commande-service_2:
+    build:
+      context: ./services/commandeService
+      dockerfile: Dockerfile
+    container_name: commandeService2
+    restart: unless-stopped
+    ports:
+      - "4003:3000"
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.22
   # Livreur Service
-  livreur-service:
+  livreur-service_1:
     build:
       context: ./services/livreurService
       dockerfile: Dockerfile
-    container_name: livreurService
+    container_name: livreurService1
     restart: unless-stopped
-
     ports:
       - "3004:3000"
     networks:
-      - app-network
-
+      primary-network:
+        ipv4_address: 172.168.1.23
+  livreur-service_2:
+    build:
+      context: ./services/livreurService
+      dockerfile: Dockerfile
+    container_name: livreurService2
+    restart: unless-stopped
+    ports:
+      - "4004:3000"
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.23
   # Menu Service
-  menu-service:
+  menu-service_1:
     build:
       context: ./services/menuService
       dockerfile: Dockerfile
-    container_name: menuService
+    container_name: menuService1
     restart: unless-stopped
-
     ports:
       - "3006:3000"
     networks:
-      - app-network
-
+      primary-network:
+        ipv4_address: 172.168.1.24
+  menu-service_2:
+    build:
+      context: ./services/menuService
+      dockerfile: Dockerfile
+    container_name: menuService2
+    restart: unless-stopped
+    ports:
+      - "4006:3000"
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.24
   # Restaurateur Service
-  restaurateur-service:
+  restaurateur-service_1:
     build:
       context: ./services/restaurateurService
       dockerfile: Dockerfile
-    container_name: restaurateurService
+    container_name: restaurateurService1
     restart: unless-stopped
-
     ports:
       - "3001:3000"
     networks:
-      - app-network
-
+      primary-network:
+        ipv4_address: 172.168.1.25
+  restaurateur-service_2:
+    build:
+      context: ./services/restaurateurService
+      dockerfile: Dockerfile
+    container_name: restaurateurService2
+    restart: unless-stopped
+    ports:
+      - "4001:3000"
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.25
   # Commentaire Service
-  commentaire-service:
+  commentaire-service_1:
     build:
       context: ./services/commentaireService
       dockerfile: Dockerfile
-    container_name: commentaireService
+    container_name: commentaireService1
     restart: unless-stopped
     ports:
       - "3007:3000"
     networks:
-      - app-network
-      
+      primary-network:
+        ipv4_address: 172.168.1.26
+  commentaire-service_2:
+    build:
+      context: ./services/commentaireService
+      dockerfile: Dockerfile
+    container_name: commentaireService2
+    restart: unless-stopped
+    ports:
+      - "4007:3000"
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.26    
   # Components Service
-  component-service:
+  component-service_1:
     build:
       context: ./services/componentService
       dockerfile: Dockerfile
-    container_name: componentService
+    container_name: componentService1
     restart: unless-stopped
     ports:
       - "3002:3002"  # IMPORTANT: changer le port exposé pour correspondre au port interne
     volumes:
       - component_uploads:/app/uploads  # Corriger le chemin du volume
     networks:
-      - app-network
-
+      primary-network:
+        ipv4_address: 172.168.1.27
+  component-service_2:
+    build:
+      context: ./services/componentService
+      dockerfile: Dockerfile
+    container_name: componentService2
+    restart: unless-stopped
+    ports:
+      - "4002:3002"  # IMPORTANT: changer le port exposé pour correspondre au port interne
+    volumes:
+      - component_uploads:/app/uploads  # Corriger le chemin du volume
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.27
   # Log Service
-  log-service:
+  log-service_1:
     build:
       context: ./services/logService
       dockerfile: Dockerfile
-    container_name: logService
+    container_name: logService1
     restart: unless-stopped
-
     ports:
       - "3008:3000"
     networks:
-      - app-network
-
+      primary-network:
+        ipv4_address: 172.168.1.28
+  log-service_2:
+    build:
+      context: ./services/logService
+      dockerfile: Dockerfile
+    container_name: logService2
+    restart: unless-stopped
+    ports:
+      - "4008:3000"
+    networks:
+      secondary-network:
+        ipv4_address: 172.168.2.28
   
 
 networks:
-  app-network:
+  primary-network:
     driver: bridge # Ensures proper communication between services
+    ipam:
+      config:
+        - subnet: 172.168.1.0/24
+    
+
+  secondary-network:
+    driver: bridge # Ensures proper communication between services
+    ipam:
+      config:
+        - subnet: 172.168.2.0/24  # Define a new subnet for the secondary network
 
 volumes:
   component_uploads:
