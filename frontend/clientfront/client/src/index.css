@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --color-default-background: #b9d8c2;
+  --color-gradient-left: #9ac2c9;
+  --color-gradient-right: #4a5043;
+  --color-button-background: #ffcb47;
+  --color-text-search-color: #ffcb47;
+  --font-Inter: "Inter", sans-serif;
+  --default-font-family: "Inter", sans-serif;
+
+  /* colors definitions*/
+  --color-primary: #b9d8c2;
+  --color-secondary: #9ac2c9;
+  --color-tertiary: #8aa1b1;
+  --color-quaternary: #4a5043;
+  --color-quinary: #ffcb47;
+  --color-transparent-background: rgba(255, 255, 255, 0.7);
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url(./assets/fonts/Inter-Italic-VariableFont_opsz_wght.ttf) format("ttf"),
+    url(./assets/fonts/Inter-VariableFont_opsz_wght.ttf) format("ttf");
+  font-style: normal;
+}
