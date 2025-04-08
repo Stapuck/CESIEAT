@@ -30,4 +30,7 @@ const logSchema = new Schema(
 );
 
 const Log = mongoose.model<ILog>('Log', logSchema);
+
+
+//fzefz"efz
 export default Log;
