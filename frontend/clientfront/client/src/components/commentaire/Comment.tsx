@@ -19,6 +19,7 @@ export default function Comment({ comment, onEdit }: CommentProps) {
   const [commentaire, setCommentaire] = useState();
 
   const currentUserId = auth.user?.profile.sub
+  console.log(commentaire);
 
   const isOwner = comment.clientId_Zitadel === currentUserId;
 
@@ -32,6 +33,7 @@ export default function Comment({ comment, onEdit }: CommentProps) {
     try {
         const response = await axios.get(`https://localhost/api/commentaires/client/${clientId_Zitadel}`);
         setCommentaire(response.data);
+        console.log(response.data)
     } catch (error) {
         console.log(error);
     }

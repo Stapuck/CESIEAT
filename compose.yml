@@ -202,6 +202,8 @@ services:
     restart: unless-stopped
     ports:
       - "3007:3000"
+    networks:
+      - app-network
       
   # Components Service
   component-service:
