@@ -76,7 +76,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetClientById = async () => {
     try {
       const response = await axios.get(
-        `https://localhost/api/clients/byZitadelId/${commande.clientId_Zitadel}`
+        `https://cesieat.nathan-lorit.com/api/clients/byZitadelId/${commande.clientId_Zitadel}`
       );
       setClient(response.data);
     } catch (error) {
@@ -87,7 +87,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetLivreurById = async () => {
     try {
       const response = await axios.get(
-        `https://localhost/api/livreurs/byZitadelId/${commande.livreurId_Zitadel}`
+        `https://cesieat.nathan-lorit.com/api/livreurs/byZitadelId/${commande.livreurId_Zitadel}`
       );
       setLivreur(response.data);
     } catch (error) {
@@ -98,7 +98,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
   const GetMenuById = async () => {
     try {
       const response = await axios.get(
-        `https://localhost/api/menus/${commande.menuId}`
+        `https://cesieat.nathan-lorit.com/api/menus/${commande.menuId}`
       );
       setMenu(response.data);
 
@@ -107,7 +107,7 @@ const CommandeCard: React.FC<CommandeCardProps> = ({
         const articlesDetails = await Promise.all(
           response.data.articles.map(async (articleId: string) => {
             const articleRes = await axios.get(
-              `https://localhost/api/articles/${articleId}`
+              `https://cesieat.nathan-lorit.com/api/articles/${articleId}`
             );
             return articleRes.data; // Retourne l'objet article
           })

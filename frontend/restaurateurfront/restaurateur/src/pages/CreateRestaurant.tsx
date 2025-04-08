@@ -34,7 +34,7 @@ const CreateRestaurant = () => {
 
         try {
             setIsLoading(true);
-            await axios.post("https://localhost/api/restaurateurs", {
+            await axios.post("https://cesieat.nathan-lorit.com/api/restaurateurs", {
                 restaurantName,
                 address,
                 phone,

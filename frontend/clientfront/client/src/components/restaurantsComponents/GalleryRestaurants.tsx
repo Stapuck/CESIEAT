@@ -30,7 +30,7 @@ const GalleryRestaurants: React.FC<GalleryRestaurantsProps> = ({ login }) => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        "https://localhost/api/restaurateurs"
+        "https://cesieat.nathan-lorit.com/api/restaurateurs"
       );
       setRestaurants(response.data);
       setIsLoading(false);

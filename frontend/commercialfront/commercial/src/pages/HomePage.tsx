@@ -11,9 +11,9 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const ordersResponse = await fetch('https://localhost/api/commandes');
-        const clientsResponse = await fetch('https://localhost/api/clients');
-        const livreursResponse = await fetch('https://localhost/api/livreurs');
+        const ordersResponse = await fetch('https://cesieat.nathan-lorit.com/api/commandes');
+        const clientsResponse = await fetch('https://cesieat.nathan-lorit.com/api/clients');
+        const livreursResponse = await fetch('https://cesieat.nathan-lorit.com/api/livreurs');
 
         if (!ordersResponse.ok || !clientsResponse.ok || !livreursResponse.ok) {
           throw new Error('Failed to fetch data');

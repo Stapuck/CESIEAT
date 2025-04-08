@@ -28,7 +28,7 @@ function GalleryMenu() {
         try {
             setIsLoading(true);
             const response = await axios.get(
-                `https://localhost/api/restaurateurs/manager/${auth.user?.profile.sub}`
+                `https://cesieat.nathan-lorit.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
             );
             if (response.data.length > 0) {
                 setRestaurant(response.data[0]);
@@ -44,7 +44,7 @@ function GalleryMenu() {
     const getMenusByRestaurateur = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`https://localhost/api/menus/restaurateur/${restaurant?._id}`);
+            const response = await axios.get(`https://cesieat.nathan-lorit.com/api/menus/restaurateur/${restaurant?._id}`);
             setMenus(response.data);
             setIsLoading(false);
         } catch (error) {

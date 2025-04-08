@@ -39,7 +39,7 @@ function TableauArticle() {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `https://localhost/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://cesieat.nathan-lorit.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
       if (response.data.length > 0) {
         setRestaurant(response.data[0]);
@@ -56,7 +56,7 @@ function TableauArticle() {
       setIsLoading(true);
 
       const response = await axios.get(
-        `https://localhost/api/articles/restaurateur/${restaurant?._id}`
+        `https://cesieat.nathan-lorit.com/api/articles/restaurateur/${restaurant?._id}`
       );
       setArticles(response.data);
       setIsLoading(false);
@@ -87,7 +87,7 @@ function TableauArticle() {
     });
     if (result.isConfirmed) {
       try {
-        await axios.delete(`https://localhost/api/articles/${id}`);
+        await axios.delete(`https://cesieat.nathan-lorit.com/api/articles/${id}`);
         toast.success("Article supprimé avec succès");
         getArticlesByRestaurant();
       } catch (error: any) {

@@ -22,7 +22,7 @@ const Account = () => {
   const getLivreurInfos = async () => {
     try {
       const response = await axios.get(
-        `https://localhost/api/livreurs/byZitadelId/${auth.user?.profile.sub}`
+        `https://cesieat.nathan-lorit.com/api/livreurs/byZitadelId/${auth.user?.profile.sub}`
       );
       setLivreurInfo(response.data);
     } catch (error) {
@@ -62,7 +62,7 @@ const Account = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `https://localhost/api/livreurs/${livreurInfo?._id}`,
+        `https://cesieat.nathan-lorit.com/api/livreurs/${livreurInfo?._id}`,
         formData
       );
       setLivreurInfo({ ...livreurInfo!, ...formData });

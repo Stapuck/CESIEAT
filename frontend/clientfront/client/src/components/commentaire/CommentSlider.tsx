@@ -19,7 +19,7 @@ export default function CommentSlider() {
   const getComments = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get('https://localhost/api/commentaires');
+      const response = await axios.get('https://cesieat.nathan-lorit.com/api/commentaires');
       setComments(response.data);
     } catch (error) {
       console.log(error);
@@ -30,7 +30,7 @@ export default function CommentSlider() {
 
   const onEdit = async (id: string, newText: string) => {
     try {
-      const response = await axios.put(`https://localhost/api/commentaires/${id}`, {
+      const response = await axios.put(`https://cesieat.nathan-lorit.com/api/commentaires/${id}`, {
         commentaire: newText,
       });
 

@@ -21,7 +21,7 @@ const ProfileInfo = () => {
   const getClientInfos = async () => {
     try {
       const response = await axios.get(
-        `https://localhost/api/clients/byZitadelId/${auth.user?.profile.sub}`
+        `https://cesieat.nathan-lorit.com/api/clients/byZitadelId/${auth.user?.profile.sub}`
       );
       setClientInfo(response.data);
     } catch (error) {
@@ -55,7 +55,7 @@ const ProfileInfo = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `https://localhost/api/clients/${clientInfo?._id}`,
+        `https://cesieat.nathan-lorit.com/api/clients/${clientInfo?._id}`,
         formData
       );
       setClientInfo({ ...clientInfo!, ...formData });

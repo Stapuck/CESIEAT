@@ -20,7 +20,7 @@ const EditArticle = () => {
     const fetchArticle = async () => {
       try {
         const response = await axios.get(
-          `https://localhost/api/articles/${id}`
+          `https://cesieat.nathan-lorit.com/api/articles/${id}`
         );
         const article = response.data;
         setName(article.name);
@@ -49,7 +49,7 @@ const EditArticle = () => {
 
     try {
       setIsLoading(true);
-      await axios.put(`https://localhost/api/articles/${id}`, {
+      await axios.put(`https://cesieat.nathan-lorit.com/api/articles/${id}`, {
         name,
         reference,
         type,

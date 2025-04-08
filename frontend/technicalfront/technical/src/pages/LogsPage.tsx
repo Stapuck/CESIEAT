@@ -19,7 +19,7 @@ const LogsPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("https://localhost/api/logs");
+      const response = await axios.get("https://cesieat.nathan-lorit.com/api/logs");
       logger({
         type: "info",
         message: "Logs fetched successfully",

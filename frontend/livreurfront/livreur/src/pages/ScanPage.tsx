@@ -12,7 +12,7 @@ const ScanPage = () => {
     setProcessing(true);
     try {
       // Appel à l'API pour marquer la commande comme "Livrée"
-      await axios.put(`https://localhost/api/commandes/${commandeId}`, { status: "Livrée" });
+      await axios.put(`https://cesieat.nathan-lorit.com/api/commandes/${commandeId}`, { status: "Livrée" });
       toast.success("Commande marquée comme livrée avec succès!");
     } catch (error) {
       console.error("Erreur lors de la mise à jour de la commande:", error);

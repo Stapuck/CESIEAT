@@ -28,7 +28,7 @@ const Checkout: React.FC = () => {
     const fetchClientAddress = async () => {
       if (zitadelId) {
         try {
-          const response = await axios.get(`https://localhost/api/clients/byZitadelId/${zitadelId}`);
+          const response = await axios.get(`https://cesieat.nathan-lorit.com/api/clients/byZitadelId/${zitadelId}`);
           if (response.data && response.data.address) {
             setCustomerInfo(prev => ({
               ...prev,
@@ -90,7 +90,7 @@ const Checkout: React.FC = () => {
           status: "En attente",
         };
 
-        await axios.post("https://localhost/api/commandes", payload, {
+        await axios.post("https://cesieat.nathan-lorit.com/api/commandes", payload, {
           headers: {
             "Content-Type": "application/json",
           },

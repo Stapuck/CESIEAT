@@ -31,7 +31,7 @@ export default function Comment({ comment, onEdit }: CommentProps) {
 
   const getCommentsByIdClient = async (clientId_Zitadel: string) => {
     try {
-        const response = await axios.get(`https://localhost/api/commentaires/client/${clientId_Zitadel}`);
+        const response = await axios.get(`https://cesieat.nathan-lorit.com/api/commentaires/client/${clientId_Zitadel}`);
         setCommentaire(response.data);
         console.log(response.data)
     } catch (error) {

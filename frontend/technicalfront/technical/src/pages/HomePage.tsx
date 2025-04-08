@@ -36,7 +36,7 @@ const HomePage = () => {
       try {
         setLoading(true);
         // Utiliser l'URL correcte du backend
-        const response = await axios.get("https://localhost/api/components");
+        const response = await axios.get("https://cesieat.nathan-lorit.com/api/components");
         setComponents(response.data);
         setError(null);
       } catch (err: any) {
@@ -264,7 +264,7 @@ const HomePage = () => {
             </h3>
             <div className="flex flex-col gap-2">
               <Link
-                to="https://localhost:8081"
+                to="https://cesieat.nathan-lorit.com:8081"
                 className="text-blue-600 hover:underline"
               >
                 État des containers

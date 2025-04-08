@@ -77,7 +77,7 @@ const Search = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "https://localhost/api/restaurateurs"
+        "https://cesieat.nathan-lorit.com/api/restaurateurs"
       );
 
       // Filtrer pour n'inclure que les restaurants avec des positions valides
