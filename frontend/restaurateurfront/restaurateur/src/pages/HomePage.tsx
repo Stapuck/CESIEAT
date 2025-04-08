@@ -1,8 +1,11 @@
 import { useAuth } from "react-oidc-context";
 import Footer from "../components/Footer";
+import { useLogger } from "../hooks/useLogger";
 
 const RestaurateurPage = () => {
   const auth = useAuth();
+  const logger = useLogger();
+  const userId = auth.user?.profile?.sub || "unknown";
 
   return (
     <div className="min-h-screen flex flex-col items-center w-full mt-10 pt-10 justify-center ">
@@ -25,7 +28,14 @@ const RestaurateurPage = () => {
           <>
             {" "}
             <button
-              onClick={() => void auth.signinRedirect()}
+              onClick={() => {
+                void auth.signinRedirect();
+                logger({
+                  type: "info",
+                  message: "Tentative de connexion initiée par l'utilisateur",
+                  clientId_Zitadel: userId,
+                });
+              }}
               className="text-lg text-gray-800 max-w-xl text-center mt-2"
             >
               Connectez-vous pour accéder à l'ensemble de vos services.
