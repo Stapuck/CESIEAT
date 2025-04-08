@@ -37,11 +37,16 @@ const HomePage = () => {
         setLoading(true);
         // Utiliser l'URL correcte du backend
         const response = await axios.get("https://localhost/api/components");
-        console.log("Données reçues:", response.data);
         setComponents(response.data);
         setError(null);
       } catch (err) {
-        console.error("Erreur lors de la récupération des composants:", err);
+        logger({
+          type: "error",
+          message: `Erreur lors de la récupération des composants: ${
+            err instanceof Error ? err.message : String(err)
+          }`,
+          clientId_Zitadel: userId,
+        });
         setError(
           "Impossible de charger les composants. Veuillez réessayer plus tard."
         );

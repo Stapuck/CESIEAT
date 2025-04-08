@@ -24,14 +24,27 @@ const Hero = () => {
     try {
       // Verify user profile exists
       if (!auth.user?.profile) {
-        console.error("User profile not available");
+        logger({
+          type: "error",
+          message: "User profile not available",
+          clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+        });
         return;
       }
 
-      const { given_name, family_name, email, sub: zitadelId } = auth.user.profile;
-      
+      const {
+        given_name,
+        family_name,
+        email,
+        sub: zitadelId,
+      } = auth.user.profile;
+
       if (!given_name || !family_name || !email || !zitadelId) {
-        console.error("Required user profile data missing", { given_name, family_name, email, zitadelId });
+        logger({
+          type: "error",
+          message: "Required user profile data missing",
+          clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+        });
         return;
       }
 
@@ -61,30 +74,45 @@ const Hero = () => {
         await axios.put(
           `https://localhost/api/clients/byZitadelId/${zitadelId}`,
           clientData,
-          { headers: { "Content-Type": "application/json", Accept: "application/json" } }
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          }
         );
-        console.log("Client updated successfully");
-
       } catch (error: any) {
         // Check if error is due to client not existing (404)
         if (error.response?.status === 404) {
           // Create new client
           await axios.post("https://localhost/api/clients", clientData, {
-            headers: { "Content-Type": "application/json", Accept: "application/json" }
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
           });
-          console.log("New client created successfully");
+          logger({
+            type: "info",
+            message: `New client created for user ${given_name} ${family_name}`,
+            clientId_Zitadel: zitadelId,
+          });
         } else {
           // Handle other API errors
-          console.error("API error:", error.response?.data || error.message);
+          logger({
+            type: "error",
+            message: `Error synchronizing user data: ${error.message}`,
+            clientId_Zitadel: zitadelId,
+          });
           toast.error("Error synchronizing user data");
           throw error; // Re-throw for outer catch
         }
       }
     } catch (error: any) {
-      console.error(
-        "Client creation/update failed:",
-        error.response?.data || error.message || error
-      );
+      logger({
+        type: "error",
+        message: `Failed to sync user profile: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
       toast.error("Failed to sync your profile. Please try again later.");
     }
   };
@@ -149,7 +177,11 @@ const Hero = () => {
       // Vous pourriez faire quelque chose avec la réponse ici
     } catch (error: any) {
       // Gestion des erreurs
-      console.error("Erreur lors de la publication:", error);
+      logger({
+        type: "error",
+        message: `Error publishing post: ${error.message}`,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
       toast.error(
         `Erreur: ${
           error.response?.data?.message || "Impossible de publier votre message"
