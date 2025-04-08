@@ -299,26 +299,12 @@ const HomePage = () => {
             </h3>
             <div className="flex flex-col gap-2">
               <Link
-                to="/technical/routes"
+                to="/technical/logs"
                 className="text-blue-600 hover:underline"
               >
-                Orchestration des routes
+                Logs
               </Link>
-              <Link
-                to="/technical/deploy"
-                className="text-blue-600 hover:underline"
-              >
-                Déploiement de services
-              </Link>
-              <Link
-                to="/technical/notifications"
-                className="text-blue-600 hover:underline"
-              >
-                Centre de notifications{" "}
-                <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  3
-                </span>
-              </Link>
+
             </div>
           </div>
         </div>

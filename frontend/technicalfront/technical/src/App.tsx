@@ -11,6 +11,7 @@ import ProfilePage from "./pages/ProfilePage";
 import Protected from "./pages/Protected";
 import LoginPage from "./pages/LoginPage";
 import CreateProductPage from "./pages/CreateProductPage";
+import LogsPage from "./pages/LogsPage";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
                 path="/technical/create-product"
                 element={<CreateProductPage />}
               ></Route>
+              <Route path="/technical/logs" element={<LogsPage />} />
             </Route>
           </Routes>
         </div>
