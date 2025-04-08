@@ -12,6 +12,7 @@ const EditProfilePage = () => {
     bio: "Développeur full-stack avec 10 ans d'expérience dans le développement d'applications web et mobiles."
   });
 
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({

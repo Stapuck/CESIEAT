@@ -20,7 +20,7 @@ const Navbar = () => {
             </div>
 
             <div className="flex p-2 hover:cursor-pointer f hover:scale-110 transition-transform duration-200">
-                <Link to="/technical/account" className="flex flex-col justify-center items-center">
+                <Link to="/technical/profile" className="flex flex-col justify-center items-center">
                     <img src={CompteLogo} alt="Compte" className="h-7 w-7 mb-1" />
                     <h2 className="text-black font-Inter text-xs">{userName}</h2>
                 </Link>

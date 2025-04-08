@@ -18,7 +18,7 @@ export const useLogger = () => {
         try {
             await axios.post("https://localhost/api/logs", {
                 type,
-                message: "client => " + message,
+                message: "Client => " + message,
                 createdAt: new Date(),
                 clientId_Zitadel
             });

@@ -60,6 +60,7 @@ export const createComponent = async (c: Context) => {
         const version = formData.get('version') as string;
         const category = formData.get('category') as string;
         const tagsString = formData.get('tags') as string;
+        const author = formData.get('author') as string; // À remplacer par l'ID de l'utilisateur authentifié
         const documentation = formData.get('documentation') as string;
         const componentFile = formData.get('componentFile') as File;
 
@@ -101,7 +102,7 @@ export const createComponent = async (c: Context) => {
             name,
             description,
             version,
-            author: 'Utilisateur courant', // À remplacer par l'ID de l'utilisateur authentifié
+            author, // À remplacer par l'ID de l'utilisateur authentifié
             tags,
             downloadUrl,
             documentation,

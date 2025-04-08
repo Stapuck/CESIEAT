@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "react-oidc-context";
+import { useLogger } from "../hooks/useLogger";
 
 const CreateProductPage = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const auth = useAuth();
+  const logger = useLogger();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -15,6 +19,7 @@ const CreateProductPage = () => {
     category: "",
     tags: "",
     documentation: "",
+    author: auth.user?.profile?.name || "Inconnu",
   });
 
   const [file, setFile] = useState<File | null>(null);
@@ -58,21 +63,25 @@ const CreateProductPage = () => {
       }
 
       // URL correcte du backend - conserver HTTPS car c'est l'URL exposée via nginx
-      const response = await axios.post("https://localhost/api/components", componentData, {
+      await axios.post("https://localhost/api/components", componentData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      console.log('Réponse du serveur:', response.data);
       setSuccess("Composant créé avec succès!");
 
       // Rediriger vers la page d'accueil après 2 secondes
       setTimeout(() => {
-        navigate("/");
+        navigate("/technical/");
       }, 2000);
     } catch (err: any) {
-      console.error("Erreur lors de la création du composant:", err);
+      logger({
+        type: "error",
+        message: "Erreur lors de la création du composant: " + err.message,
+        clientId_Zitadel: "system"
+      });
+      
       // Afficher un message d'erreur plus détaillé si disponible
       setError(
         err.response?.data?.error || 
@@ -270,7 +279,7 @@ const CreateProductPage = () => {
         <div className="mt-8 flex justify-between">
           <button
             type="button"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/technical/")}
             className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100"
           >
             Annuler

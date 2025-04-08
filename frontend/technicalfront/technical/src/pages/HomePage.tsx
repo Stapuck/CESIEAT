@@ -37,11 +37,14 @@ const HomePage = () => {
         setLoading(true);
         // Utiliser l'URL correcte du backend
         const response = await axios.get("https://localhost/api/components");
-        console.log("Données reçues:", response.data);
         setComponents(response.data);
         setError(null);
-      } catch (err) {
-        console.error("Erreur lors de la récupération des composants:", err);
+      } catch (err: any) {
+        logger({
+          type: "error",
+          message: "Erreur lors de la récupération des composants: " + err.message,
+          clientId_Zitadel: userId,
+        });
         setError(
           "Impossible de charger les composants. Veuillez réessayer plus tard."
         );
@@ -226,11 +229,15 @@ const HomePage = () => {
                         className="text-xs px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500"
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={() =>logger({
-                          type: "info",
-                          message: `Downloading component: ${component.name || "Sans nom"}`,
-                          clientId_Zitadel: userId,
-                        })}
+                        onClick={() =>
+                          logger({
+                            type: "info",
+                            message: `Downloading component: ${
+                              component.name || "Sans nom"
+                            }`,
+                            clientId_Zitadel: userId,
+                          })
+                        }
                       >
                         Télécharger
                       </a>
@@ -250,33 +257,6 @@ const HomePage = () => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Gestion des composants */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="font-semibold mb-2 text-yellow-700">
-              Gestion des composants
-            </h3>
-            <div className="flex flex-col gap-2">
-              <Link
-                to="/technical/components/manage"
-                className="text-blue-600 hover:underline"
-              >
-                Gérer les composants
-              </Link>
-              <Link
-                to="/technical/components/add"
-                className="text-blue-600 hover:underline"
-              >
-                Ajouter un composant
-              </Link>
-              <Link
-                to="/technical/components/remove"
-                className="text-blue-600 hover:underline"
-              >
-                Supprimer des composants
-              </Link>
-            </div>
-          </div>
-
           {/* Logs et statistiques */}
           <div className="bg-white rounded-lg shadow p-4">
             <h3 className="font-semibold mb-2 text-yellow-700">
@@ -304,7 +284,6 @@ const HomePage = () => {
               >
                 Logs
               </Link>
-
             </div>
           </div>
         </div>

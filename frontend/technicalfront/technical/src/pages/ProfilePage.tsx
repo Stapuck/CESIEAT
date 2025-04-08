@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "react-oidc-context";
+import { useLogger } from "../hooks/useLogger";
 
 interface IClient {
   _id: string;
@@ -21,6 +22,7 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const auth = useAuth();
+  const logger = useLogger();
 
   // Statistiques fictives (à remplacer par des vraies données si disponible)
   const stats = {
@@ -45,8 +47,12 @@ const ProfilePage = () => {
         address: response.data.address
       });
       setError(null);
-    } catch (err) {
-      console.error("Erreur lors de la récupération des informations client:", err);
+    } catch (err: any) {
+      logger({
+        type: "error",
+        message: "Erreur lors de la récupération des informations client: " + err.message,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
       setError("Impossible de charger les informations de votre profil");
     } finally {
       setIsLoading(false);
@@ -79,8 +85,12 @@ const ProfilePage = () => {
       setClientInfo({ ...clientInfo, ...formData as IClient });
       setIsEditing(false);
       setError(null);
-    } catch (err) {
-      console.error("Erreur lors de la mise à jour du profil:", err);
+    } catch (err: any) {
+      logger({
+        type: "error",
+        message: "Erreur lors de la mise à jour du profil: " + err.message,
+        clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+      });
       setError("La mise à jour du profil a échoué");
     }
   };

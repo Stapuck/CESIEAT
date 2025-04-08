@@ -43,7 +43,6 @@ function Protected() {
             message: `User authenticated: ${auth.user?.profile?.name || "unknown"}`,
             clientId_Zitadel: auth.user?.profile?.sub || "unknown",
         });
-        console.log("🟩 User is authenticated");
         return <Outlet />;
     }
     logger({
@@ -51,7 +50,6 @@ function Protected() {
         message: "User is not authenticated, redirecting to login",
         clientId_Zitadel: auth.user?.profile?.sub || "unknown",
     });
-    console.warn("🤡 User is not authenticated, redirecting to login...");
     return <Navigate to="/technical/login" />;
 }
 
