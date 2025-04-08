@@ -158,7 +158,7 @@ const ClientList: React.FC = () => {
 
   return (
     <div>
-      <div className="p-6 bg-white shadow rounded-lg mb-4">
+      <div className="p-4 bg-white shadow rounded-lg mb-4">
         <input
           type="text"
           placeholder="Rechercher un compte client..."
@@ -168,7 +168,7 @@ const ClientList: React.FC = () => {
           }}
           className="mb-4 p-2 border rounded w-full"
         />
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center">
           <div className="flex space-x-2">
             <button
               onClick={() => {
@@ -189,7 +189,7 @@ const ClientList: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="p-6 bg-white shadow rounded-lg">
+      <div className="p-4 bg-white shadow rounded-lg">
         <div className="flex justify-between items-center mb-4">
           <label htmlFor="activeItemsPerPage" className="mr-2">Afficher les comptes actifs de 25, 50, 75, 100 dynamiquement :</label>
           <select
@@ -242,7 +242,7 @@ const ClientList: React.FC = () => {
       </button>
       {showSuspended && (
         <>
-          <div className="p-6 bg-white shadow rounded-lg">
+          <div className="p-4 bg-white shadow rounded-lg">
             <div className="flex justify-between items-center mb-4">
               <label htmlFor="suspendedItemsPerPage" className="mr-2">Afficher les comptes suspendus de 25, 50, 75, 100 dynamiquement :</label>
               <select

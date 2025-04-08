@@ -74,17 +74,20 @@ interface Article extends Document {
 
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [clients, setClients] = useState<Client[]>([]); // Corrected type to Client[]
+  const [clients, setClients] = useState<Client[]>([]);
   const [restaurants, setRestaurants] = useState<IRestaurateur[]>([]);
   const [livreurs, setLivreurs] = useState<Livreur[]>([]);
   const [menus, setMenus] = useState<Menu[]>([]);
-  const [articles, setArticles] = useState<Article[]>([]); // Add state for articles
+  const [articles, setArticles] = useState<Article[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showArchived, setShowArchived] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchCriteria, setSearchCriteria] = useState<string>('commande');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [itemsPerPage, setItemsPerPage] = useState<{ [key: string]: number }>({});
   const [currentPage, setCurrentPage] = useState<{ [key: string]: number }>({});
+  const [archivedItemsPerPage, setArchivedItemsPerPage] = useState<number>(10);
+  const [archivedCurrentPage, setArchivedCurrentPage] = useState<number>(1);
   error && console.error('Error fetching data:', error);
 
   useEffect(() => {
@@ -104,12 +107,11 @@ const OrderList: React.FC = () => {
     fetchData('restaurateurs', setRestaurants);
     fetchData('livreurs', setLivreurs);
     fetchData('menus', setMenus);
-    fetchData('articles', setArticles); // Fetch articles data
+    fetchData('articles', setArticles);
   }, []);
 
   useEffect(() => {
-    // Initialize itemsPerPage and currentPage for each status
-    const initialItemsPerPage = statuses.reduce((acc, status) => ({ ...acc, [status]: 10 }), {});
+    const initialItemsPerPage = statuses.reduce((acc, status) => ({ ...acc, [status]: 5 }), {});
     const initialCurrentPage = statuses.reduce((acc, status) => ({ ...acc, [status]: 1 }), {});
     setItemsPerPage(initialItemsPerPage);
     setCurrentPage(initialCurrentPage);
@@ -159,7 +161,7 @@ const OrderList: React.FC = () => {
         confirmButtonText: 'Fermer',
       });
     } catch (err) {
-      Swal.fire('Erreur', 'Impossible de charger les détails du client. Veuillez vérifier si le client existe.', 'error');
+      Swal.fire('Erreur', 'Impossible de charger les détails du client. Veuillez contacter votre administrateur.', 'error');
     }
   };
 
@@ -182,7 +184,7 @@ const OrderList: React.FC = () => {
         confirmButtonText: 'Fermer',
       });
     } else {
-      Swal.fire('Erreur', 'Détails du restaurant introuvables.', 'error');
+      Swal.fire('Erreur', 'Impossible de charger les détails du restaurant. Veuillez contacter votre administrateur.', 'error');
     }
   };
 
@@ -214,57 +216,77 @@ const OrderList: React.FC = () => {
         confirmButtonText: 'Fermer',
       });
     } catch (err) {
-      Swal.fire('Erreur', 'Impossible de charger les détails du livreur. Veuillez vérifier si le livreur existe.', 'error');
+      Swal.fire('Erreur', 'Impossible de charger les détails du livreur. Veuillez contacter votre administrateur.', 'error');
     }
   };
 
   const handleViewOrderDetails = (order: any) => {
-    const menu = menus.find((m: any) => m._id === order.menuId); // Find the menu by menuId
-    const client = clients.find((c: any) => c.clientId_Zitadel === order.clientId_Zitadel); // Find the client by clientId_Zitadel
-    const livreur = livreurs.find((l: any) => l.livreurId_Zitadel === order.livreurId_Zitadel); // Find the livreur by livreurId_Zitadel
-    const articleNames = menu?.articles
-      ?.map((articleId: any) => { // Changé de string à any
-        const article = articles.find((a: any) => a._id === articleId);
-        return article ? article.name : 'Article introuvable';
-      })
-      .join(', ');
+    try {
+      const menu = menus.find((m: any) => m._id === order.menuId);
+      const client = clients.find((c: any) => c.clientId_Zitadel === order.clientId_Zitadel);
+      const livreur = livreurs.find((l: any) => l.livreurId_Zitadel === order.livreurId_Zitadel);
+      const articleNames = menu?.articles
+        ?.map((articleId: any) => {
+          const article = articles.find((a: any) => a._id === articleId);
+          return article ? article.name : 'Article introuvable';
+        })
+        .join(', ');
 
-    Swal.fire({
-      title: `Détails de la Commande #${order._id.slice(-6)}`,
-      html: `
-        <div style="text-align: left; margin: 0 auto; width: fit-content;">
-          <p><strong>Client :</strong> ${client ? client.name : 'Client introuvable'}</p>
-          <p><strong>Restaurant :</strong> ${getName(order.restaurantId, restaurants, 'restaurantName')}</p>
-          <p><strong>Livreur :</strong> ${livreur ? livreur.name : 'Non assigné'}</p>
-          <p><strong>Menu :</strong> ${menu ? menu.name : 'Non trouvé'}</p>
-          <p><strong>Articles :</strong> ${articleNames || 'Aucun article'}</p>
-          <p><strong>Prix Menu :</strong> ${menu ? menu.price + ' €' : 'N/A'}</p>
-          <p><strong>Prix Total :</strong> ${order.totalAmount} €</p>
-          <p><strong>Statut :</strong> ${order.status}</p>
-          <p><strong>Date de création :</strong> ${formatDateTime(order.createdAt)}</p>
-          <p><strong>Dernière MàJ :</strong> ${formatDateTime(order.updatedAt)}</p>
-          ${
-            menu && menu.url_image
-              ? `<div style="display: flex; justify-content: center; margin-top: 10px;">
-                   <img src="${menu.url_image}" alt="${menu.name}" style="max-width: 100px;" />
-                 </div>`
-              : ''
-          }
-        </div>
-      `,
-      confirmButtonText: 'Fermer',
-    });
+      Swal.fire({
+        title: `Détails de la Commande #${order._id.slice(-6)}`,
+        html: `
+          <div style="text-align: left; margin: 0 auto; width: fit-content;">
+            <p><strong>Client :</strong> ${client ? client.name : 'Client introuvable'}</p>
+            <p><strong>Restaurant :</strong> ${getName(order.restaurantId, restaurants, 'restaurantName')}</p>
+            <p><strong>Livreur :</strong> ${livreur ? livreur.name : 'Non assigné'}</p>
+            <p><strong>Menu :</strong> ${menu ? menu.name : 'Non trouvé'}</p>
+            <p><strong>Articles :</strong> ${articleNames || 'Aucun article'}</p>
+            <p><strong>Prix Menu :</strong> ${menu ? menu.price + ' €' : 'N/A'}</p>
+            <p><strong>Prix Total :</strong> ${order.totalAmount} €</p>
+            <p><strong>Statut :</strong> ${order.status}</p>
+            <p><strong>Date de création :</strong> ${formatDateTime(order.createdAt)}</p>
+            <p><strong>Dernière MàJ :</strong> ${formatDateTime(order.updatedAt)}</p>
+            ${
+              menu && menu.url_image
+                ? `<div style="display: flex; justify-content: center; margin-top: 10px;">
+                    <img src="${menu.url_image}" alt="${menu.name}" style="max-width: 100px;" />
+                  </div>`
+                : ''
+            }
+          </div>
+        `,
+        confirmButtonText: 'Fermer',
+      });
+    } catch (err) {
+      Swal.fire('Erreur', 'Impossible de charger les détails de la commande. Veuillez contacter votre administrateur.', 'error');
+    }
   };
 
   const statuses = ['En attente', 'Préparation', 'Prêt', 'En livraison'];
   const filteredOrders = orders.filter(order => {
     const searchLower = searchTerm.toLowerCase();
-    const result = (
-      getName(order.clientId_Zitadel, clients, 'name').toLowerCase().includes(searchLower) || // Remplacé order.client par order.clientId_Zitadel
-      getName(order.restaurantId, restaurants, 'restaurantName').toLowerCase().includes(searchLower) || // Remplacé order.restaurant par order.restaurantId
-      (order.livreurId_Zitadel && getName(order.livreurId_Zitadel, livreurs, 'name').toLowerCase().includes(searchLower)) || // Remplacé order.livreur par order.livreurId_Zitadel
-      order._id.includes(searchLower)
-    );
+    let result = false;
+
+    switch (searchCriteria) {
+      case 'commande':
+        result = order._id.includes(searchLower);
+        break;
+      case 'client':
+        result = getName(order.clientId_Zitadel, clients, 'name').toLowerCase().includes(searchLower);
+        break;
+      case 'restaurant':
+        result = getName(order.restaurantId, restaurants, 'restaurantName').toLowerCase().includes(searchLower);
+        break;
+      case 'statut':
+        result = order.status.toLowerCase().includes(searchLower);
+        break;
+      case 'livreur':
+        result = order.livreurId_Zitadel && getName(order.livreurId_Zitadel, livreurs, 'name').toLowerCase().includes(searchLower);
+        break;
+      default:
+        result = false;
+    }
+
     return result;
   });
 
@@ -285,7 +307,7 @@ const OrderList: React.FC = () => {
 
   const handleItemsPerPageChange = (status: string, value: number) => {
     setItemsPerPage(prev => ({ ...prev, [status]: value }));
-    setCurrentPage(prev => ({ ...prev, [status]: 1 })); // Reset to first page
+    setCurrentPage(prev => ({ ...prev, [status]: 1 }));
   };
 
   const handlePageChange = (status: string, direction: 'prev' | 'next') => {
@@ -295,6 +317,9 @@ const OrderList: React.FC = () => {
     }));
   };
 
+  const handleArchivedPageChange = (direction: 'prev' | 'next') => {
+    setArchivedCurrentPage(prev => direction === 'prev' ? prev - 1 : prev + 1);
+  };
 
   const archivedOrdersProps = {
     orders: sortedOrders,
@@ -307,21 +332,38 @@ const OrderList: React.FC = () => {
     handleViewClientDetails,
     handleViewRestaurantDetails,
     handleViewLivreurDetails,
-    handleViewOrderDetails, // Pass the new function
+    handleViewOrderDetails,
+    itemsPerPage: archivedItemsPerPage,
+    handleItemsPerPageChange: setArchivedItemsPerPage,
+    currentPage: archivedCurrentPage,
+    handlePageChange: handleArchivedPageChange,
   };
 
   return (
     <>
-      <div className="p-4 bg-white rounded-lg mb-4">
-        <input
-          type="text"
-          placeholder="Rechercher une commande... (sans le #)"
-          value={searchTerm}
-          onChange={e => {
-            setSearchTerm(e.target.value);
-          }}
-          className="mb-4 p-2 border rounded w-full"
-        />
+      <div className="p-4 bg-white shadow rounded-lg mb-4">
+        <div className="flex items-center mb-4">
+          <select
+            value={searchCriteria}
+            onChange={e => setSearchCriteria(e.target.value)}
+            className="mr-2 p-2 border rounded"
+          >
+            <option value="commande">Commande</option>
+            <option value="client">Client</option>
+            <option value="restaurant">Restaurant</option>
+            <option value="statut">Statut</option>
+            <option value="livreur">Livreur</option>
+          </select>
+          <input
+            type="text"
+            placeholder={`Rechercher par ${searchCriteria}...`}
+            value={searchTerm}
+            onChange={e => {
+              setSearchTerm(e.target.value);
+            }}
+            className="flex-grow p-2 border rounded"
+          />
+        </div>
         <div className="flex justify-between items-center">
           <div className="flex space-x-2">
             <button
@@ -348,11 +390,11 @@ const OrderList: React.FC = () => {
         const paginated = paginatedOrders(orders, status);
 
         if (orders.length === 0) {
-          return null; // Ne pas rendre le composant si la liste des commandes est vide
+          return null;
         }
 
         return (
-          <div key={status} className="p-4 bg-white rounded-lg mb-4">
+          <div key={status} className="p-4 bg-white shadow rounded-lg mb-4">
             <ActiveOrders
               status={status}
               orders={paginated}
@@ -366,33 +408,17 @@ const OrderList: React.FC = () => {
               handleViewOrderDetails={handleViewOrderDetails}
               itemsPerPage={itemsPerPage[status]}
               handleItemsPerPageChange={(value) => handleItemsPerPageChange(status, value)}
+              currentPage={currentPage[status]}
+              handlePageChange={(direction) => handlePageChange(status, direction)}
+              totalOrders={orders.length}
             />
-            <div className="flex justify-between items-center mt-4">
-              <button
-                onClick={() => handlePageChange(status, 'prev')}
-                className={`px-4 py-2 bg-gray-300 rounded cursor-pointer ${currentPage[status] === 1 ? 'invisible' : ''}`}
-                disabled={currentPage[status] === 1}
-              >
-                Précédent
-              </button>
-              <span className="text-center flex-grow">Page {currentPage[status]}</span>
-              <button
-                onClick={() => handlePageChange(status, 'next')}
-                className={`px-4 py-2 bg-gray-300 rounded cursor-pointer ${currentPage[status] * itemsPerPage[status] >= orders.length ? 'invisible' : ''}`}
-                disabled={currentPage[status] * itemsPerPage[status] >= orders.length}
-              >
-                Suivant
-              </button>
-            </div>
           </div>
         );
       })}
       {statuses.every(status => filteredStatusOrders(status).length === 0) && (
         <p className="text-gray-500">Aucune commande en cours</p>
       )}
-      <ArchivedOrders itemsPerPage={0} handleItemsPerPageChange={function (_value: number): void {
-        throw new Error('Function not implemented.');
-      } } {...archivedOrdersProps} />
+      <ArchivedOrders {...archivedOrdersProps} />
     </>
   );
 };

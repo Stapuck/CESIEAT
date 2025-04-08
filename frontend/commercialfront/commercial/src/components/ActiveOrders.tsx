@@ -23,6 +23,9 @@ interface ActiveOrdersProps {
   handleViewOrderDetails: (order: any) => void;
   itemsPerPage: number;
   handleItemsPerPageChange: (value: number) => void;
+  currentPage: number;
+  handlePageChange: (direction: 'prev' | 'next') => void;
+  totalOrders: number;
 }
 
 const ActiveOrders: React.FC<ActiveOrdersProps> = ({
@@ -37,14 +40,17 @@ const ActiveOrders: React.FC<ActiveOrdersProps> = ({
   handleViewRestaurantDetails,
   handleViewOrderDetails,
   itemsPerPage,
-  handleItemsPerPageChange
+  handleItemsPerPageChange,
+  currentPage,
+  handlePageChange,
+  totalOrders
 }) => {
   const showLivreurColumn = !['En attente', 'Préparation', 'Prêt'].includes(status);
 
   return (
-    <div className="p-4 bg-white shadow rounded-lg mb-4">
+    <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold">{status} ({orders.length})</h2>
+        <h2 className="text-lg font-bold">{status} ({totalOrders})</h2>
         <div className="flex items-center space-x-2">
           <label htmlFor={`itemsPerPage-${status}`} className="mr-2">Afficher :</label>
           <select
@@ -53,7 +59,7 @@ const ActiveOrders: React.FC<ActiveOrdersProps> = ({
             onChange={e => handleItemsPerPageChange(Number(e.target.value))}
             className="p-2 border rounded"
           >
-            {[10, 25, 50, 75, 100].filter(option => option <= orders.length || option === 10).map(option => (
+            {[5, 25, 50, 75, 100].filter(option => option <= totalOrders || option === 5).map(option => (
               <option key={option} value={option}>{option}</option>
             ))}
           </select>
@@ -117,6 +123,23 @@ const ActiveOrders: React.FC<ActiveOrdersProps> = ({
           ))}
         </tbody>
       </table>
+      <div className="flex justify-between items-center mt-4">
+        <button
+          onClick={() => handlePageChange('prev')}
+          className={`px-4 py-2 bg-gray-300 rounded cursor-pointer ${currentPage === 1 ? 'invisible' : ''}`}
+          disabled={currentPage === 1}
+        >
+          Précédent
+        </button>
+        <span className="text-center flex-grow">Page {currentPage}</span>
+        <button
+          onClick={() => handlePageChange('next')}
+          className={`px-4 py-2 bg-gray-300 rounded cursor-pointer ${currentPage * itemsPerPage >= totalOrders ? 'invisible' : ''}`}
+          disabled={currentPage * itemsPerPage >= totalOrders}
+        >
+          Suivant
+        </button>
+      </div>
     </div>
   );
 };
