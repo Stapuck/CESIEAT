@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { useAuth } from "react-oidc-context";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useLogger } from "../hooks/useLogger";
 
 const Hero = () => {
   const messages = [
@@ -17,6 +18,7 @@ const Hero = () => {
   const [currentMessage, setCurrentMessage] = useState(messages[0]);
   const [postContent, setPostContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const logger = useLogger();
 
   const createClient = async () => {
     try {
@@ -91,6 +93,11 @@ const Hero = () => {
   useEffect(() => {
     if (auth.isAuthenticated && auth.user) {
       createClient();
+      logger({
+        type: "info",
+        message: `User ${auth.user.profile.name} authenticated successfully`,
+        clientId_Zitadel: auth.user.profile.sub,
+      });
     }
   }, [auth.isAuthenticated, auth.user]);
 

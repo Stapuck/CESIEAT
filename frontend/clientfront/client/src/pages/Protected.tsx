@@ -1,20 +1,33 @@
 import { Navigate, Outlet } from "react-router";
 import { useAuth } from "react-oidc-context";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { toast } from "react-toastify";
+import { useLogger } from "../hooks/useLogger";
+import { LoadingSpinner } from "../components/auth/LoadingSpinner";
 
 function Protected() {
   const auth = useAuth();
   const redirectToastShown = useRef(false);
+  const logger = useLogger();
 
-  // Afficher une notification lorsqu'une erreur d'authentification se produit
+  // Obtenir l'identifiant de l'utilisateur de manière sécurisée
+  const userId = useMemo(() => {
+    return auth.user?.profile?.sub || "unknown";
+  }, [auth.user?.profile?.sub]);
+
+  // Gérer les erreurs d'authentification
   useEffect(() => {
     if (auth.error) {
       toast.error(`Erreur d'authentification: ${auth.error.message}`);
+      logger({
+        type: "error",
+        message: `Erreur d'authentification: ${auth.error.message}`,
+        clientId_Zitadel: userId,
+      });
     }
-  }, [auth.error]);
+  }, [auth.error, userId, logger]);
 
-  // Afficher une notification lors de la redirection
+  // Gérer les redirections
   useEffect(() => {
     if (
       !auth.isLoading &&
@@ -22,54 +35,75 @@ function Protected() {
       !redirectToastShown.current
     ) {
       toast.info("Vous devez être connecté pour accéder à cette page");
+      logger({
+        type: "info",
+        message: "Tentative d'accès à une page protégée sans authentification",
+        clientId_Zitadel: userId,
+      });
       redirectToastShown.current = true;
     }
-  }, [auth.isLoading, auth.isAuthenticated]);
+  }, [auth.isLoading, auth.isAuthenticated, userId, logger]);
 
   // États de navigation d'authentification
   switch (auth.activeNavigator) {
     case "signinSilent":
+      logger({
+        type: "info",
+        message: `Tentative de connexion silencieuse de l'utilisateur: ${
+          auth.user?.profile?.name || "inconnu"
+        }`,
+        clientId_Zitadel: userId,
+      });
       return (
-        <div className="flex justify-center items-center h-screen bg-gray-50">
-          <div className="text-center p-8 bg-white rounded-lg shadow-md">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <h2 className="text-xl font-semibold text-gray-700">
-              Connexion en cours...
-            </h2>
-            <p className="text-gray-500 mt-2">
-              Veuillez patienter pendant que nous vous connectons
-            </p>
-          </div>
-        </div>
+        <LoadingSpinner
+          title="Connexion en cours..."
+          message="Veuillez patienter pendant que nous vous connectons"
+        />
       );
-    case "signoutRedirect":
+      
+    case "signinRedirect":
+      logger({
+        type: "info", 
+        message: "Redirection vers la page de connexion", 
+        clientId_Zitadel: userId
+      });
       return (
-        <div className="flex justify-center items-center h-screen bg-gray-50">
-          <div className="text-center p-8 bg-white rounded-lg shadow-md">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <h2 className="text-xl font-semibold text-gray-700">
-              Déconnexion en cours...
-            </h2>
-            <p className="text-gray-500 mt-2">
-              Vous allez être redirigé dans un instant
-            </p>
-          </div>
-        </div>
+        <LoadingSpinner
+          title="Redirection..."
+          message="Vous allez être redirigé vers la page de connexion"
+        />
+      );
+
+    case "signoutRedirect":
+      logger({
+        type: "info",
+        message: `Déconnexion de l'utilisateur: ${
+          auth.user?.profile?.name || "inconnu"
+        }`,
+        clientId_Zitadel: userId,
+      });
+      return (
+        <LoadingSpinner
+          title="Déconnexion en cours..."
+          message="Vous allez être redirigé dans un instant"
+        />
       );
   }
 
   // État de chargement
   if (auth.isLoading) {
+    logger({
+      type: "info",
+      message: `Chargement de l'authentification pour l'utilisateur: ${
+        auth.user?.profile.name || "inconnu"
+      }`,
+      clientId_Zitadel: userId,
+    });
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
-        <div className="text-center p-8 bg-white rounded-lg shadow-md">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-700">Chargement...</h2>
-          <p className="text-gray-500 mt-2">
-            Vérification de votre authentification
-          </p>
-        </div>
-      </div>
+      <LoadingSpinner
+        title="Chargement..."
+        message="Vérification de votre authentification"
+      />
     );
   }
 
@@ -84,6 +118,7 @@ function Protected() {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -108,16 +143,17 @@ function Protected() {
     );
   }
 
-  // Utilisateur authentifié - passer l'état d'authentification via context
+  // Utilisateur authentifié
   if (auth.isAuthenticated) {
-    console.log(
-      "Utilisateur authentifié, passage du contexte login=true à Outlet"
-    );
+    logger({
+      type: "info",
+      message: `Utilisateur authentifié: ${auth.user?.profile.name || "inconnu"}`,
+      clientId_Zitadel: userId,
+    });
     return <Outlet context={{ login: true }} />;
   }
 
-  // Utilisateur non authentifié - redirection
-  // Notification gérée par useEffect, ne pas afficher de toast ici
+  // Utilisateur non authentifié
   return <Navigate to="/client/" replace />;
 }
 

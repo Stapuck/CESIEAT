@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 interface ILog extends Document {
-  type: string;
+  type?: string;   // Rendre type optionnel
   message: string; 
   createdAt: Date; 
   clientId_Zitadel?: string; 
@@ -9,7 +9,8 @@ interface ILog extends Document {
 
 const logSchema = new Schema(
   {
-    type: {
+
+    type: {       // Rendre type optionnel
       type: String,
       required: true,
     },
@@ -21,7 +22,7 @@ const logSchema = new Schema(
       type: Date,
       default: Date.now,
     },
-    userId: {
+    clientId_Zitadel: {
       type: String,
       required: false,
     },
@@ -29,8 +30,8 @@ const logSchema = new Schema(
   { timestamps: true }
 );
 
+
+
 const Log = mongoose.model<ILog>('Log', logSchema);
 
-
-//fzefz"efz
 export default Log;
