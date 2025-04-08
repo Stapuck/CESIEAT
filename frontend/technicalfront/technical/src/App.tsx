@@ -9,7 +9,7 @@ import EditProfilePage from "./pages/EditProfilePage";
 
 import ProfilePage from "./pages/ProfilePage";
 import Protected from "./pages/Protected";
-import LoginPage from "./pages/LoginPage"; // Importez la page de connexion
+import LoginPage from "./pages/LoginPage";
 import CreateProductPage from "./pages/CreateProductPage";
 
 function App() {
@@ -19,12 +19,10 @@ function App() {
         <Navbar />
         <div className="container mx-auto p-2 h-full">
           <Routes>
-            <Route path="/technical/" element={<HomePage />} />
-            <Route path="/technical/login" element={<LoginPage />} />{" "}
-            {/* Nouvelle route */}
+            <Route path="/technical/login" element={<LoginPage />} />
+            
             <Route element={<Protected />}>
-              <Route index element={<HomePage />} />
-              {/* Routes protégées */}
+              <Route path="/technical/" element={<HomePage />} />
               <Route
                 path="/technical/profile"
                 element={<ProfilePage />}
@@ -33,13 +31,10 @@ function App() {
                 path="/technical/profile/edit"
                 element={<EditProfilePage />}
               ></Route>
-
               <Route
                 path="/technical/create-product"
                 element={<CreateProductPage />}
               ></Route>
-
-              {/* Routes de gestion des containers */}
             </Route>
           </Routes>
         </div>

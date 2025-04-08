@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useLogger } from "../hooks/useLogger";
+import { useAuth } from "react-oidc-context";
 
 // Interface pour les composants
 interface Component {
@@ -24,6 +26,9 @@ const HomePage = () => {
   const [components, setComponents] = useState<Component[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const logger = useLogger();
+  const auth = useAuth();
+  const userId = auth.user?.profile?.sub || "unknown";
 
   // Récupérer les composants au chargement de la page
   useEffect(() => {
@@ -221,6 +226,11 @@ const HomePage = () => {
                         className="text-xs px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500"
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() =>logger({
+                          type: "info",
+                          message: `Downloading component: ${component.name || "Sans nom"}`,
+                          clientId_Zitadel: userId,
+                        })}
                       >
                         Télécharger
                       </a>
