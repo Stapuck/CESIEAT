@@ -11,9 +11,9 @@ import LoginButton from "./components/LoginButton"
 
 function App() {
   return (
-    <div className="bg-primary pt-30 h-full">
+    <div className="bg-primary pt-20 h-full">
       <Navbar />
-      <div className="flex bg-gray-50">
+      <div className="flex bg-primary">
         {/* Left Side Navigation */}
         <div className="w-1/6 bg-gray-800 text-white p-4">
           <h2 className="text-2xl font-bold mb-6">Portail Commercial</h2>
@@ -33,7 +33,7 @@ function App() {
         {/* Right Side Content */}
         <div className="w-3/4 p-6">
           <Routes>
-            <Route path="/commercial/tmplogin" element={<LoginButton />} />
+            <Route path="/commercial/login" element={<LoginButton />} />
             <Route element={<Protected />}>
               <Route index element={<HomePage />} />
               <Route path="/commercial" element={<HomePage />} />
