@@ -91,24 +91,8 @@ const CommandesPage = () => {
   const [showLivreeCommande, setShowLivreeCommande] = useState(true);
   const [showAnnuleeCommande, setShowAnnuleeCommande] = useState(true);
 
-  // if (status === "pending") return <h1>Loading...</h1>;
-  // if (status === "error") return <span>Error: {error.message}</span>;
-
   if (status === "pending") return <h1>Loading...</h1>;
   if (status === "error") return <span>Error: {error.message}</span>;
-
-  if (!data || data.length === 0) {
-    return (
-      <div className="min-h-screen bg-transparent-background mt-25 mx-3 p-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">
-            Gestion des Commandes
-          </h1>
-        </div>
-        <p className="text-gray-600 text-lg">Aucune commande pour le moment.</p>
-      </div>
-    );
-  }
 
   // Filtrer les commandes par statut
   const nouvellesCommandes = data.filter(
@@ -528,7 +512,9 @@ const CommandesPage = () => {
           </div>
         </>
       ) : (
-        <> pas de commande</>
+        <>
+          <div>Vous n'avez pas encore de commande</div>
+        </>
       )}
     </div>
   );
