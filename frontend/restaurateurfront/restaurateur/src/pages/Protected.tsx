@@ -50,7 +50,7 @@ function Protected() {
         message: "User is not authenticated, redirecting to login",
         clientId_Zitadel: auth.user?.profile?.sub || "unknown",
     });
-    return <Navigate to="/technical/login" />;
+    return <Navigate to="/restaurateur/login" />;
 }
 
 export default Protected;
