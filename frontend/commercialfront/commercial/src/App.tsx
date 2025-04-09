@@ -19,7 +19,7 @@ function App() {
           <h2 className="text-2xl font-bold mb-6">Portail Commercial</h2>
           <ul>
             <li>
-              <Link to="/commercial" className="block py-2 hover:bg-gray-700 rounded">Acceuil</Link>
+              <Link to="/commercial" className="block py-2 hover:bg-gray-700 rounded">Accueil</Link>
             </li>
             <li>
               <Link to="/commercial/clientAccountsPage" className="block py-2 hover:bg-gray-700 rounded">Comptes Clients</Link>
