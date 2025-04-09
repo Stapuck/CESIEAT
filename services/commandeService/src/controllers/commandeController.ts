@@ -113,14 +113,11 @@ export const getCommandesByLivreur = async (c: Context) => {
             return c.json({ message: "Livreur ID is required" }, 400);
         }
         
+        // Récupérer toutes les commandes assignées à ce livreur, quel que soit leur statut
         const commandes = await Commande.find({ 
-            livreurId_Zitadel: livreurId_Zitadel,
-            status: { $in: ["En livraison", "Prêt"] }
+            livreurId_Zitadel: livreurId_Zitadel
+            // Ne pas filtrer par statut
         });
-        
-        if (commandes.length === 0) {
-            return c.json([]);
-        }
         
         return c.json(commandes);
     } catch (error) {

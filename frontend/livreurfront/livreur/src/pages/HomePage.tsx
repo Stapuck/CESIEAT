@@ -264,8 +264,7 @@ export default function HomePage() {
             Authorization: `Bearer ${auth.user.access_token}`,
           },
           body: JSON.stringify({
-            livreurId_Zitadel: auth.user.profile.sub,
-            status: "En livraison",
+            livreurId_Zitadel: auth.user.profile.sub
           }),
         }
       );
