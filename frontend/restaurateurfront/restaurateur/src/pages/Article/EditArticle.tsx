@@ -28,7 +28,7 @@ const EditArticle = () => {
         setType(article.type);
         setPrice(article.price);
         setIsInStock(article.isInStock);
-        setImage(article.image);
+        setImage(article.url_image);
         setRestaurantId(article.restaurantid);
       } catch (error) {
         console.error(error);
@@ -99,7 +99,6 @@ const EditArticle = () => {
               onChange={(e) => setType(e.target.value)}
               className="w-full block border p-3 rounded"
             >
-
               <option value="">Sélectionnez un type</option>
               <option value="plat">Plat</option>
               <option value="boisson">Boisson</option>

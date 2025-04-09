@@ -4,7 +4,7 @@ interface IArticle extends Document {
     name: string;
     reference: string;
     price: number;
-    type : "plat" | "boisson" | "sauce" | "accompagnement " | "dessert" | "snack" | "autre";
+    type : "plat" | "boisson" | "sauce" | "accompagnement" | "dessert" | "snack" | "autre";
     url_image: string;
     restaurantId: mongoose.Types.ObjectId;
 
@@ -26,7 +26,7 @@ const articleSchema = new Schema(
         },
         type : {
             type : String,
-            enum : ["plat", "boisson", "sauce", "accompagnement ", "dessert", "snack", "autre"],
+            enum : ["plat", "boisson", "sauce", "accompagnement", "dessert", "snack", "autre"],
             required : true
         },
         url_image: {
