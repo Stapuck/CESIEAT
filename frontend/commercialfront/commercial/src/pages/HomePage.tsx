@@ -31,7 +31,7 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className='min-h-screen'>
       <h1 className="text-3xl font-bold mb-4">Tableaux de Bord</h1>
       <Dashboard orders={orders} clients={clients} livreurs={livreurs} />
     </div>
