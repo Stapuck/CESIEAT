@@ -19,6 +19,7 @@ import TarifsPage from "./pages/Tarif";
 import Promotion from "./pages/Promotion";
 import Terms from "./pages/TermPage";
 import Contact from "./pages/ContactPage";
+import LogsPage from "./pages/LogsPage";
 
 function App() {
   return (
