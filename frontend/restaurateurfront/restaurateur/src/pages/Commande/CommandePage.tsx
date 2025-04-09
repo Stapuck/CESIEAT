@@ -91,8 +91,25 @@ const CommandesPage = () => {
   const [showLivreeCommande, setShowLivreeCommande] = useState(true);
   const [showAnnuleeCommande, setShowAnnuleeCommande] = useState(true);
 
+  // if (status === "pending") return <h1>Loading...</h1>;
+  // if (status === "error") return <span>Error: {error.message}</span>;
+
   if (status === "pending") return <h1>Loading...</h1>;
   if (status === "error") return <span>Error: {error.message}</span>;
+
+  if (!data || data.length === 0) {
+    return (
+      <div className="min-h-screen bg-transparent-background mt-25 mx-3 p-8">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">
+            Gestion des Commandes
+          </h1>
+        </div>
+        <p className="text-gray-600 text-lg">Aucune commande pour le moment.</p>
+      </div>
+    );
+  }
+
   // Filtrer les commandes par statut
   const nouvellesCommandes = data.filter(
     (commande) => commande.status === "En attente"
@@ -173,10 +190,13 @@ const CommandesPage = () => {
       );
 
       // Mise à jour de la commande côté backend
-      await axios.put(`https://cesieat.nathan-lorit.com/api/commandes/${commande._id}`, {
-        status: "En livraison",
-        livreur: livreur._id, // Ajout de l'ID du livreur
-      });
+      await axios.put(
+        `https://cesieat.nathan-lorit.com/api/commandes/${commande._id}`,
+        {
+          status: "En livraison",
+          livreur: livreur._id, // Ajout de l'ID du livreur
+        }
+      );
     } catch (error) {
       toast.error("Erreur lors de la mise à jour de la commande.");
     }
