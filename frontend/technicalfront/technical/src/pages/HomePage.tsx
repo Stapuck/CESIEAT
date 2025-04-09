@@ -264,7 +264,7 @@ const HomePage = () => {
             </h3>
             <div className="flex flex-col gap-2">
               <Link
-                to="https://cesieat.nathan-lorit.com/dozzle"
+                to="https://cesieat.nathan-lorit.com/dozzle/"
                 className="text-blue-600 hover:underline"
               >
                 État des containers
