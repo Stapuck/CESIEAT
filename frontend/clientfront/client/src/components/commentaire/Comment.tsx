@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useAuth } from "react-oidc-context";
-import Swal from "sweetalert2"; // Ajout de l'import SweetAlert2
+import Swal from "sweetalert2"; 
 import { toast } from "react-toastify";
 
 type CommentProps = {
@@ -28,11 +28,9 @@ export default function Comment({ comment, onEdit, getComments }: CommentProps) 
   const auth = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(comment.commentaire);
-  const [commentaire, setCommentaire] = useState();
   const [client, setClient] = useState<IClient>();
 
   const currentUserId = auth.user?.profile.sub;
-
   const isOwner = comment.clientId_Zitadel === currentUserId;
 
   const formattedDate = new Date(comment.createdAt).toLocaleDateString(
@@ -43,18 +41,6 @@ export default function Comment({ comment, onEdit, getComments }: CommentProps) 
       year: "numeric",
     }
   );
-
-  const getCommentsByIdClient = async (clientId_Zitadel: string) => {
-    try {
-      const response = await axios.get(
-        `https://cesieat.nathan-lorit.com/api/commentaires/client/${clientId_Zitadel}`
-      );
-      setCommentaire(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const getClientByIdZitadel = async (clientId_Zitadel: string) => {
     try {
@@ -73,12 +59,6 @@ export default function Comment({ comment, onEdit, getComments }: CommentProps) 
     }
   }, [comment.clientId_Zitadel]);
 
-  useEffect(() => {
-    if (currentUserId) {
-      getCommentsByIdClient(currentUserId);
-    }
-  }, [currentUserId]);
-
   const handleDelete = async (idcomment: string) => {
     const result = await Swal.fire({
       title: "Voulez vous vraiment supprimer votre commentaire ?",
@@ -92,7 +72,6 @@ export default function Comment({ comment, onEdit, getComments }: CommentProps) 
       try {
         await axios.delete(`https://cesieat.nathan-lorit.com/api/commentaires/${idcomment}`);
         toast.success("Votre commentaire a été supprimé");
-        getClientByIdZitadel(comment.clientId_Zitadel);
         getComments();
       } catch (error: any) {
         toast.error(error.message);
