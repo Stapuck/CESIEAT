@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { useAuth } from "react-oidc-context";
 import axios from "axios";
 import { toast } from "react-toastify";
+import CommentSlider from "../components/commentaire/CommentSlider";
 import { useLogger } from "../hooks/useLogger";
 
 const Hero = () => {
@@ -22,7 +23,6 @@ const Hero = () => {
 
   const createClient = async () => {
     try {
-      // Verify user profile exists
       if (!auth.user?.profile) {
         logger({
           type: "error",
@@ -40,39 +40,36 @@ const Hero = () => {
       } = auth.user.profile;
 
       if (!given_name || !family_name || !email || !zitadelId) {
-        logger({
-          type: "error",
-          message: "Required user profile data missing",
-          clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+        console.error("Required user profile data missing", {
+          given_name,
+          family_name,
+          email,
+          zitadelId,
         });
         return;
       }
 
-      // Prepare client data
       const clientData = {
         name: `${given_name} ${family_name}`,
         email,
-        phone: "Empty", // Default value
-        address: "Empty", // Default value
+        phone: "Empty",
+        address: "Empty",
         isPaused: false,
         clientId_Zitadel: zitadelId,
       };
 
       try {
-        // Try to fetch existing client data
         const response = await axios.get(
-          `https://localhost/api/clients/byZitadelId/${zitadelId}`,
+          `https://cesieat.nathan-lorit.com/api/clients/byZitadelId/${zitadelId}`,
           { headers: { Accept: "application/json" } }
         );
 
-        // Client exists - preserve existing phone and address
         const existingClient = response.data;
         clientData.phone = existingClient.phone || clientData.phone;
         clientData.address = existingClient.address || clientData.address;
 
-        // Update the existing client
         await axios.put(
-          `https://localhost/api/clients/byZitadelId/${zitadelId}`,
+          `https://cesieat.nathan-lorit.com/api/clients/byZitadelId/${zitadelId}`,
           clientData,
           {
             headers: {
@@ -81,30 +78,23 @@ const Hero = () => {
             },
           }
         );
+        console.log("Client updated successfully");
       } catch (error: any) {
-        // Check if error is due to client not existing (404)
         if (error.response?.status === 404) {
-          // Create new client
-          await axios.post("https://localhost/api/clients", clientData, {
+          await axios.post("https://cesieat.nathan-lorit.com/api/clients", clientData, {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
             },
           });
-          logger({
-            type: "info",
-            message: `New client created for user ${given_name} ${family_name}`,
-            clientId_Zitadel: zitadelId,
-          });
         } else {
-          // Handle other API errors
           logger({
             type: "error",
             message: `Error synchronizing user data: ${error.message}`,
             clientId_Zitadel: zitadelId,
           });
           toast.error("Error synchronizing user data");
-          throw error; // Re-throw for outer catch
+          throw error;
         }
       }
     } catch (error: any) {
@@ -117,7 +107,6 @@ const Hero = () => {
     }
   };
 
-  // Vérifier et créer le client lorsque l'utilisateur se connecte
   useEffect(() => {
     if (auth.isAuthenticated && auth.user) {
       createClient();
@@ -136,9 +125,9 @@ const Hero = () => {
         const nextIndex = (currentIndex + 1) % messages.length;
         return messages[nextIndex];
       });
-    }, 3000); // Change message every 3 seconds
+    }, 3000);
 
-    return () => clearInterval(interval); // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   const handleSubmitPost = async (e: any) => {
@@ -152,31 +141,14 @@ const Hero = () => {
     setIsSubmitting(true);
 
     try {
-      // Récupération du token d'authentification
-      const token = auth.user?.access_token;
+      await axios.post("https://cesieat.nathan-lorit.com/api/commentaires", {
+        commentaire: postContent,
+        clientId_Zitadel: auth.user?.profile.sub,
+      });
 
-      // Configuration de la requête avec en-têtes d'autorisation
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      };
-
-      // Effectuer la requête POST avec une URL API correcte
-      await axios.post(
-        "/api/posts", // Remplacez par l'URL correcte de votre API
-        { content: postContent },
-        config
-      );
-
-      // Succès
       toast.success("Votre message a été publié avec succès!");
       setPostContent("");
-
-      // Vous pourriez faire quelque chose avec la réponse ici
     } catch (error: any) {
-      // Gestion des erreurs
       logger({
         type: "error",
         message: `Error publishing post: ${error.message}`,
@@ -204,41 +176,43 @@ const Hero = () => {
           duration: 0.0,
           scale: { type: "spring", visualDuration: 0.0, bounce: 0.0 },
         }}
-        className="relative items-center mx-2 mb-6 z-10 mt-10 rounded-3xl shadow-2xl bg-transparent-background p-8 sm:w-screen]"
+        className="relative items-center w-[95%] md:w-[85%] lg:w-[80%] mx-auto mb-6 z-10 mt-16 sm:mt-20 md:mt-24 rounded-3xl shadow-2xl bg-transparent-background p-4 sm:p-6 md:p-8"
       >
-        <h1 className="text-5xl font-extrabold p-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold p-3 sm:p-4 md:p-8 text-center md:text-left">
           Bienvenue {auth.user?.profile.given_name} sur{" "}
           <span className="bg-gradient-to-r from-gradient-left to-gradient-right bg-clip-text font-extrabold text-transparent">
             C.H.E.F.
           </span>
         </h1>
 
-        <img
-          src={Quote}
-          alt="Quote"
-          className="p-4 max-w-sm object-contain z-10"
-        />
-        <p className="text-center font-bold italic">{currentMessage}</p>
+        <div className="flex flex-col px-2 sm:px-4">
+          <img
+            src={Quote}
+            alt="Quote"
+            className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain z-10 self-start"
+          />
+          
+          <p className="text-center font-bold italic text-sm sm:text-base md:text-lg py-2 md:py-4">
+            {currentMessage}
+          </p>
 
-        <div className="flex justify-end items-end">
           <img
             src={InversedQuote}
             alt="Inversed Quote"
-            className="p-4 max-w-sm object-contain z-10"
+            className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain z-10 self-end"
           />
         </div>
 
-        {/* Formulaire de publication pour les utilisateurs authentifiés */}
         {auth.isAuthenticated && (
-          <div className="mt-8 p-6 bg-white bg-opacity-90 rounded-xl shadow-md">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          <div className="mt-4 sm:mt-6 md:mt-8 p-3 sm:p-4 md:p-6 bg-white bg-opacity-90 rounded-xl shadow-md">
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 text-gray-800">
               Partagez votre expérience
             </h2>
-            <form onSubmit={handleSubmitPost}>
+            <form onSubmit={handleSubmitPost}> 
               <textarea
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4"
+                className="w-full p-2 sm:p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2 sm:mb-4 text-sm sm:text-base"
                 placeholder="Partagez votre avis sur nos plats..."
-                rows={4}
+                rows={3}
                 value={postContent}
                 onChange={(e) => setPostContent(e.target.value)}
                 required
@@ -246,14 +220,14 @@ const Hero = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`px-4 py-2 ${
+                className={`w-full sm:w-auto px-3 sm:px-4 py-1.5 sm:py-2 ${
                   isSubmitting ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
-                } text-white rounded transition-colors duration-200 flex items-center justify-center`}
+                } text-white rounded transition-colors duration-200 flex items-center justify-center text-sm sm:text-base`}
               >
                 {isSubmitting ? (
                   <>
                     <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      className="animate-spin -ml-1 mr-2 h-3 w-3 sm:h-4 sm:w-4 text-white"
                       xmlns="https://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -272,7 +246,7 @@ const Hero = () => {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Envoi en cours...
+                    Envoi...
                   </>
                 ) : (
                   "Publier"
@@ -281,6 +255,10 @@ const Hero = () => {
             </form>
           </div>
         )}
+        
+        <div className="mt-4 sm:mt-5">
+          <CommentSlider />
+        </div>
       </motion.div>
     </div>
   );

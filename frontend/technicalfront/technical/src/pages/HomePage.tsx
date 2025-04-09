@@ -36,7 +36,7 @@ const HomePage = () => {
       try {
         setLoading(true);
         // Utiliser l'URL correcte du backend
-        const response = await axios.get("https://localhost/api/components");
+        const response = await axios.get("https://cesieat.nathan-lorit.com/api/components");
         setComponents(response.data);
         setError(null);
       } catch (err: any) {
@@ -79,7 +79,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 min-h-screen">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold mb-2">Portail Technique</h1>
         <p className="text-gray-600">
@@ -264,7 +264,7 @@ const HomePage = () => {
             </h3>
             <div className="flex flex-col gap-2">
               <Link
-                to="https://localhost:8081"
+                to="https://dozzle.nathan-lorit.com/"
                 className="text-blue-600 hover:underline"
               >
                 État des containers

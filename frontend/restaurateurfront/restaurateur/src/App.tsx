@@ -14,16 +14,34 @@ import HistoriqueCommande from "./pages/Commande/HistoriqueCommande";
 import CommandePage from "./pages/Commande/CommandePage";
 import Protected from "./pages/Protected";
 import CreateRestaurant from "./pages/CreateRestaurant";
+import ScrollToTop from "./components/ScrollToTop";
+import AboutUs from "./pages/AboutUs";
+import ConfidentialityPage from "./pages/ConfidentialityPage";
+import FAQPage from "./pages/FAQ";
+import TarifsPage from "./pages/Tarif"; 
+import Promotion from "./pages/Promotion"; 
+import Terms from "./pages/TermPage"; 
+import Contact from "./pages/ContactPage"; 
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ScrollToTop/>
       <Routes>
         
         <Route element={<Layout />}>
           <Route path="restaurateur/" element={<HomePage />} />
+          <Route path="restaurateur/login" element={<HomePage />} />
+
+          <Route path="restaurateur/aboutus" element={<AboutUs />} />
+          <Route path="restaurateur/faq" element={<FAQPage />} />
+          <Route path="restaurateur/contact" element={<Contact />} />
+          <Route path="restaurateur/confidentialité" element={<ConfidentialityPage />} />
+          <Route path="restaurateur/terms" element={<Terms />} />
+          <Route path="restaurateur/tarif" element={<TarifsPage />} />
+          <Route path="restaurateur/promotion" element={<Promotion />} />
 
           <Route element={<Protected />}>
             <Route path="restaurateur/account" element={<Account />} />
@@ -50,6 +68,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
+
     </QueryClientProvider>
   );
 }

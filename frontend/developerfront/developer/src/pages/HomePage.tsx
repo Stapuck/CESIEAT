@@ -36,7 +36,7 @@ const HomePage = () => {
       try {
         setLoading(true);
         // Utiliser l'URL correcte du backend
-        const response = await axios.get("https://localhost/api/components");
+        const response = await axios.get("https://cesieat.nathan-lorit.com/api/components");
         setComponents(response.data);
         setError(null);
       } catch (err) {

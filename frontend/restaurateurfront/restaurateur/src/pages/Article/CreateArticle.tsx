@@ -33,7 +33,7 @@ const CreateArticle = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `https://localhost/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://cesieat.nathan-lorit.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
       setRestaurant(response.data.length > 0 ? response.data[0] : null);
     } catch (error) {
@@ -53,7 +53,7 @@ const CreateArticle = () => {
 
     try {
       setIsLoading(true);
-      await axios.post("https://localhost/api/articles", {
+      await axios.post("https://cesieat.nathan-lorit.com/api/articles", {
         name,
         type,
         price,

@@ -40,7 +40,7 @@ const CommandesPage = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `https://localhost/api/restaurateurs/manager/${auth.user?.profile.sub}`
+        `https://cesieat.nathan-lorit.com/api/restaurateurs/manager/${auth.user?.profile.sub}`
       );
 
       if (Array.isArray(response.data) && response.data.length > 0) {
@@ -68,7 +68,7 @@ const CommandesPage = () => {
     queryFn: async (): Promise<Array<ICommande>> => {
       if (!restaurantmanager?._id) return []; // Évite une requête invalide
       const response = await fetch(
-        `https://localhost/api/commandes/restaurateur/${restaurantmanager._id}`
+        `https://cesieat.nathan-lorit.com/api/commandes/restaurateur/${restaurantmanager._id}`
       );
 
       return await response.json();
@@ -93,6 +93,7 @@ const CommandesPage = () => {
 
   if (status === "pending") return <h1>Loading...</h1>;
   if (status === "error") return <span>Error: {error.message}</span>;
+
   // Filtrer les commandes par statut
   const nouvellesCommandes = data.filter(
     (commande) => commande.status === "En attente"
@@ -123,7 +124,7 @@ const CommandesPage = () => {
     );
 
     axios
-      .put(`https://localhost/api/commandes/${commande._id}`, {
+      .put(`https://cesieat.nathan-lorit.com/api/commandes/${commande._id}`, {
         status: "Préparation",
       })
       .catch((error) => console.log("Erreur de mise à jour:", error));
@@ -140,7 +141,7 @@ const CommandesPage = () => {
     );
 
     axios
-      .put(`https://localhost/api/commandes/${commande._id}`, {
+      .put(`https://cesieat.nathan-lorit.com/api/commandes/${commande._id}`, {
         status: "Prêt",
       })
       .catch((error) => console.log("Erreur de mise à jour:", error));
@@ -153,7 +154,7 @@ const CommandesPage = () => {
 
       // Récupération du livreur
       const response = await axios.get(
-        `https://localhost/api/livreurs/codelivreur/${codeLivreur}`
+        `https://cesieat.nathan-lorit.com/api/livreurs/codelivreur/${codeLivreur}`
       );
       const livreur = response.data;
 
@@ -173,10 +174,13 @@ const CommandesPage = () => {
       );
 
       // Mise à jour de la commande côté backend
-      await axios.put(`https://localhost/api/commandes/${commande._id}`, {
-        status: "En livraison",
-        livreur: livreur._id, // Ajout de l'ID du livreur
-      });
+      await axios.put(
+        `https://cesieat.nathan-lorit.com/api/commandes/${commande._id}`,
+        {
+          status: "En livraison",
+          livreur: livreur._id, // Ajout de l'ID du livreur
+        }
+      );
     } catch (error) {
       toast.error("Erreur lors de la mise à jour de la commande.");
     }
@@ -202,7 +206,7 @@ const CommandesPage = () => {
       );
 
       axios
-        .put(`https://localhost/api/commandes/${commande._id}`, {
+        .put(`https://cesieat.nathan-lorit.com/api/commandes/${commande._id}`, {
           status: "Annulée",
         })
         .catch((error) => console.log("Erreur de mise à jour:", error));
@@ -508,7 +512,9 @@ const CommandesPage = () => {
           </div>
         </>
       ) : (
-        <> pas de commande</>
+        <>
+          <div>Vous n'avez pas encore de commande</div>
+        </>
       )}
     </div>
   );

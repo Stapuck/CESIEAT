@@ -168,7 +168,7 @@ export default function HomePage() {
   // Récupérer les commandes disponibles (seulement Préparation et Prêt)
   const getCommandes = async () => {
     try {
-      const response = await axios.get("https://localhost/api/commandes");
+      const response = await axios.get("https://cesieat.nathan-lorit.com/api/commandes");
       // Filtrer pour n'inclure que les statuts "Préparation" et "Prêt"
       const filteredCommandes = response.data.filter(
         (cmd: ICommande) =>
@@ -188,7 +188,7 @@ export default function HomePage() {
 
   const getClients = async () => {
     try {
-      const response = await axios.get("https://localhost/api/clients");
+      const response = await axios.get("https://cesieat.nathan-lorit.com/api/clients");
       setClients(response.data);
     } catch (error: any) {
       logger({
@@ -201,7 +201,7 @@ export default function HomePage() {
 
   const getRestaurateurs = async () => {
     try {
-      const response = await axios.get("https://localhost/api/restaurateurs");
+      const response = await axios.get("https://cesieat.nathan-lorit.com/api/restaurateurs");
 
       setRestaurateur(response.data);
     } catch (error: any) {
@@ -215,7 +215,7 @@ export default function HomePage() {
 
   const getLivreus = async () => {
     try {
-      const response = await axios.get("https://localhost/api/livreurs");
+      const response = await axios.get("https://cesieat.nathan-lorit.com/api/livreurs");
       setLivreurs(response.data);
     } catch (error: any) {
       logger({
@@ -232,7 +232,7 @@ export default function HomePage() {
 
     try {
       const response = await fetch(
-        `https://localhost/api/commandes/livreur/${auth.user.profile.sub}`
+        `https://cesieat.nathan-lorit.com/api/commandes/livreur/${auth.user.profile.sub}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -256,7 +256,7 @@ export default function HomePage() {
 
     try {
       const response = await fetch(
-        `https://localhost/api/commandes/${commandeId}/${auth.user.profile.sub}/assign`,
+        `https://cesieat.nathan-lorit.com/api/commandes/${commandeId}/${auth.user.profile.sub}/assign`,
         {
           method: "PUT",
           headers: {
@@ -264,8 +264,7 @@ export default function HomePage() {
             Authorization: `Bearer ${auth.user.access_token}`,
           },
           body: JSON.stringify({
-            livreurId_Zitadel: auth.user.profile.sub,
-            status: "En livraison",
+            livreurId_Zitadel: auth.user.profile.sub
           }),
         }
       );
@@ -627,7 +626,7 @@ export default function HomePage() {
         return;
       }
 
-      await axios.put(`https://localhost/api/commandes/${commandeId}`, {
+      await axios.put(`https://cesieat.nathan-lorit.com/api/commandes/${commandeId}`, {
         status: "Livrée",
       });
       toast.success("Commande marquée comme livrée avec succès!");
@@ -680,7 +679,7 @@ export default function HomePage() {
       // Vérifier d'abord si le livreur existe
       try {
         const checkResponse = await axios.get(
-          `https://localhost/api/livreurs/byZitadelId/${zitadelId}`,
+          `https://cesieat.nathan-lorit.com/api/livreurs/byZitadelId/${zitadelId}`,
           {
             headers: {
               Accept: "application/json",
@@ -705,7 +704,7 @@ export default function HomePage() {
         };
 
         await axios.put(
-          `https://localhost/api/livreurs/byZitadelId/${zitadelId}`,
+          `https://cesieat.nathan-lorit.com/api/livreurs/byZitadelId/${zitadelId}`,
           updatedData,
           {
             headers: {
@@ -718,7 +717,7 @@ export default function HomePage() {
         // Si le livreur n'existe pas (erreur 404), on le crée
         if (checkError.response && checkError.response.status === 404) {
 
-          await axios.post(`https://localhost/api/livreurs`, livreurData, {
+          await axios.post(`https://cesieat.nathan-lorit.com/api/livreurs`, livreurData, {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
@@ -906,7 +905,12 @@ export default function HomePage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {commandes
-              .filter((commande) => !hiddenCommandes.includes(commande._id)) // Filtrer les commandes masquées
+              .filter((commande) => 
+                // Ne pas afficher les commandes masquées
+                !hiddenCommandes.includes(commande._id) && 
+                // Ne pas afficher les commandes déjà prises par ce livreur
+                !myCommandes.some(myCmd => myCmd._id === commande._id)
+              )
               .map((commande) => {
                 const restaurant = restaurateurs.find(
                   (r) => r._id === commande.restaurantId
@@ -944,7 +948,7 @@ export default function HomePage() {
                       e.stopPropagation();
                       toggleHideCommande(id);
                     }}
-                    onTake={handleTakeCommande} // Utilisation correcte de `onTake`
+                    onTake={handleTakeCommande}
                   />
                 );
               })}

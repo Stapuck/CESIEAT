@@ -8,6 +8,14 @@ import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import Protected from "./pages/Protected"
 import LoginButton from "./components/LoginButton"
+import AboutUs from "./pages/AboutUs";
+import ConfidentialityPage from "./pages/ConfidentialityPage";
+import FAQPage from "./pages/FAQ";
+import TarifsPage from "./pages/Tarif"; 
+import Promotion from "./pages/Promotion"; 
+import Terms from "./pages/TermPage"; 
+import Contact from "./pages/ContactPage"; 
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
@@ -19,7 +27,7 @@ function App() {
           <h2 className="text-2xl font-bold mb-6">Portail Commercial</h2>
           <ul>
             <li>
-              <Link to="/commercial" className="block py-2 hover:bg-gray-700 rounded">Acceuil</Link>
+              <Link to="/commercial" className="block py-2 hover:bg-gray-700 rounded">Accueil</Link>
             </li>
             <li>
               <Link to="/commercial/clientAccountsPage" className="block py-2 hover:bg-gray-700 rounded">Comptes Clients</Link>
@@ -32,8 +40,16 @@ function App() {
 
         {/* Right Side Content */}
         <div className="w-3/4 p-6">
+          <ScrollToTop />
           <Routes>
             <Route path="/commercial/login" element={<LoginButton />} />
+            <Route path="/commercial/aboutus" element={<AboutUs/>}/>
+            <Route path="/commercial/confidentialité" element={<ConfidentialityPage/>}/>
+            <Route path="/commercial/faq" element={<FAQPage/>}/>
+            <Route path="/commercial/tarif" element={<TarifsPage/>}/>
+            <Route path="/commercial/promotion" element={<Promotion/>}/>
+            <Route path="/commercial/terms" element={<Terms/>}/>
+            <Route path="/commercial/contact" element={<Contact/>}/>
             <Route element={<Protected />}>
               <Route index element={<HomePage />} />
               <Route path="/commercial" element={<HomePage />} />

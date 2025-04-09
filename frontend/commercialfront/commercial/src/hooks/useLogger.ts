@@ -16,7 +16,7 @@ export const useLogger = () => {
         clientId_Zitadel
     }: LogParams) => {
         try {
-            await axios.post("https://localhost/api/logs", {
+            await axios.post("https://cesieat.nathan-lorit.com/api/logs", {
                 type,
                 message: "Commercial => " + message,
                 createdAt: new Date(),

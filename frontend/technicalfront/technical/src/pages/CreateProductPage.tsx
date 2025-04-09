@@ -63,7 +63,7 @@ const CreateProductPage = () => {
       }
 
       // URL correcte du backend - conserver HTTPS car c'est l'URL exposée via nginx
-      await axios.post("https://localhost/api/components", componentData, {
+      await axios.post("https://cesieat.nathan-lorit.com/api/components", componentData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

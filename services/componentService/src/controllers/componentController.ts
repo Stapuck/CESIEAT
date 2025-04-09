@@ -95,7 +95,7 @@ export const createComponent = async (c: Context) => {
         }
 
         // URL de téléchargement via nginx (utiliser le nom du fichier simple)
-        const downloadUrl = `https://localhost/api/components/download/${fileName}`;
+        const downloadUrl = `https://cesieat.nathan-lorit.com/api/components/download/${fileName}`;
 
         // Créer et sauvegarder le composant
         const component = new Component({

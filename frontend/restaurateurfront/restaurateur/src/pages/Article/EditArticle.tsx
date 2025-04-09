@@ -20,7 +20,7 @@ const EditArticle = () => {
     const fetchArticle = async () => {
       try {
         const response = await axios.get(
-          `https://localhost/api/articles/${id}`
+          `https://cesieat.nathan-lorit.com/api/articles/${id}`
         );
         const article = response.data;
         setName(article.name);
@@ -28,7 +28,7 @@ const EditArticle = () => {
         setType(article.type);
         setPrice(article.price);
         setIsInStock(article.isInStock);
-        setImage(article.image);
+        setImage(article.url_image);
         setRestaurantId(article.restaurantid);
       } catch (error) {
         console.error(error);
@@ -49,7 +49,7 @@ const EditArticle = () => {
 
     try {
       setIsLoading(true);
-      await axios.put(`https://localhost/api/articles/${id}`, {
+      await axios.put(`https://cesieat.nathan-lorit.com/api/articles/${id}`, {
         name,
         reference,
         type,
@@ -99,7 +99,6 @@ const EditArticle = () => {
               onChange={(e) => setType(e.target.value)}
               className="w-full block border p-3 rounded"
             >
-
               <option value="">Sélectionnez un type</option>
               <option value="plat">Plat</option>
               <option value="boisson">Boisson</option>

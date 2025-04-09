@@ -31,7 +31,7 @@ const MenuCard = ({
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`https://localhost/api/menus/${id}`);
+        await axios.delete(`https://cesieat.nathan-lorit.com/api/menus/${id}`);
         toast.success("Menu supprimé avec succès");
         getMenus();
       } catch (error: any) {

@@ -1,70 +1,78 @@
 import IOSAppIcon from "../assets/IOS_store.svg";
 import AndroidAppIcon from "../assets/Android_store.png";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
     <footer className="bg-tertiary text-white py-4">
-      <div className="flex flex-col text-black">
-        <div className="flex justify-between">
-          <div className="flex flex-col items-start justify-between p-2">
-            <div className="font-extrabold text-2xl">CHEF</div>
-            <div className="flex items-center">
-              <img src={IOSAppIcon} alt="" className="pr-3" />
-              <img src={AndroidAppIcon} alt="" className="w-[140px] p2" />
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col text-black">
+          {/* Première section: Logo et badges d'app stores */}
+          <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start mb-6">
+            <div className="flex flex-col items-center sm:items-start justify-between p-2 mb-4 sm:mb-0">
+              <div className="font-extrabold text-2xl mb-3">CHEF</div>
+              <div className="flex flex-col sm:flex-row items-center">
+                <img src={IOSAppIcon} alt="App Store" className="h-10 mb-2 sm:mb-0 sm:mr-3" />
+                <img src={AndroidAppIcon} alt="Google Play" className="h-10 w-auto" />
+              </div>
             </div>
           </div>
-          <div className="flex flex-col items-start">
-            <div>Obtenir de l'aide</div>
-            <div>Ajouter votre restaurant</div>
-            <div>Devenir coursier</div>
-            <div>Créer votre compte</div>
-          </div>
-          <div className="flex flex-col items-start mr-4">
-            <div>Questions fréquentes</div>
-            <div>Restaurants à proximité</div>
-            <div>Afficher toutes les villes</div>
-            <div>Promotions</div>
-          </div>
-        </div>
-        <div className="flex justify-around items-center mt-4">
-          <div className="flex p-2 justify-around">
-            <img
-              src="https://img.icons8.com/ios/50/000000/facebook-new.png"
-              alt="Facebook"
-              className="p-2"
-            />
-            <img
-              src="https://img.icons8.com/ios/50/000000/twitter.png"
-              alt="Twitter"
-              className=" p-2"
-            />
-            <img
-              src="https://img.icons8.com/ios/50/000000/instagram-new.png"
-              alt="Instagram"
-              className=" p-2"
-            />
-          </div>
+          
+          {/* Deuxième section: Réseaux sociaux et liens */}
+          <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start mt-2 border-t border-gray-200 pt-4">
+            {/* Réseaux sociaux */}
+            <div className="flex justify-center mb-6 sm:mb-0">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="mx-2">
+                <img
+                  src="https://img.icons8.com/ios/50/000000/facebook-new.png"
+                  alt="Facebook"
+                  className="w-8 h-8"
+                />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="mx-2">
+                <img
+                  src="https://img.icons8.com/ios/50/000000/twitter.png"
+                  alt="Twitter"
+                  className="w-8 h-8"
+                />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="mx-2">
+                <img
+                  src="https://img.icons8.com/ios/50/000000/instagram-new.png"
+                  alt="Instagram"
+                  className="w-8 h-8"
+                />
+              </a>
+            </div>
 
-          <div className="flex flex-col">
-            <div>A propos de nous</div>
-            <div>Nous contacter</div>
-          </div>
+            {/* Groupes de liens */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full sm:w-auto">
+              <div className="flex flex-col items-center sm:items-start">
+                <Link to="/client/faq" className="mb-1 hover:underline">Questions fréquentes</Link>
+                <Link to="/client/aboutus" className="mb-1 hover:underline">À propos de nous</Link>
+                <Link to="/client/contact" className="hover:underline">Nous contacter</Link>
+              </div>
 
-          <div className="flex flex-col">
-            <div>Fonctionnement global</div>
-            <div>Politique de confidentialité</div>
-          </div>
+              <div className="flex flex-col items-center sm:items-start">
+                <Link to="/client/promotion" className="mb-1 hover:underline">Promotion</Link>
+                <Link to="/client/tarif" className="hover:underline">Tarif</Link>
+              </div>
 
-          <div className="flex flex-col">
-            <div>Tarifs</div>
-            <div>Conditions</div>
+              <div className="flex flex-col items-center sm:items-start">
+                <Link to="/client/confidentialité" className="mb-1 hover:underline">Politique de confidentialité</Link>
+                <Link to="/client/terms" className="hover:underline">Conditions d'utilisation</Link>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="flex justify-end italic items-end mx-4 mt-4">
-          <div>© 2025 C.H.E.F Technologies Inc.</div>
+          
+          {/* Copyright */}
+          <div className="flex justify-center sm:justify-end italic mt-6 pt-4 border-t border-gray-200 text-sm">
+            <div>© 2025 C.H.E.F Technologies Inc.</div>
+          </div>
         </div>
       </div>
     </footer>
   );
 };
+
 export default Footer;
