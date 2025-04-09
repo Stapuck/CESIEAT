@@ -32,7 +32,6 @@ export default function Comment({ comment, onEdit, getComments }: CommentProps) 
   const [client, setClient] = useState<IClient>();
 
   const currentUserId = auth.user?.profile.sub;
-  console.log(commentaire);
 
   const isOwner = comment.clientId_Zitadel === currentUserId;
 
