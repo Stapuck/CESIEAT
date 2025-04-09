@@ -17,6 +17,14 @@ import Checkout from "./pages/checkout/checkout";
 import AccountPage from "./pages/AccountPage";
 import Protected from "./pages/Protected";
 import HomePageWithoutLogin from "./pages/HomePageWithoutLogin";
+import AboutUs from "./pages/AboutUs";
+import ConfidentialityPage from "./pages/ConfidentialityPage";
+import FAQPage from "./pages/FAQ";
+import TarifsPage from "./pages/Tarif"; 
+import Promotion from "./pages/Promotion"; 
+import Terms from "./pages/TermPage"; 
+import Contact from "./pages/ContactPage"; 
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
@@ -24,12 +32,21 @@ function App() {
       <ErrorBoundary fallback={<Navigate to="/client/" />}>
         <div className="bg-primary pt-30 h-full">
           <Navbar />
+          <ScrollToTop />
           <Routes>
             <Route path="/client/" element={<HomePageWithoutLogin />} />
             <Route
               path="/client/restaurant/:slug"
               element={<ShowRestaurantMenu login={false} />}
             />
+
+            <Route path="/client/aboutus" element={<AboutUs/>}/>
+            <Route path="/client/confidentialité" element={<ConfidentialityPage/>}/>
+            <Route path="/client/faq" element={<FAQPage/>}/>
+            <Route path="/client/tarif" element={<TarifsPage/>}/>
+            <Route path="/client/promotion" element={<Promotion/>}/>
+            <Route path="/client/terms" element={<Terms/>}/>
+            <Route path="/client/contact" element={<Contact/>}/>
 
             <Route element={<Protected />}>
               {/* Routes principales */}

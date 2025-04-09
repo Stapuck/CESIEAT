@@ -11,7 +11,14 @@ import ProfilePage from "./pages/ProfilePage";
 import Protected from "./pages/Protected";
 import LoginPage from "./pages/LoginPage";
 import CreateProductPage from "./pages/CreateProductPage";
-import LogsPage from "./pages/LogsPage";
+import ScrollToTop from "./components/ScrollToTop";
+import AboutUs from "./pages/AboutUs";
+import ConfidentialityPage from "./pages/ConfidentialityPage";
+import FAQPage from "./pages/FAQ";
+import TarifsPage from "./pages/Tarif";
+import Promotion from "./pages/Promotion";
+import Terms from "./pages/TermPage";
+import Contact from "./pages/ContactPage";
 
 function App() {
   return (
@@ -19,11 +26,26 @@ function App() {
       <div className="bg-primary pt-30 h-full">
         <Navbar />
         <div className="container mx-auto p-2 h-full">
+          <ScrollToTop />
           <Routes>
-            <Route path="/technical/login" element={<LoginPage />} />
-            
+            <Route path="/technical/" element={<HomePage />} />
+            <Route path="/technical/login" element={<LoginPage />} />{" "}
+            <Route path="technical/aboutus" element={<AboutUs />} />
+            <Route path="technical/faq" element={<FAQPage />} />
+            <Route path="technical/contact" element={<Contact />} />
+            <Route
+              path="technical/confidentialité"
+              element={<ConfidentialityPage />}
+            />
+            <Route path="technical/terms" element={<Terms />} />
+            <Route path="technical/tarif" element={<TarifsPage />} />
+            <Route path="technical/promotion" element={<Promotion />} />
+            {/* Nouvelle route */}
             <Route element={<Protected />}>
               <Route path="/technical/" element={<HomePage />} />
+              <Route path="/technical/logs" element={<LogsPage />} />
+
+
               <Route
                 path="/technical/profile"
                 element={<ProfilePage />}

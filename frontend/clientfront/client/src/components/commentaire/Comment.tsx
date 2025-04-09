@@ -1,6 +1,8 @@
-import axios from 'axios';
-import { useState, useEffect } from 'react';
-import { useAuth } from 'react-oidc-context';
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { useAuth } from "react-oidc-context";
+import Swal from "sweetalert2"; // Ajout de l'import SweetAlert2
+import { toast } from "react-toastify";
 
 type CommentProps = {
   comment: {
@@ -10,47 +12,102 @@ type CommentProps = {
     createdAt: string;
   };
   onEdit: (id: string, newText: string) => void;
+  getComments: () => void;
 };
 
-export default function Comment({ comment, onEdit }: CommentProps) {
+interface IClient {
+  name: String;
+  email: String;
+  phone: String;
+  address: String;
+  isPaused: Boolean;
+  clientId_Zitadel: String;
+}
+
+export default function Comment({ comment, onEdit, getComments }: CommentProps) {
   const auth = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(comment.commentaire);
   const [commentaire, setCommentaire] = useState();
+  const [client, setClient] = useState<IClient>();
 
-  const currentUserId = auth.user?.profile.sub
+  const currentUserId = auth.user?.profile.sub;
   console.log(commentaire);
 
   const isOwner = comment.clientId_Zitadel === currentUserId;
 
-  const formattedDate = new Date(comment.createdAt).toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
+  const formattedDate = new Date(comment.createdAt).toLocaleDateString(
+    "fr-FR",
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }
+  );
 
   const getCommentsByIdClient = async (clientId_Zitadel: string) => {
     try {
-        const response = await axios.get(`https://cesieat.nathan-lorit.com/api/commentaires/client/${clientId_Zitadel}`);
-        setCommentaire(response.data);
-        console.log(response.data)
+      const response = await axios.get(
+        `https://cesieat.nathan-lorit.com/api/commentaires/client/${clientId_Zitadel}`
+      );
+      setCommentaire(response.data);
+      console.log(response.data);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-};
+  };
 
+  const getClientByIdZitadel = async (clientId_Zitadel: string) => {
+    try {
+      const response = await axios.get(
+        `https://cesieat.nathan-lorit.com/api/clients/byZitadelId/${clientId_Zitadel}`
+      );
+      setClient(response.data); // Stocke les infos du client (nom, prénom, etc.)
+    } catch (error) {
+      console.error("Erreur lors de la récupération du client :", error);
+    }
+  };
+
+  useEffect(() => {
+    if (comment.clientId_Zitadel) {
+      getClientByIdZitadel(comment.clientId_Zitadel);
+    }
+  }, [comment.clientId_Zitadel]);
 
   useEffect(() => {
     if (currentUserId) {
-        getCommentsByIdClient(currentUserId); // Assure-toi que `currentUserId` est bien défini
+      getCommentsByIdClient(currentUserId);
     }
-}, [currentUserId]);  // Si `currentUserId` change, on recharge les commentaires
+  }, [currentUserId]);
 
+  const handleDelete = async (idcomment: string) => {
+    const result = await Swal.fire({
+      title: "Voulez vous vraiment supprimer votre commentaire ?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Oui, supprimer!",
+    });
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`https://cesieat.nathan-lorit.com/api/commentaires/${idcomment}`);
+        toast.success("Votre commentaire a été supprimé");
+        getClientByIdZitadel(comment.clientId_Zitadel);
+        getComments();
+      } catch (error: any) {
+        toast.error(error.message);
+      }
+    }
+  };
 
   return (
     <div className="min-w-[280px] max-w-sm bg-white shadow-md rounded-2xl p-4 flex flex-col justify-between">
       <div className="text-xs text-gray-400">{formattedDate}</div>
-      <div className="font-semibold text-gray-800">{comment.clientId_Zitadel ?? 'Utilisateur'}</div>
+
+      <div className="font-semibold text-gray-800">
+        {client?.name ?? "Utilisateur"}{" "}
+      </div>
 
       {isEditing ? (
         <>
@@ -82,16 +139,26 @@ export default function Comment({ comment, onEdit }: CommentProps) {
           </div>
         </>
       ) : (
-        <p className="mt-2 text-gray-700 whitespace-pre-line">{comment.commentaire}</p>
+        <p className="mt-2 text-gray-700 whitespace-pre-line">
+          {comment.commentaire}
+        </p>
       )}
 
       {isOwner && !isEditing && (
-        <button
-          onClick={() => setIsEditing(true)}
-          className="mt-3 text-blue-500 text-sm self-end hover:underline"
-        >
-          Modifier
-        </button>
+        <div className="flex justify-between">
+          <button
+            onClick={() => setIsEditing(true)}
+            className="mt-3 text-blue-500 text-sm self-end hover:underline"
+          >
+            Modifier
+          </button>
+          <button
+            onClick={() => handleDelete(comment._id)}
+            className="mt-3 text-red-500 text-sm self-end hover:underline"
+          >
+            Supprimer
+          </button>
+        </div>
       )}
     </div>
   );

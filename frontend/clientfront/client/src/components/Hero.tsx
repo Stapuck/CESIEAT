@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 import { useAuth } from "react-oidc-context";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useLogger } from "../hooks/useLogger";
+import CommentSlider from "../components/commentaire/CommentSlider";
 
 const Hero = () => {
   const messages = [
@@ -40,10 +40,11 @@ const Hero = () => {
       } = auth.user.profile;
 
       if (!given_name || !family_name || !email || !zitadelId) {
-        logger({
-          type: "error",
-          message: "Required user profile data missing",
-          clientId_Zitadel: auth.user?.profile?.sub || "unknown",
+        console.error("Required user profile data missing", {
+          given_name,
+          family_name,
+          email,
+          zitadelId,
         });
         return;
       }
@@ -81,6 +82,7 @@ const Hero = () => {
             },
           }
         );
+        console.log("Client updated successfully");
       } catch (error: any) {
         // Check if error is due to client not existing (404)
         if (error.response?.status === 404) {
@@ -90,11 +92,6 @@ const Hero = () => {
               "Content-Type": "application/json",
               Accept: "application/json",
             },
-          });
-          logger({
-            type: "info",
-            message: `New client created for user ${given_name} ${family_name}`,
-            clientId_Zitadel: zitadelId,
           });
         } else {
           // Handle other API errors
@@ -153,22 +150,21 @@ const Hero = () => {
 
     try {
       // Récupération du token d'authentification
-      const token = auth.user?.access_token;
+      // const token = auth.user?.access_token;
 
       // Configuration de la requête avec en-têtes d'autorisation
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      };
+      // const config = {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //     "Content-Type": "application/json",
+      //   },
+      // };
 
       // Effectuer la requête POST avec une URL API correcte
-      await axios.post(
-        "/api/posts", // Remplacez par l'URL correcte de votre API
-        { content: postContent },
-        config
-      );
+      await axios.post("https://cesieat.nathan-lorit.com/api/commentaires", {
+        commentaire: postContent,
+        clientId_Zitadel: auth.user?.profile.sub,
+      });
 
       // Succès
       toast.success("Votre message a été publié avec succès!");
@@ -230,11 +226,11 @@ const Hero = () => {
 
         {/* Formulaire de publication pour les utilisateurs authentifiés */}
         {auth.isAuthenticated && (
-          <div className="mt-8 p-6 bg-white bg-opacity-90 rounded-xl shadow-md">
+          <div className="mt-8 p-6 bg-white bg-opacity-90 rounded-xl shadow-md ">
             <h2 className="text-2xl font-bold mb-4 text-gray-800">
               Partagez votre expérience
             </h2>
-            <form onSubmit={handleSubmitPost}>
+            <form onSubmit={handleSubmitPost}> 
               <textarea
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4"
                 placeholder="Partagez votre avis sur nos plats..."
@@ -279,8 +275,14 @@ const Hero = () => {
                 )}
               </button>
             </form>
+
+            
           </div>
+          
         )}
+        <div className="my-5">
+              <CommentSlider />
+            </div>
       </motion.div>
     </div>
   );
