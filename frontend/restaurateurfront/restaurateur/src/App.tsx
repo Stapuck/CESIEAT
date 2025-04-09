@@ -22,7 +22,6 @@ import TarifsPage from "./pages/Tarif";
 import Promotion from "./pages/Promotion"; 
 import Terms from "./pages/TermPage"; 
 import Contact from "./pages/ContactPage"; 
-// import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
@@ -68,7 +67,6 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
-      {/* <Footer /> */}
 
     </QueryClientProvider>
   );
