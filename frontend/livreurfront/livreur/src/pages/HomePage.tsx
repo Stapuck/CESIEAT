@@ -905,7 +905,12 @@ export default function HomePage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {commandes
-              .filter((commande) => !hiddenCommandes.includes(commande._id)) // Filtrer les commandes masquées
+              .filter((commande) => 
+                // Ne pas afficher les commandes masquées
+                !hiddenCommandes.includes(commande._id) && 
+                // Ne pas afficher les commandes déjà prises par ce livreur
+                !myCommandes.some(myCmd => myCmd._id === commande._id)
+              )
               .map((commande) => {
                 const restaurant = restaurateurs.find(
                   (r) => r._id === commande.restaurantId
@@ -943,7 +948,7 @@ export default function HomePage() {
                       e.stopPropagation();
                       toggleHideCommande(id);
                     }}
-                    onTake={handleTakeCommande} // Utilisation correcte de `onTake`
+                    onTake={handleTakeCommande}
                   />
                 );
               })}
