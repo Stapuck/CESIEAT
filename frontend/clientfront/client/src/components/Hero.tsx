@@ -7,6 +7,7 @@ import { useAuth } from "react-oidc-context";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CommentSlider from "../components/commentaire/CommentSlider";
+import { useLogger } from "../hooks/useLogger";
 
 const Hero = () => {
   const messages = [
