@@ -8,6 +8,15 @@ import LoginButton from "./LoginButton";
 import { useAuth } from "react-oidc-context";
 import { useState } from "react";
 
+// Interface pour les props du composant NavItem
+interface NavItemProps {
+  to: string;
+  icon: string;
+  text: string;
+  badge?: boolean;
+  mobile?: boolean;
+}
+
 const Navbar = () => {
   const { cartItems } = useCart(); // Utiliser le hook pour accéder au panier
   const auth = useAuth(); // Utiliser le hook pour accéder aux informations d'authentification
@@ -89,8 +98,8 @@ const Navbar = () => {
   );
 };
 
-// Composant pour les éléments de navigation (pour éviter la répétition)
-const NavItem = ({ to, icon, text, badge = false, mobile = false }) => {
+// Composant pour les éléments de navigation avec typage correct
+const NavItem = ({ to, icon, text, badge = false, mobile = false }: NavItemProps) => {
   return (
     <div className={`flex p-2 hover:cursor-pointer hover:scale-110 transition-transform duration-200 relative ${mobile ? 'justify-center w-full' : ''}`}>
       <Link
