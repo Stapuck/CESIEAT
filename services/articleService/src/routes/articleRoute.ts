@@ -111,7 +111,7 @@ articleRoute.get(
                 description: 'Articles API',
             },
             servers: [
-                { url: `https://localhost:8080`, description: 'Local Server' },
+                { url: `https://localhost`, description: 'Local Server' },
             ],
         },
     })
@@ -122,11 +122,11 @@ articleRoute.get(
     scalar_url,
     apiReference({
         // theme: 'saturn',
-        url: `https://localhost:8080${baseUrl}${openapi_url}`,
+        url: `https://localhost${baseUrl}${openapi_url}`,
     }),
 )
 
-console.log(`https://localhost:8080${baseUrl}${scalar_url}`)
-console.log(`https://localhost:8080${baseUrl}${openapi_url}`)
+// console.log(`https://localhost${baseUrl}${scalar_url}`)
+// console.log(`https://localhost${baseUrl}${openapi_url}`)
 
 export default articleRoute
