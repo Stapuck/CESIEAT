@@ -6,7 +6,11 @@ import articleRoute from './routes/articleRoute.js';
 import { showRoutes } from 'hono/dev'
 
 const app = new Hono({strict : false})
-app.use('*', cors())
+
+app.use('*', cors({
+  origin: '*', // Autoriser toutes les origines
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 
 const PORT = Number(process.env.PORT) || 3005;
 
