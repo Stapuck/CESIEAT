@@ -111,7 +111,7 @@ articleRoute.get(
                 description: 'Articles API',
             },
             servers: [
-                { url: `cesieat.nathan-lorit.com`, description: 'Local Server' },
+                { url: `https://cesieat.nathan-lorit.com`, description: 'Local Server' },
             ],
         },
     })
