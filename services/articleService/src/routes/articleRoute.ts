@@ -122,7 +122,7 @@ articleRoute.get(
     scalar_url,
     apiReference({
         // theme: 'saturn',
-        url: `${openapi_url}`,
+        url: `/api/articles/${openapi_url}`,
     }),
 )
 
