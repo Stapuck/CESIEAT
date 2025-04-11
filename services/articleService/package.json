@@ -6,10 +6,14 @@
     "build": "rm -rf ./dist && tsc && echo \"🟩 Build success !\""
   },
   "dependencies": {
+    "@hono/arktype-validator": "^2.0.0",
     "@hono/node-server": "^1.14.0",
+    "@scalar/hono-api-reference": "^0.8.0",
+    "arktype": "^2.1.19",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "hono": "^4.7.5",
+    "hono-openapi": "^0.4.6",
     "mongoose": "^8.13.0",
     "typescript": "^5.8.2"
   },
