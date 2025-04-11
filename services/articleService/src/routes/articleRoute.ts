@@ -9,6 +9,8 @@ const baseUrl = "/api/articles"
 const articleRoute = new Hono().basePath(baseUrl)
 
 
+
+
 articleRoute.get(
     '/',
     describeRoute({
@@ -95,7 +97,6 @@ articleRoute.get(
             },
         },
     }),
-    validator('param', type({ restaurateurid: "string" })),
     getArticlesByRestorateur
 )
 
