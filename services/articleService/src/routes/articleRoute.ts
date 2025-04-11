@@ -122,7 +122,7 @@ articleRoute.get(
     scalar_url,
     apiReference({
         // theme: 'saturn',
-        url: `cesieat.nathan-lorit.com${baseUrl}${openapi_url}`,
+        url: `${openapi_url}`,
     }),
 )
 
