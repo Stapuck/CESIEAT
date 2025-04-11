@@ -111,7 +111,7 @@ articleRoute.get(
                 description: 'Articles API',
             },
             servers: [
-                { url: `https://localhost`, description: 'Local Server' },
+                { url: `cesieat.nathan-lorit.com`, description: 'Local Server' },
             ],
         },
     })
@@ -122,7 +122,7 @@ articleRoute.get(
     scalar_url,
     apiReference({
         // theme: 'saturn',
-        url: `https://localhost${baseUrl}${openapi_url}`,
+        url: `cesieat.nathan-lorit.com${baseUrl}${openapi_url}`,
     }),
 )
 
